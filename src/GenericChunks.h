@@ -753,6 +753,10 @@ struct GENMNAM
     int32_t  dimX, dimY;
     int16_t  NWCellX, NWCellY, SECellX, SECellY;
 
+	float minHeight;
+	float maxHeight;
+	float initialPitch;
+
     GENMNAM();
     ~GENMNAM();
 

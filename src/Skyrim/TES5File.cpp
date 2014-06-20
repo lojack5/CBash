@@ -382,12 +382,12 @@ int32_t TES5File::Load(RecordOp &read_parser, RecordOp &indexer, std::vector<For
         case eIgDIAL:
         case REV32(DIAL):
             buffer_position = group_buffer_end;
-            //DIAL.Read(buffer_start, buffer_position, group_buffer_end, indexer, parser, DeletedRecords, processor, FileName);
+            DIAL.Read(buffer_start, buffer_position, group_buffer_end, indexer, parser, DeletedRecords, processor, FileName);
             break;
         case eIgDLBR:
         case REV32(DLBR):
             buffer_position = group_buffer_end;
-            //DLBR.Read(buffer_start, buffer_position, group_buffer_end, indexer, parser, DeletedRecords, processor, FileName);
+            DLBR.Read(buffer_start, buffer_position, group_buffer_end, indexer, parser, DeletedRecords, processor, FileName);
             break;
         case eIgDLVW:
         case REV32(DLVW):
@@ -644,7 +644,7 @@ int32_t TES5File::Load(RecordOp &read_parser, RecordOp &indexer, std::vector<For
         case eIgPACK:
         case REV32(PACK):
             buffer_position = group_buffer_end;
-            //PACK.Read(buffer_start, buffer_position, group_buffer_end, indexer, parser, DeletedRecords, processor, FileName);
+            PACK.Read(buffer_start, buffer_position, group_buffer_end, indexer, parser, DeletedRecords, processor, FileName);
             break;
         case eIgPERK:
         case REV32(PERK):
@@ -975,8 +975,10 @@ uint32_t TES5File::GetNumRecords(const uint32_t &RecordType)
         return (uint32_t)IMAD.pool.used_object_capacity();
     case REV32(IMGS):
         return (uint32_t)IMGS.pool.used_object_capacity();
+	*/
     case REV32(INFO):
         return (uint32_t)DIAL.info_pool.used_object_capacity();
+	/*
     case REV32(INGR):
         return (uint32_t)INGR.pool.used_object_capacity();
     case REV32(IPCT):
@@ -1040,9 +1042,10 @@ uint32_t TES5File::GetNumRecords(const uint32_t &RecordType)
     */
     case REV32(OTFT):
         return (uint32_t)OTFT.pool.used_object_capacity();
-    /*
+
     case REV32(PACK):
         return (uint32_t)PACK.pool.used_object_capacity();
+	/*
     case REV32(PERK):
         return (uint32_t)PERK.pool.used_object_capacity();
     case REV32(PGRE):
@@ -1341,6 +1344,7 @@ Record * TES5File::CreateRecord(const uint32_t &RecordType, char * const &Record
         return REGN.pool.construct(SourceRecord, this, true);
     case REV32(NAVI):
         return NAVI.pool.construct(SourceRecord, this, true);
+	*/
     case REV32(DIAL):
         return DIAL.dial_pool.construct(SourceRecord, this, true);
     case REV32(INFO):
@@ -1352,6 +1356,7 @@ Record * TES5File::CreateRecord(const uint32_t &RecordType, char * const &Record
 
         ((Sk::DIALRecord *)ParentRecord)->INFO.push_back(DIAL.info_pool.construct(SourceRecord, ParentRecord, false));
         return ((Sk::DIALRecord *)ParentRecord)->INFO.back();
+	/*
     case REV32(ACHR):
         if(ParentRecord == NULL || ParentRecord->GetType() != REV32(CELL))
             {
@@ -1437,8 +1442,10 @@ Record * TES5File::CreateRecord(const uint32_t &RecordType, char * const &Record
         return QUST.pool.construct(SourceRecord, this, true);
     case REV32(IDLE):
         return IDLE.pool.construct(SourceRecord, this, true);
+	*/
     case REV32(PACK):
         return PACK.pool.construct(SourceRecord, this, true);
+	/*
     case REV32(CSTY):
         return CSTY.pool.construct(SourceRecord, this, true);
     case REV32(LSCR):
@@ -1780,6 +1787,7 @@ int32_t TES5File::DeleteRecord(Record *&curRecord, RecordOp &deindexer)
         deindexer.Accept(curRecord);
         DEBR.pool.destroy(curRecord);
         return 1;
+	*/
     case REV32(DIAL):
     {
         Sk::DIALRecord *dial_record = (Sk::DIALRecord *)curRecord;
@@ -1797,7 +1805,8 @@ int32_t TES5File::DeleteRecord(Record *&curRecord, RecordOp &deindexer)
         deindexer.Accept(curRecord);
         DLBR.pool.destroy(curRecord);
         return 1;
-    case REV32(DLVW):
+	/*
+	case REV32(DLVW):
         deindexer.Accept(curRecord);
         DLVW.pool.destroy(curRecord);
         return 1;
@@ -1895,6 +1904,7 @@ int32_t TES5File::DeleteRecord(Record *&curRecord, RecordOp &deindexer)
         deindexer.Accept(curRecord);
         IMGS.pool.destroy(curRecord);
         return 1;
+	*/
     case REV32(INFO):
     {
         Sk::DIALRecord *dial_record = (Sk::DIALRecord *)curRecord->GetParentRecord();
@@ -1918,6 +1928,7 @@ int32_t TES5File::DeleteRecord(Record *&curRecord, RecordOp &deindexer)
         DIAL.info_pool.destroy(curRecord);
     }
         return 1;
+	/*
     case REV32(INGR):
         deindexer.Accept(curRecord);
         INGR.pool.destroy(curRecord);
@@ -2068,11 +2079,11 @@ int32_t TES5File::DeleteRecord(Record *&curRecord, RecordOp &deindexer)
         deindexer.Accept(curRecord);
         OTFT.pool.destroy(curRecord);
         return 1;
-    /*
     case REV32(PACK):
         deindexer.Accept(curRecord);
         PACK.pool.destroy(curRecord);
         return 1;
+	/*
     case REV32(PERK):
         deindexer.Accept(curRecord);
         PERK.pool.destroy(curRecord);
@@ -2430,10 +2441,10 @@ int32_t TES5File::Save(char * const &SaveName, std::vector<FormIDResolver *> &Ex
     // formCount += NAVI.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
     formCount += CELL.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
     formCount += WRLD.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod, FormIDHandler, CELL, indexer);
-    // formCount += DIAL.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
+    formCount += DIAL.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
     // formCount += QUST.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
     // formCount += IDLE.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
-    // formCount += PACK.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
+    formCount += PACK.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
     // formCount += CSTY.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
     // formCount += LSCR.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
     formCount += LVSP.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
@@ -2468,7 +2479,7 @@ int32_t TES5File::Save(char * const &SaveName, std::vector<FormIDResolver *> &Ex
     // formCount += SMBN.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
     // formCount += SMQN.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
     // formCount += SMEN.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
-    // formCount += DLBR.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
+    formCount += DLBR.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
     // formCount += MUST.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
     // formCount += DLVW.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
     formCount += WOOP.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
@@ -2548,10 +2559,10 @@ void TES5File::VisitAllRecords(RecordOp &op)
     // DEBR.pool.VisitRecords(op);
     // DIAL
     {
-        // DIAL.info_pool.VisitRecords(op);
-        // DIAL.dial_pool.VisitRecords(op);
+        DIAL.info_pool.VisitRecords(op);
+        DIAL.dial_pool.VisitRecords(op);
     }
-    // DLBR.pool.VisitRecords(op);
+    DLBR.pool.VisitRecords(op);
     // DLVW.pool.VisitRecords(op);
     // DOBJ.pool.VisitRecords(op);
     // DOOR.pool.VisitRecords(op);
@@ -2605,7 +2616,7 @@ void TES5File::VisitAllRecords(RecordOp &op)
     // NAVM - in CELL
     // NPC_.pool.VisitRecords(op);
     OTFT.pool.VisitRecords(op);
-    // PACK.pool.VisitRecords(op);
+    PACK.pool.VisitRecords(op);
     // PERK.pool.VisitRecords(op);
     // PGRE - in CELL
     // PHZD.pool.VisitRecords(op); // in CELL?
@@ -2754,10 +2765,10 @@ void TES5File::VisitRecords(const uint32_t &RecordType, RecordOp &op)
     case REV32(DEBR):
         // DEBR.pool.VisitRecords(op);break;
     case REV32(DIAL):
-        // DIAL.dial_pool.VisitRecords(op);
+        DIAL.dial_pool.VisitRecords(op);
         break;
     case REV32(DLBR):
-        // DLBR.pool.VisitRecords(op);
+        DLBR.pool.VisitRecords(op);
         break;
     case REV32(DLVW):
         // DLVW.pool.VisitRecords(op);
@@ -2832,7 +2843,7 @@ void TES5File::VisitRecords(const uint32_t &RecordType, RecordOp &op)
         // IMGS.pool.VisitRecords(op);
         break;
     case REV32(INFO):
-        // DIAL.info_pool.VisitRecords(op);
+        DIAL.info_pool.VisitRecords(op);
         break;
     case REV32(INGR):
         // INGR.pool.VisitRecords(op);
@@ -2919,7 +2930,7 @@ void TES5File::VisitRecords(const uint32_t &RecordType, RecordOp &op)
         OTFT.pool.VisitRecords(op);
         break;
     case REV32(PACK):
-        // PACK.pool.VisitRecords(op);
+        PACK.pool.VisitRecords(op);
         break;
     case REV32(PERK):
         // PERK.pool.VisitRecords(op);

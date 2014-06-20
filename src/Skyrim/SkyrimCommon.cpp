@@ -96,7 +96,8 @@ bool StringLookups::Open(char * ModName)
         delete [] StringsFileName;
         delete [] DLStringsFileName;
         delete [] ILStringsFileName;
-        throw;
+		return false;
+        //throw;
     }
 
     delete [] StringsFileName;

@@ -81,7 +81,7 @@ CELLRecord::CELLRecord(CELLRecord *srcRecord):
     FULL = srcRecord->FULL;
     DATA = srcRecord->DATA;
     XCLC = srcRecord->XCLC;
-/*  XCLL = srcRecord->XCLL;*/
+    XCLL = srcRecord->XCLL;
     IMPS = srcRecord->IMPS;
     IMPF = srcRecord->IMPF;
     LTMP = srcRecord->LTMP;
@@ -95,6 +95,7 @@ CELLRecord::CELLRecord(CELLRecord *srcRecord):
     XCCM = srcRecord->XCCM;
     XCWT = srcRecord->XCWT;
 /*  Ownership = srcRecord->Ownership;*/
+	XOWN = srcRecord->XOWN;
     XCAS = srcRecord->XCAS;
     XCMT = srcRecord->XCMT;
     XCMO = srcRecord->XCMO;
@@ -162,6 +163,8 @@ bool CELLRecord::VisitFormIDs(FormIDOp &op)
         op.Accept(XCWT.value);
 /*  if(Ownership.IsLoaded())
         op.Accept(Ownership->XOWN.value);*/
+	if(XOWN.IsLoaded())
+		op.Accept(XOWN.value);
     if(XCAS.IsLoaded())
         op.Accept(XCAS.value);
     if(XCMO.IsLoaded())
@@ -468,9 +471,9 @@ int32_t CELLRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
             case REV32(XCLC):
                 XCLC.Read(buffer, subSize);
                 break;
-/*          case REV32(XCLL):
+            case REV32(XCLL):
                 XCLL.Read(buffer, subSize);
-                break;*/
+                break;
             case REV32(IMPS):
                 IMPS.Read(buffer, subSize);
                 break;
@@ -507,10 +510,10 @@ int32_t CELLRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
             case REV32(XCWT):
                 XCWT.Read(buffer, subSize);
                 break;
-/*          case REV32(XOWN):
-                Ownership.Load();
-                Ownership->XOWN.Read(buffer, subSize);
+            case REV32(XOWN):
+                XOWN.Read(buffer, subSize);
                 break;
+			/*
             case REV32(XRNK):
                 Ownership.Load();
                 Ownership->XRNK.Read(buffer, subSize);
@@ -561,7 +564,7 @@ int32_t CELLRecord::Unload()
     FULL.Unload();
     DATA.Unload();
     XCLC.Unload();
-/*  XCLL.Unload();*/
+    XCLL.Unload();
     IMPS.Unload();
     IMPF.Unload();
     LTMP.Unload();
@@ -574,6 +577,7 @@ int32_t CELLRecord::Unload()
     XEZN.Unload();
     XCCM.Unload();
     XCWT.Unload();
+	XOWN.Unload();
 /*  Ownership.Unload();*/
     XCAS.Unload();
     XCMT.Unload();
@@ -592,7 +596,7 @@ int32_t CELLRecord::WriteRecord(FileWriter &writer)
     WRITE(FULL);
     //DATA.Unload(); //need to keep IsInterior around
     WRITE(XCLC);
-/*  WRITE(XCLL);*/
+    WRITE(XCLL);
     WRITE(IMPS);
     WRITE(IMPF);
     if(LNAM.value != 0 || LTMP.value != 0)
@@ -612,6 +616,7 @@ int32_t CELLRecord::WriteRecord(FileWriter &writer)
     WRITE(XCCM);
     WRITE(XCWT);
 /*  Ownership.Write(writer);*/
+	WRITE(XOWN);
     WRITE(XCAS);
     WRITE(XCMT);
     WRITE(XCMO);
@@ -627,7 +632,7 @@ bool CELLRecord::operator ==(const CELLRecord &other) const
     {
     return (DATA == other.DATA &&
             XCLC == other.XCLC &&
-/*          XCLL == other.XCLL &&*/
+            XCLL == other.XCLL &&
             IMPF == other.IMPF &&
             LTMP == other.LTMP &&
             LNAM == other.LNAM &&
@@ -641,6 +646,7 @@ bool CELLRecord::operator ==(const CELLRecord &other) const
             IMPS == other.IMPS &&
             XCLR == other.XCLR &&
 /*          Ownership == other.Ownership &&*/
+			XOWN == other.XOWN &&
             EDID.equalsi(other.EDID) &&
             FULL.equals(other.FULL) &&
             XNAM.equalsi(other.XNAM) &&
@@ -753,4 +759,59 @@ bool CELLRecord::deep_equals(Record *master, RecordOp &read_self, RecordOp &read
 
     return true;
     }
+
+CELLRecord::TES5LIGHT::TES5LIGHT() :
+fogNear(0.0f),
+fogFar(0.0f),
+directionalXY(0),
+directionalZ(0),
+directionalFade(0.0f),
+fogClip(0.0f),
+fogPower(0.0f),
+fresnelPow(0.0f),
+fogMax(0.0f),
+lightFadeDistancesStart(0.0f),
+lightFadeDistancesEnd(0.0f)
+{
+	//
+}
+
+CELLRecord::TES5LIGHT::~TES5LIGHT()
+{
+	//
+}
+
+bool CELLRecord::TES5LIGHT::operator ==(const TES5LIGHT &other) const
+{
+	return (ambient == other.ambient &&
+		directional == other.directional &&
+		fog == other.fog &&
+		AlmostEqual(fogNear, other.fogNear, 2) &&
+		AlmostEqual(fogFar, other.fogFar, 2) &&
+		directionalXY == other.directionalXY &&
+		directionalZ == other.directionalZ &&
+		AlmostEqual(directionalFade, other.directionalFade, 2) &&
+		AlmostEqual(fogClip, other.fogClip, 2) &&
+		AlmostEqual(fogPower, other.fogPower, 2) &&
+		ambientXp == other.ambientXp &&
+		ambientXm == other.ambientXm &&
+		ambientYp == other.ambientYp &&
+		ambientYm == other.ambientYm &&
+		ambientZp == other.ambientZp &&
+		ambientZm == other.ambientZm &&
+		specular == other.specular &&
+		AlmostEqual(fresnelPow, other.fresnelPow, 2) &&
+		fogFarTwo == other.fogFarTwo &&
+		AlmostEqual(fogMax, other.fogMax, 2) &&
+		AlmostEqual(lightFadeDistancesStart, other.lightFadeDistancesStart, 2) &&
+		AlmostEqual(lightFadeDistancesEnd, other.lightFadeDistancesEnd, 2) &&
+		inheritFlags == other.inheritFlags
+		);
+}
+
+bool CELLRecord::TES5LIGHT::operator !=(const TES5LIGHT &other) const
+{
+	return !(*this == other);
+}
+
 }

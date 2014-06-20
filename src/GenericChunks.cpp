@@ -1937,7 +1937,10 @@ GENMNAM::GENMNAM():
     NWCellX(0),
     NWCellY(0),
     SECellX(0),
-    SECellY(0)
+    SECellY(0),
+	minHeight(50000.0f),
+	maxHeight(80000.0f),
+	initialPitch(50.0f)
     {
     //
     }

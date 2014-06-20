@@ -54,6 +54,33 @@ class CELLRecord : public TES5Record //Cell
             bool operator !=(const CELLXCLC &other) const;
             };
 
+
+		struct TES5LIGHT
+		{
+			GENCLR  ambient; //Ambient Color
+			GENCLR  directional; //Directional Color
+			GENCLR  fog; //Fog Color
+			float fogNear, fogFar; //Fog Near, Fog Far
+			int32_t  directionalXY, directionalZ; //Directional Rotation XY, Directional Rotation Z
+			float directionalFade, fogClip, fogPower; //Directional Fade, Fog Clip Dist, Fog Power
+
+			GENCLR ambientXp, ambientXm, ambientYp, ambientYm, ambientZp, ambientZm;
+			GENCLR specular;
+			float fresnelPow;
+			GENCLR fogFarTwo;
+			float fogMax;
+			float lightFadeDistancesStart;
+			float lightFadeDistancesEnd;
+
+			uint32_t inheritFlags;
+
+			TES5LIGHT();
+			~TES5LIGHT();
+
+			bool operator ==(const TES5LIGHT &other) const;
+			bool operator !=(const TES5LIGHT &other) const;
+		};
+
         enum flagsFlags
             {
             fIsInterior         = 0x00000001,
@@ -92,7 +119,7 @@ class CELLRecord : public TES5Record //Cell
         StringRecord FULL; //Name
         ReqSimpleSubRecord<uint8_t> DATA; //Flags
         OptSubRecord<CELLXCLC> XCLC; //Grid
-//      OptSubRecord<TES5LIGHT> XCLL; //Lighting
+        OptSubRecord<TES5LIGHT> XCLL; //Lighting
         UnorderedSparseArray<GENIMPS *> IMPS; //Swapped Impact
         OptSubRecord<GENIMPF> IMPF; //Footstep Materials
         ReqSimpleSubRecord<FORMID> LTMP; //Light Template
@@ -106,6 +133,7 @@ class CELLRecord : public TES5Record //Cell
         OptSimpleSubRecord<FORMID> XCCM; //Climate
         OptSimpleSubRecord<FORMID> XCWT; //Water -> WATR
 //      OptSubRecord<TES5XOWN> Ownership; //Owner
+		OptSimpleSubRecord<FORMID> XOWN; //Owner simple.
         OptSimpleSubRecord<FORMID> XCAS; //Acoustic Space
         RawRecord XCMT; //Unused
         OptSimpleSubRecord<FORMID> XCMO; //Music Type

@@ -37,6 +37,7 @@
 #include "Records/CELLRecord.h"
 #include "Records/LANDRecord.h"
 #include "Records/WRLDRecord.h"
+#include "Records/DIALRecord.h"
 
 template<uint32_t RecType, uint32_t AllocUnit, bool IsKeyedByEditorID>
 class TES5GRUPRecords<Sk::CELLRecord, RecType, AllocUnit, IsKeyedByEditorID>
@@ -2176,3 +2177,263 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
             return formCount;
             }
     };
+
+
+template<uint32_t RecType, uint32_t AllocUnit, bool IsKeyedByEditorID>
+class TES5GRUPRecords<Sk::DIALRecord, RecType, AllocUnit, IsKeyedByEditorID>
+{
+public:
+	RecordPoolAllocator<Sk::DIALRecord, RecType, AllocUnit> dial_pool;
+	RecordPoolAllocator<Sk::INFORecord, REV32(INFO), 20> info_pool;
+	uint32_t stamp, unknown;
+
+	TES5GRUPRecords() :
+		stamp(134671),
+		unknown(0)
+	{
+		//
+	}
+
+	~TES5GRUPRecords()
+	{
+		//
+	}
+
+	bool Read(unsigned char *&buffer_start, unsigned char *&buffer_position, unsigned char *&group_buffer_end, RecordOp &indexer, RecordOp &parser, std::vector<Record *> &DeletedRecords, RecordProcessor &processor, char * &FileName)
+	{
+		stamp = *(uint32_t *)buffer_position;
+		buffer_position += 4;
+		if (group_buffer_end <= buffer_position)
+		{
+			printer("TES5GRUPRecords<Sk::DIALRecord>::Read: Error - Unable to load group in file \"%s\". The group has a size of 0.\n", FileName);
+#ifdef CBASH_DEBUG_CHUNK
+			peek_around(buffer_position, PEEK_SIZE);
+#endif
+			return false;
+		}
+
+		Record * curRecord = NULL;
+		uint32_t recordSize = 0;
+		RecordHeader header;
+
+		Sk::DIALRecord *last_record = NULL, *orphaned_records = NULL;
+		uint32_t numDIAL = 0, numINFO = 0;
+
+		std::vector<RecordHeader> records;
+		records.reserve((uint32_t)(group_buffer_end - buffer_position) / sizeof(Sk::DIALRecord)); //gross overestimation, but good enough
+		while (buffer_position < group_buffer_end){
+			if ((processor.IsSkipAllRecords && processor.IsTrackNewTypes) &&
+				processor.NewTypes.count(REV32(DIAL)) > 0 &&
+				processor.NewTypes.count(REV32(INFO)) > 0)
+			{
+				buffer_position = group_buffer_end;
+				break;
+			}
+
+			//Assumes that all records in a generic group are of the same type
+			header.type = *(uint32_t *)buffer_position;
+			buffer_position += 4;
+			recordSize = *(uint32_t *)buffer_position;
+			buffer_position += 4;
+
+			if (header.type == REV32(GRUP)) //All GRUPs will be recreated from scratch on write (saves memory)
+			{
+				if (recordSize == 20)
+					processor.EmptyGRUPs++;
+				buffer_position += 16;
+				continue;
+			}
+
+			header.flags = *(uint32_t *)buffer_position;
+			buffer_position += 4;
+			header.formID = *(FORMID *)buffer_position;
+			buffer_position += 4;
+			header.flagsUnk = *(uint32_t *)buffer_position; //VersionControl1
+			buffer_position += 4;
+			header.formVersion = *(uint16_t *)buffer_position;
+			buffer_position += 2;
+			header.versionControl2[0] = *(uint8_t *)buffer_position;
+			buffer_position++;
+			header.versionControl2[1] = *(uint8_t *)buffer_position;
+			buffer_position++;
+
+			if (processor.Accept(header))
+			{
+				header.data = buffer_position;
+				records.push_back(header);
+
+				switch (header.type)
+				{
+				case REV32(DIAL):
+					numDIAL++;
+					break;
+				case REV32(INFO):
+					numINFO++;
+					break;
+				default:
+					printer("TES5GRUPRecords<Sk::DIALRecord>::Read: Warning - Parsing error. Unexpected record type (%c%c%c%c) in file \"%s\".\n", ((char *)&header.type)[0], ((char *)&header.type)[1], ((char *)&header.type)[2], ((char *)&header.type)[3], FileName);
+#ifdef CBASH_DEBUG_CHUNK
+					peek_around(buffer_position, PEEK_SIZE);
+#endif
+					records.pop_back();
+					break;
+				}
+			}
+
+			buffer_position += recordSize;
+		};
+
+		if (records.size())
+		{
+			//Allocates many records at once in a contiguous space
+			//Allocate memory
+			unsigned char *dial_buffer = NULL;
+			if (numDIAL)
+			{
+				dial_buffer = (unsigned char *)malloc(sizeof(Sk::DIALRecord) * numDIAL);
+				if (dial_buffer == 0)
+					throw std::bad_alloc();
+				dial_pool.add_buffer(dial_buffer);
+			}
+
+			unsigned char *info_buffer = NULL;
+			if (numINFO)
+			{
+				info_buffer = (unsigned char *)malloc(sizeof(Sk::INFORecord) * numINFO);
+				if (info_buffer == 0)
+					throw std::bad_alloc();
+				info_pool.add_buffer(info_buffer);
+			}
+
+			last_record = orphaned_records = new Sk::DIALRecord();
+
+			//Construct the records
+			for (uint32_t x = 0; x < records.size(); ++x)
+			{
+				header = records[x];
+
+				switch (header.type)
+				{
+				case REV32(DIAL):
+					curRecord = last_record = new(dial_buffer)Sk::DIALRecord(header.data);
+					dial_buffer += sizeof(Sk::DIALRecord);
+					curRecord->SetParent(processor.curModFile, true);
+					break;
+				case REV32(INFO):
+					curRecord = new(info_buffer)Sk::INFORecord(header.data);
+					info_buffer += sizeof(Sk::INFORecord);
+					curRecord->SetParent(last_record, false);
+					last_record->INFO.push_back(curRecord);
+					break;
+				default:
+					printer("TES5GRUPRecords<Sk::DIALRecord>::Read: Warning - Parsing error. Unexpected record type (%c%c%c%c) in file \"%s\".\n", ((char *)&header.type)[0], ((char *)&header.type)[1], ((char *)&header.type)[2], ((char *)&header.type)[3], FileName);
+#ifdef CBASH_DEBUG_CHUNK
+					peek_around(header.data, PEEK_SIZE);
+#endif
+					continue;
+					break;
+				}
+
+				curRecord->flags = header.flags;
+				curRecord->formID = header.formID;
+				curRecord->flagsUnk = header.flagsUnk;
+				//Testing Messages
+				//if((flags & 0x4000) != 0)
+				//    printer("0x4000 used: %08X!!!!\n", curRecord->formID);
+
+				//Read (if FullLoad), no-op otherwise
+				parser.Accept(curRecord);
+				//Save any deleted records for post-processing
+				if (curRecord->IsDeleted())
+					DeletedRecords.push_back(curRecord);
+				//Index it for fast, random lookup
+				indexer.Accept(curRecord);
+			}
+
+			records.clear();
+
+			for (uint32_t x = 0; x < orphaned_records->INFO.size(); ++x)
+			{
+				curRecord = orphaned_records->INFO[x];
+				processor.OrphanedRecords.push_back(curRecord->formID);
+				//printer("TES5GRUPRecords<Sk::DIALRecord>::Read: Warning - Parsing error. Skipped orphan INFO (%08X) at %08X in file \"%s\"\n", curRecord->formID, curRecord->recData - buffer_start, FileName);
+#ifdef CBASH_DEBUG_CHUNK
+				peek_around(curRecord->recData, PEEK_SIZE);
+#endif
+				info_pool.destroy(curRecord);
+			}
+			delete orphaned_records;
+		}
+
+		return true;
+	}
+
+	uint32_t Write(FileWriter &writer, std::vector<FormIDResolver *> &Expanders, FormIDResolver &expander, FormIDResolver &collapser, const bool &bMastersChanged, bool CloseMod)
+	{
+		std::vector<Record *> Records;
+		dial_pool.MakeRecordsVector(Records);
+		uint32_t numDIALRecords = (uint32_t)Records.size(); //Parent Records
+		if (numDIALRecords == 0)
+			return 0;
+
+		uint32_t type = REV32(GRUP);
+		uint32_t gType = eTop;
+		uint32_t TopSize = 0;
+		uint32_t ChildrenSize = 0;
+		uint32_t formCount = 0;
+		uint32_t TopLabel = REV32(DIAL);
+		uint32_t numINFORecords = 0;
+		uint32_t parentFormID = 0;
+		Sk::DIALRecord *curRecord = NULL;
+
+		//Top GRUP Header
+		writer.file_write(&type, 4);
+		uint32_t TopSizePos = writer.file_tell();
+		writer.file_write(&TopSize, 4); //Placeholder: will be overwritten with correct value later.
+		writer.file_write(&TopLabel, 4);
+		writer.file_write(&gType, 4);
+		writer.file_write(&stamp, 4);
+		writer.file_write(&unknown, 4);
+		++formCount;
+		TopSize = 24;
+
+
+		gType = eTopicChildren;
+		formCount += numDIALRecords;
+		for (uint32_t p = 0; p < numDIALRecords; ++p)
+		{
+			curRecord = (Sk::DIALRecord *)Records[p];
+			parentFormID = curRecord->formID;
+			collapser.Accept(parentFormID);
+			TopSize += curRecord->Write(writer, bMastersChanged, expander, collapser, Expanders);
+
+			numINFORecords = (uint32_t)curRecord->INFO.size();
+			if (numINFORecords)
+			{
+				writer.file_write(&type, 4);
+				uint32_t ChildrenSizePos = writer.file_tell();
+				writer.file_write(&ChildrenSize, 4); //Placeholder: will be overwritten with correct value later.
+				writer.file_write(&parentFormID, 4);
+				writer.file_write(&gType, 4);
+				writer.file_write(&stamp, 4);
+				writer.file_write(&unknown, 4);
+				++formCount;
+				ChildrenSize = 24;
+
+				formCount += numINFORecords;
+				for (uint32_t y = 0; y < numINFORecords; ++y)
+					ChildrenSize += curRecord->INFO[y]->Write(writer, bMastersChanged, expander, collapser, Expanders);
+				writer.file_write(ChildrenSizePos, &ChildrenSize, 4);
+				TopSize += ChildrenSize;
+			}
+		}
+		writer.file_write(TopSizePos, &TopSize, 4);
+		if (CloseMod)
+		{
+			info_pool.purge_with_destructors();
+			dial_pool.purge_with_destructors();
+		}
+		return formCount;
+	}
+
+};
