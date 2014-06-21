@@ -91,6 +91,7 @@ class WRLDRecord : public TES5Record //Worldspace
         RawRecord OFST; //Unknown
         RawRecord RNAM; //Unknown (Skyrim)
         RawRecord NAMA; //Unknown (Skyrim)
+		OptSubRecord<FNVWORLDMODEL> MODL; // Model
         StringRecord TNAM; //Texture Filename (Skyrim)
         StringRecord UNAM; //Normal Texture Filename (Skyrim)
 

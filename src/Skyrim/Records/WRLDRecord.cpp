@@ -61,6 +61,7 @@ WRLDRecord::WRLDRecord(WRLDRecord *srcRecord):
     NAM2 = srcRecord->NAM2;
     NAM3 = srcRecord->NAM3;
     NAM4 = srcRecord->NAM4;
+	MODL = srcRecord->MODL;
     DNAM = srcRecord->DNAM;
     ICON = srcRecord->ICON;
     MICO = srcRecord->MICO;
@@ -105,6 +106,10 @@ bool WRLDRecord::VisitFormIDs(FormIDOp &op)
         op.Accept(CNAM.value);
     op.Accept(NAM2.value);
     op.Accept(NAM3.value);
+
+	if (MODL.IsLoaded())
+		MODL->Textures.VisitFormIDs(op);
+
     if(INAM.IsLoaded())
         op.Accept(INAM.value);
     if(ZNAM.IsLoaded())
@@ -418,6 +423,18 @@ int32_t WRLDRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
             case REV32(UNAM): // 53 bytes, Data\Textures\Landscape\Mountains\MountainSlab02_N.dds
                 UNAM.Read(buffer, subSize, CompressedOnDisk);
                 break;
+			case REV32(MODL):
+				MODL.Load();
+				MODL->MODL.Read(buffer, subSize, CompressedOnDisk);
+				break;
+			case REV32(MODT):
+				MODL.Load();
+				MODL->MODT.Read(buffer, subSize, CompressedOnDisk);
+				break;
+			case REV32(MODS):
+				MODL.Load();
+				MODL->Textures.Read(buffer, subSize);
+				break;
             default:
                 //printer("FileName = %s\n", FileName);
                 printer("  WRLD: %08X - Unknown subType = %04x [%c%c%c%c]\n", formID, subType, (subType >> 0) & 0xFF, (subType >> 8) & 0xFF, (subType >> 16) & 0xFF, (subType >> 24) & 0xFF);
@@ -444,6 +461,7 @@ int32_t WRLDRecord::Unload()
     NAM2.Unload();
     NAM3.Unload();
     NAM4.Unload();
+	MODL.Unload();
     DNAM.Unload();
     ICON.Unload();
     MICO.Unload();
@@ -477,6 +495,7 @@ int32_t WRLDRecord::WriteRecord(FileWriter &writer)
     WRITE(NAM2);
     WRITE(NAM3);
     WRITE(NAM4);
+	MODL.Write(writer);
     WRITE(DNAM);
     WRITE(ICON);
     WRITE(MICO);
@@ -510,6 +529,7 @@ bool WRLDRecord::operator ==(const WRLDRecord &other) const
             NAM3 == other.NAM3 &&
             NAM4 == other.NAM4 &&
             DNAM == other.DNAM &&
+			MODL == other.MODL &&
             MNAM == other.MNAM &&
             ONAM == other.ONAM &&
             INAM == other.INAM &&

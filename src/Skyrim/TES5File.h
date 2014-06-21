@@ -68,8 +68,8 @@
 // #include "Records/CPTHRecord.h"
 // #include "Records/CSTYRecord.h"
 // #include "Records/DEBRRecord.h"
-// #include "Records/DIALRecord.h"
-// #include "Records/DLBRRecord.h"
+#include "Records/DIALRecord.h"
+#include "Records/DLBRRecord.h"
 // #include "Records/DLVWRecord.h"
 // #include "Records/DOBJRecord.h"
 // #include "Records/DOORRecord.h"
@@ -122,7 +122,7 @@
 // #include "Records/NAVIRecord.h"
 // #include "Records/NPC_Record.h"
 #include "Records/OTFTRecord.h"
-// #include "Records/PACKRecord.h"
+#include "Records/PACKRecord.h"
 // #include "Records/PERKRecord.h"
 // #include "Records/PROJRecord.h"
 // #include "Records/PWATRecord.h" // Empty GRUP
@@ -197,8 +197,8 @@ class TES5File : public ModFile
         // GRUP(CPTH);
         // GRUP(CSTY);
         // GRUP(DEBR);
-        // GRUP(DIAL);
-        // GRUP(DLBR);
+        GRUP(DIAL);
+        GRUP(DLBR);
         // GRUP(DLVW);
         // GRUP(DOBJ);
         // GRUP(DOOR);
@@ -251,7 +251,7 @@ class TES5File : public ModFile
         // GRUP(NAVI);
         // GRUP(NPC_);
         GRUP(OTFT);
-        // GRUP(PACK);
+        GRUP(PACK);
         // GRUP(PERK);
         // GRUP(PROJ);
         // GRUP(PWAT); // Empty GRUP
