@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\..\Common.h"
-#include "..\AACTRecord.h"
+#include "../../../Common.h"
+#include "../AACTRecord.h"
 
 namespace Sk
 {
@@ -45,47 +45,47 @@ uint32_t AACTRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
         case 0: //recType
             return GetType();
         case 1: //flags1
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 2: //fid
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 3: //versionControl1
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 4;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 4: //eid
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 5: //formVersion
-            return CB_UINT16_FIELD;
+            return UINT16_FIELD;
         case 6: //versionControl2
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 2;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 7: // CNAM.red
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 8: // CNAM.green
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 9: // CNAM.blue
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 10: // CNAM.unk1
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         default:
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         }
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * AACTRecord::GetField(FIELD_IDENTIFIERS, void **FieldValues)
@@ -167,7 +167,6 @@ bool AACTRecord::SetField(FIELD_IDENTIFIERS, void *FieldValue, uint32_t ArraySiz
 
 void AACTRecord::DeleteField(FIELD_IDENTIFIERS)
     {
-    GENCNAM defaultCNAM;
     switch(FieldID)
         {
         case 1: //flags1
@@ -187,14 +186,8 @@ void AACTRecord::DeleteField(FIELD_IDENTIFIERS)
             versionControl2[1] = 0;
             return;
         case 7:  // CNAM.red
-            CNAM->red = defaultCNAM.red;
-            return;
         case 8:  // CNAM.green
-            CNAM->green = defaultCNAM.green;
-            return;
         case 9:  // CNAM.blue
-            CNAM->blue = defaultCNAM.blue;
-            return;
         case 10: // CNAM.unk1
             CNAM.Unload();
             return;

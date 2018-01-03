@@ -35,9 +35,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
 #pragma once
-#include "..\..\Common.h"
-#include "..\..\GenericRecord.h"
-#include "..\SkyrimChunks.h"
+#include "../../Common.h"
+#include "../../GenericRecord.h"
+#include "../SkyrimChunks.h"
 
 namespace Sk
 {
@@ -87,6 +87,7 @@ class LVLIRecord : public TES5Record //Leveled Item
         int32_t ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk=false);
         int32_t Unload();
         int32_t WriteRecord(FileWriter &writer);
+		char *GetEditorIDKey() { return EDID.value; }
 
         bool operator ==(const LVLIRecord &other) const;
         bool operator !=(const LVLIRecord &other) const;

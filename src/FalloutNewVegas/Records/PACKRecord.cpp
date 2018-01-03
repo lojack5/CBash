@@ -33,7 +33,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\Common.h"
+#include "../../Common.h"
 #include "PACKRecord.h"
 
 namespace FNV
@@ -1998,7 +1998,7 @@ int32_t PACKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                 //            printer("  INFO: %08X - Unexpected IDLC value. Expected (0) and got (%u). IDLC = %u.\n", formID, test, IDLC.value);
                 //            CBASH_CHUNK_DEBUG
                 //            printer("  Size = %i\n", subSize);
-                //            printer("  CurPos = %04x\n\n", buffer - 6);
+                //            printer("  CurPos = %08x\n\n", buffer - 6);
                 //            }
                 //        }
                 //        break;
@@ -2006,7 +2006,7 @@ int32_t PACKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                 //        printer("  INFO: %08X - Unexpected IDLC chunk size. Expected (1 or 4) and got (%u)\n", formID, subSize);
                 //        CBASH_CHUNK_DEBUG
                 //        printer("  Size = %i\n", subSize);
-                //        printer("  CurPos = %04x\n\n", buffer - 6);
+                //        printer("  CurPos = %08x\n\n", buffer - 6);
                 //        buffer += subSize;
                 //        break;
                 //    }
@@ -2057,7 +2057,7 @@ int32_t PACKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                         printer("  INFO: %08X - Unexpected INAM chunk\n", formID);
                         CBASH_CHUNK_DEBUG
                         printer("  Size = %i\n", subSize);
-                        printer("  CurPos = %04x\n\n", buffer - 6);
+                        printer("  CurPos = %08x\n\n", buffer - 6);
                         buffer += subSize;
                         break;
                     }
@@ -2078,7 +2078,7 @@ int32_t PACKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                         printer("  INFO: %08X - Unexpected SCHR chunk\n", formID);
                         CBASH_CHUNK_DEBUG
                         printer("  Size = %i\n", subSize);
-                        printer("  CurPos = %04x\n\n", buffer - 6);
+                        printer("  CurPos = %08x\n\n", buffer - 6);
                         buffer += subSize;
                         break;
                     }
@@ -2099,7 +2099,7 @@ int32_t PACKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                         printer("  INFO: %08X - Unexpected SCDA chunk\n", formID);
                         CBASH_CHUNK_DEBUG
                         printer("  Size = %i\n", subSize);
-                        printer("  CurPos = %04x\n\n", buffer - 6);
+                        printer("  CurPos = %08x\n\n", buffer - 6);
                         buffer += subSize;
                         break;
                     }
@@ -2120,7 +2120,7 @@ int32_t PACKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                         printer("  INFO: %08X - Unexpected SCTX chunk\n", formID);
                         CBASH_CHUNK_DEBUG
                         printer("  Size = %i\n", subSize);
-                        printer("  CurPos = %04x\n\n", buffer - 6);
+                        printer("  CurPos = %08x\n\n", buffer - 6);
                         buffer += subSize;
                         break;
                     }
@@ -2144,7 +2144,7 @@ int32_t PACKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                         printer("  INFO: %08X - Unexpected SLSD chunk\n", formID);
                         CBASH_CHUNK_DEBUG
                         printer("  Size = %i\n", subSize);
-                        printer("  CurPos = %04x\n\n", buffer - 6);
+                        printer("  CurPos = %08x\n\n", buffer - 6);
                         buffer += subSize;
                         break;
                     }
@@ -2171,7 +2171,7 @@ int32_t PACKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                         printer("  INFO: %08X - Unexpected SCVR chunk\n", formID);
                         CBASH_CHUNK_DEBUG
                         printer("  Size = %i\n", subSize);
-                        printer("  CurPos = %04x\n\n", buffer - 6);
+                        printer("  CurPos = %08x\n\n", buffer - 6);
                         buffer += subSize;
                         break;
                     }
@@ -2195,7 +2195,7 @@ int32_t PACKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                         printer("  INFO: %08X - Unexpected SCRV chunk\n", formID);
                         CBASH_CHUNK_DEBUG
                         printer("  Size = %i\n", subSize);
-                        printer("  CurPos = %04x\n\n", buffer - 6);
+                        printer("  CurPos = %08x\n\n", buffer - 6);
                         buffer += subSize;
                         break;
                     }
@@ -2219,7 +2219,7 @@ int32_t PACKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                         printer("  INFO: %08X - Unexpected SCRO chunk\n", formID);
                         CBASH_CHUNK_DEBUG
                         printer("  Size = %i\n", subSize);
-                        printer("  CurPos = %04x\n\n", buffer - 6);
+                        printer("  CurPos = %08x\n\n", buffer - 6);
                         buffer += subSize;
                         break;
                     }
@@ -2240,7 +2240,7 @@ int32_t PACKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                         printer("  INFO: %08X - Unexpected TNAM chunk\n", formID);
                         CBASH_CHUNK_DEBUG
                         printer("  Size = %i\n", subSize);
-                        printer("  CurPos = %04x\n\n", buffer - 6);
+                        printer("  CurPos = %08x\n\n", buffer - 6);
                         buffer += subSize;
                         break;
                     }
@@ -2261,7 +2261,7 @@ int32_t PACKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                     printer("  INFO: %08X - Unexpected PKED chunk\n", formID);
                     CBASH_CHUNK_DEBUG
                     printer("  Size = %i\n", subSize);
-                    printer("  CurPos = %04x\n\n", buffer - 6);
+                    printer("  CurPos = %08x\n\n", buffer - 6);
                     buffer += subSize;
                     }
                 break;
@@ -2272,7 +2272,7 @@ int32_t PACKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                     printer("  INFO: %08X - Unexpected PUID chunk\n", formID);
                     CBASH_CHUNK_DEBUG
                     printer("  Size = %i\n", subSize);
-                    printer("  CurPos = %04x\n\n", buffer - 6);
+                    printer("  CurPos = %08x\n\n", buffer - 6);
                     buffer += subSize;
                     }
                 break;
@@ -2283,7 +2283,7 @@ int32_t PACKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                     printer("  INFO: %08X - Unexpected PKAM chunk\n", formID);
                     CBASH_CHUNK_DEBUG
                     printer("  Size = %i\n", subSize);
-                    printer("  CurPos = %04x\n\n", buffer - 6);
+                    printer("  CurPos = %08x\n\n", buffer - 6);
                     buffer += subSize;
                     }
                 break;
@@ -2292,7 +2292,7 @@ int32_t PACKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                 printer("  PACK: %08X - Unknown subType = %04x\n", formID, subType);
                 CBASH_CHUNK_DEBUG
                 printer("  Size = %i\n", subSize);
-                printer("  CurPos = %04x\n\n", buffer - 6);
+                printer("  CurPos = %08x\n\n", buffer - 6);
                 buffer = end_buffer;
                 break;
             }

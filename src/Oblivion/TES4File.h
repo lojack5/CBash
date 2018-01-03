@@ -162,7 +162,7 @@ class TES4File : public ModFile
 
         int32_t   LoadTES4();
         int32_t   Load(RecordOp &read_parser, RecordOp &indexer, std::vector<FormIDResolver *> &Expanders, std::vector<Record *> &DeletedRecords);
-        uint32_t   GetNumRecords(const uint32_t &RecordType);
+        size_t   GetNumRecords(const uint32_t &RecordType);
         Record * CreateRecord(const uint32_t &RecordType, char * const &RecordEditorID, Record *&SourceRecord, Record *&ParentRecord, CreationFlags &options);
         int32_t   DeleteRecord(Record *&curRecord, RecordOp &deindexer);
         int32_t   Save(char * const &SaveName, std::vector<FormIDResolver *> &Expanders, bool CloseMod, RecordOp &indexer);

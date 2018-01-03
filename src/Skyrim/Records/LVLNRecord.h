@@ -35,9 +35,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
 #pragma once
-#include "..\..\Common.h"
-#include "..\..\GenericRecord.h"
-#include "..\SkyrimChunks.h"
+#include "../../Common.h"
+#include "../../GenericRecord.h"
+#include "../SkyrimChunks.h"
 
 namespace Sk
 {
@@ -60,7 +60,7 @@ class LVLNRecord : public TES5Record //Leveled Item
         OptSimpleSubRecord<FORMID> LVLG; // Global
         // ReqSimpleSubRecord<uint8_t> LLCT; //Count - ignored on read, properly written
         ReqCounted<UnorderedSparseArray<SKLVLO *>, uint8_t, REV32(LLCT)> Entries; //Leveled List Entries
-        OptSubRecord<FNVWORLDMODEL> MODL; //Model
+        FNVMODEL MODL; //Model
 
         LVLNRecord(unsigned char *_recData=NULL);
         LVLNRecord(LVLNRecord *srcRecord);
@@ -88,6 +88,7 @@ class LVLNRecord : public TES5Record //Leveled Item
         int32_t ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk=false);
         int32_t Unload();
         int32_t WriteRecord(FileWriter &writer);
+		char *GetEditorIDKey() { return EDID.value; }
 
         bool operator ==(const LVLNRecord &other) const;
         bool operator !=(const LVLNRecord &other) const;

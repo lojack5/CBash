@@ -34,8 +34,12 @@
  *
  * ***** END LICENSE BLOCK ***** */
 // Collection.cpp
+#include <string.h>
 #include "Collection.h"
+#ifdef _WIN32
 #include <direct.h>
+#endif
+
 //#include <boost/threadpool.hpp>
 
 //SortedRecords::SortedRecords():
@@ -157,11 +161,11 @@ Collection::Collection(char * const &ModsPath, uint32_t _CollectionType):
     filter_wspaces(),
     filter_inclusive(false)
     {
-    if (_CollectionType >= CB_UNKNOWN_GAME_TYPE)
-        throw std::exception("CreateCollection: Error - Unable to create the collection. Invalid collection type specified.\n");
-    CollectionType = (cb_game_type_t)_CollectionType;
+    if(_CollectionType >= eIsUnknownGameType)
+        throw std::runtime_error("CreateCollection: Error - Unable to create the collection. Invalid collection type specified.\n");
+    CollectionType = (whichGameTypes)_CollectionType;
     ModsDir = new char[strlen(ModsPath)+1];
-    strcpy_s(ModsDir, strlen(ModsPath)+1, ModsPath);
+    strncpy(ModsDir, ModsPath, strlen(ModsPath) + 1);
     }
 
 Collection::~Collection()
@@ -193,7 +197,11 @@ void Collection::ResetFilter() {
 
 ModFile * Collection::AddMod(char * const &_FileName, ModFlags &flags, bool IsPreloading)
     {
-    _chdir(ModsDir);
+#ifdef _WIN32
+	_chdir(ModsDir);
+#else
+	chdir(ModsDir);
+#endif
     //Mods may not be added after collection is loaded.
     //Prevent loading mods more than once
 
@@ -221,33 +229,36 @@ ModFile * Collection::AddMod(char * const &_FileName, ModFlags &flags, bool IsPr
         }
 
     char * FileName = new char[strlen(_FileName) + 1];
-    strcpy_s(FileName, strlen(_FileName) + 1, _FileName);
+    strncpy(FileName, _FileName, strlen(_FileName) + 1);
     ModName = ModName ? ModName : FileName;
+
+    ModFile* ModFile = nullptr;
 
     switch(CollectionType)
         {
-        case CB_OBLIVION:
-            ModFiles.push_back(new TES4File(this, FileName, ModName, flags.GetFlags()));
-            ModFiles.back()->TES4.whichGame = CB_OBLIVION;
+        case eIsOblivion:
+            ModFile = new TES4File(this, FileName, ModName, flags.GetFlags());            
             break;
-        case CB_FALLOUT3:
+        case eIsFallout3:
             printer("AddMod: Error - Unable to add mod \"%s\". Fallout 3 mod support is unimplemented.\n", ModName);
             delete []ModName;
             return NULL;
-        case CB_FALLOUT_NEW_VEGAS:
-            ModFiles.push_back(new FNVFile(this, FileName, ModName, flags.GetFlags()));
-            ModFiles.back()->TES4.whichGame = CB_FALLOUT_NEW_VEGAS;
+        case eIsFalloutNewVegas:
+            ModFile = new FNVFile(this, FileName, ModName, flags.GetFlags());
             break;
-        case CB_SKYRIM:
-            ModFiles.push_back(new TES5File(this, FileName, ModName, flags.GetFlags()));
-            ModFiles.back()->TES4.whichGame = CB_SKYRIM;
+        case eIsSkyrim:
+            ModFile = new TES5File(this, FileName, ModName, flags.GetFlags());
             break;
         default:
             printer("AddMod: Error - Unable to add mod \"%s\". Invalid collection type.\n", ModName);
             delete []ModName;
             return NULL;
         }
-    return ModFiles.back();
+
+        ModFiles.push_back(ModFile);
+        ModFile->TES4.whichGame = CollectionType;
+        MappedModFiles[ModName] = ModFile;        
+        return ModFiles.back();
     }
 
 ModFile * Collection::IsModAdded(char * const &ModName)
@@ -279,25 +290,28 @@ int32_t Collection::SaveMod(ModFile *&curModFile, SaveFlags &flags, char * const
         CleanModMasters(curModFile);
 
     //Some records (WRLD->CELL) may be created during the save process if necessary
-    RecordIndexer indexer(curModFile, curModFile->Flags.IsExtendedConflicts ? ExtendedEditorID_ModFile_Record: EditorID_ModFile_Record, curModFile->Flags.IsExtendedConflicts ? ExtendedFormID_ModFile_Record: FormID_ModFile_Record);
+    RecordIndexer indexer(curModFile, curModFile->Flags.IsExtendedConflicts ? ExtendedEditorID_ModFile_Record: EditorID_ModFile_Record, curModFile->Flags.IsExtendedConflicts ? ExtendedFormID_ModFile_Record: FormID_ModFile_Record, EDIDIndex);
 
-    _chdir(ModsDir);
+#ifdef _WIN32
+	_chdir(ModsDir);
+#else
+	chdir(ModsDir);
+#endif
 
     char * temp_name = GetTemporaryFileName(DestinationName != NULL ? DestinationName : curModFile->ModName); //deleted when RenameOp is destroyed
 
     //Save the mod to temp file
     curModFile->Save(temp_name, Expanders, flags.IsCloseCollection, indexer);
-    //Delay renaming temp file to original filename until collection is closed
-    //This way the file mapping can remain open and the entire file doesn't have to be loaded into memory
-    closing_ops.push_back(new RenameOp(temp_name, DestinationName != NULL ? DestinationName : curModFile->FileName));
+    RenameOp *op = new RenameOp(temp_name, DestinationName != NULL ? DestinationName : curModFile->FileName);
+    op->perform();
     return 0;
     }
 
 int32_t Collection::Load(bool (*_ProgressCallback)(const uint32_t, const uint32_t, const char *))
     {
     ModFile *curModFile = NULL;
-    RecordIndexer indexer(EditorID_ModFile_Record, FormID_ModFile_Record);
-    RecordIndexer extended_indexer(ExtendedEditorID_ModFile_Record, ExtendedFormID_ModFile_Record);
+    RecordIndexer indexer(EditorID_ModFile_Record, FormID_ModFile_Record, EDIDIndex);
+    RecordIndexer extended_indexer(ExtendedEditorID_ModFile_Record, ExtendedFormID_ModFile_Record, EDIDIndex);
     bool Preloading = false;
     std::vector<std::pair<ModFile *, std::vector<Record *> > > DeletedRecords;
 
@@ -308,8 +322,12 @@ int32_t Collection::Load(bool (*_ProgressCallback)(const uint32_t, const uint32_
         }
     try
         {
-        _chdir(ModsDir);
-        //Brute force approach to loading all masters
+#ifdef _WIN32
+		_chdir(ModsDir);
+#else
+		chdir(ModsDir);
+#endif
+		//Brute force approach to loading all masters
         //Could be done more elegantly with recursion
         //printer("Before Preloading\n");
         do {
@@ -332,7 +350,7 @@ int32_t Collection::Load(bool (*_ProgressCallback)(const uint32_t, const uint32_
         //for(uint32_t x = 0; x < ModFiles.size(); ++x)
         //    printer("%02X: %s\n", x, ModFiles[x]->FileName);
         //printer("\n");
-        std::_Insertion_sort(ModFiles.begin(), ModFiles.end(), sortMod);
+        //std::sort(ModFiles.begin(), ModFiles.end(), sortMod);
         std::vector<char *> strLoadOrder255;
         std::vector<char *> strTempLoadOrder;
         std::vector< std::vector<char *> > strAllLoadOrder;
@@ -346,7 +364,7 @@ int32_t Collection::Load(bool (*_ProgressCallback)(const uint32_t, const uint32_
             if(curModFile->Flags.IsInLoadOrder)
                 {
                 if(LoadOrder255.size() >= 255)
-                    throw std::exception("Tried to load more than 255 mods.");
+                    throw std::runtime_error("Tried to load more than 255 mods.");
                 LoadOrder255.push_back(curModFile);
                 strLoadOrder255.push_back(curModFile->ModName);
                 //printer(" , OrderID %02X", LoadOrder255.size() - 1);
@@ -825,7 +843,7 @@ Record * Collection::CreateRecord(ModFile *&curModFile, const uint32_t &RecordTy
     //curRecord->VisitFormIDs(checker); //Shouldn't be needed unless a record defaults to having formIDs set (none do atm)
 
     //Index the new record
-    RecordIndexer indexer(curModFile, curModFile->Flags.IsExtendedConflicts ? ExtendedEditorID_ModFile_Record: EditorID_ModFile_Record, curModFile->Flags.IsExtendedConflicts ? ExtendedFormID_ModFile_Record: FormID_ModFile_Record);
+    RecordIndexer indexer(curModFile, curModFile->Flags.IsExtendedConflicts ? ExtendedEditorID_ModFile_Record: EditorID_ModFile_Record, curModFile->Flags.IsExtendedConflicts ? ExtendedFormID_ModFile_Record: FormID_ModFile_Record, EDIDIndex);
     indexer.Accept(curRecord);
 
     if(RecordFormID != 0)
@@ -963,7 +981,7 @@ Record * Collection::CopyRecord(Record *&curRecord, ModFile *&DestModFile, const
     RecordCopy->VisitFormIDs(checker);
 
     //Index the record
-    RecordIndexer indexer(DestModFile, DestModFile->Flags.IsExtendedConflicts ? ExtendedEditorID_ModFile_Record: EditorID_ModFile_Record, DestModFile->Flags.IsExtendedConflicts ? ExtendedFormID_ModFile_Record: FormID_ModFile_Record);
+    RecordIndexer indexer(DestModFile, DestModFile->Flags.IsExtendedConflicts ? ExtendedEditorID_ModFile_Record: EditorID_ModFile_Record, DestModFile->Flags.IsExtendedConflicts ? ExtendedFormID_ModFile_Record: FormID_ModFile_Record, EDIDIndex);
     indexer.Accept(RecordCopy);
 
     if(curRecord->IsWinningDetermined() || curRecord->formID != RecordCopy->formID)
@@ -994,7 +1012,7 @@ int32_t Collection::CleanModMasters(ModFile *curModFile)
     curModFile->VisitAllRecords(collector);
 
     uint32_t cleaned = 0;
-    for(int32_t ListIndex = curModFile->TES4.MAST.size() - 1; ListIndex >= 0 ; --ListIndex)
+    for(size_t ListIndex = curModFile->TES4.MAST.size() - 1; ListIndex >= 0 ; --ListIndex)
         {
         if(collector.collector.UsedTable[ListIndex] == 0)
             {
@@ -1096,7 +1114,7 @@ int32_t Collection::SetIDFields(Record *&RecordID, FORMID FormID, char * const &
     //Re-index the record
     if(bChangingFormID || (bChangingEditorID && RecordID->IsKeyedByEditorID()))
         {
-        RecordIndexer indexer(curModFile, curModFile->Flags.IsExtendedConflicts ? ExtendedEditorID_ModFile_Record: EditorID_ModFile_Record, curModFile->Flags.IsExtendedConflicts ? ExtendedFormID_ModFile_Record: FormID_ModFile_Record);
+        RecordIndexer indexer(curModFile, curModFile->Flags.IsExtendedConflicts ? ExtendedEditorID_ModFile_Record: EditorID_ModFile_Record, curModFile->Flags.IsExtendedConflicts ? ExtendedFormID_ModFile_Record: FormID_ModFile_Record, EDIDIndex);
         indexer.Accept(RecordID);
         }
 

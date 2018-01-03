@@ -54,7 +54,18 @@ void FragmentINFO::Read(unsigned char *&buffer, const bool &CompressedOnDisk)
     unk1 = *(uint8_t *)buffer;
     buffer += 1;
     // fragmentCount
-    uint8_t count = *(uint8_t *)buffer;
+    this->flags = *(uint8_t *)buffer;
+
+    uint8_t count = 0;
+
+    if ((flags & 1) == 1) {
+        count++;
+    }
+
+    if ((flags & 2) == 2) {
+        count++;
+    }
+
     buffer += 1;
     // fileName
     uint16_t nameSize = *(uint16_t *)buffer;
@@ -72,12 +83,13 @@ void FragmentINFO::Read(unsigned char *&buffer, const bool &CompressedOnDisk)
         nameSize = *(uint16_t *)buffer;
         buffer += 2;
         f->fragmentName.Read(buffer, nameSize, CompressedOnDisk);
+        fragments.push_back(f);            
     }
 }
 
 uint32_t FragmentINFO::GetSize() const
 {
-    // unk1 + fragmentCount + fileNameSize
+    // unk1 + flags + fileNameSize
     uint32_t total = sizeof(uint8_t) + sizeof(uint8_t) + sizeof(uint16_t);
     total += fileName.GetSize();
     for (uint8_t i = 0; i < fragments.size(); ++i)
@@ -93,10 +105,11 @@ uint32_t FragmentINFO::GetSize() const
 void FragmentINFO::Write(FileWriter &writer) const
 {
     writer.record_write(&unk1, sizeof(unk1));
-    uint16_t count = static_cast<uint16_t>(fragments.size());
-    writer.record_write(&count, sizeof(count));
+    writer.record_write(&this->flags, sizeof(this->flags));
     fileName.Write16(writer);
-    for (uint16_t i = 0; i < count; ++i)
+    size_t count = fragments.size();
+
+    for (size_t i = 0; i < count; ++i)
     {
         writer.record_write(&(fragments[i]->unk1), sizeof(uint8_t));
         fragments[i]->scriptName.Write16(writer);
@@ -109,6 +122,11 @@ bool FragmentINFO::equals(const Fragments *other) const
     try
     {
         const FragmentINFO *o = reinterpret_cast<const FragmentINFO *>(other);
+
+        if (flags != o->flags) {
+            return false;
+        }
+
         if (fragments.size() != o->fragments.size())
             return false;
         for (uint16_t i = 0; i < fragments.size(); ++i)
@@ -133,6 +151,7 @@ FragmentINFO & FragmentINFO::operator = (const FragmentINFO &other)
 {
     unk1 = other.unk1;
     fileName = other.fileName;
+    flags = other.flags;
 
     for (uint16_t i = 0; i < fragments.size(); ++i)
         delete fragments[i];

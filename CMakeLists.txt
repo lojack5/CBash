@@ -19,74 +19,49 @@ set (Boost_USE_STATIC_LIBS ON)
 set (Boost_USE_MULTITHREADED ON)
 set (Boost_USE_STATIC_RUNTIME PROJECT_STATIC_RUNTIME)
 
-file (GLOB_RECURSE CBASH_GEN_HDRS "${CMAKE_SOURCE_DIR}/src/*.h" )
+IF (MSVC)
+    set (Boost_COMPILER "-vc140")
+ENDIF ()
 
-file (GLOB_RECURSE CBASH_FONV "${CMAKE_SOURCE_DIR}/src/FalloutNewVegas/*.cpp")
-file (GLOB_RECURSE CBASH_OBLIVION "${CMAKE_SOURCE_DIR}/src/Oblivion/*.cpp")
-file (GLOB_RECURSE CBASH_SKYRIM "${CMAKE_SOURCE_DIR}/src/Skyrim/*.cpp")
 
-set (CBASH_SRC  "${CMAKE_SOURCE_DIR}/src/CBash.cpp"
-                "${CMAKE_SOURCE_DIR}/src/Collection.cpp"
-                "${CMAKE_SOURCE_DIR}/src/Common.cpp"
-                "${CMAKE_SOURCE_DIR}/src/GenericChunks.cpp"
-                "${CMAKE_SOURCE_DIR}/src/GenericRecord.cpp"
-                "${CMAKE_SOURCE_DIR}/src/ModFile.cpp"
-                "${CMAKE_SOURCE_DIR}/src/TES4Record.cpp"
-                "${CMAKE_SOURCE_DIR}/src/TES4RecordAPI.cpp"
-                "${CMAKE_SOURCE_DIR}/src/Visitors.cpp"
-                "${CMAKE_SOURCE_DIR}/src/CBash.rc"
+file (GLOB_RECURSE CBASH_FONV "${CMAKE_CURRENT_SOURCE_DIR}/src/FalloutNewVegas/*.cpp")
+file (GLOB_RECURSE CBASH_OBLIVION "${CMAKE_CURRENT_SOURCE_DIR}/src/Oblivion/*.cpp")
+file (GLOB_RECURSE CBASH_SKYRIM "${CMAKE_CURRENT_SOURCE_DIR}/src/Skyrim/*.cpp")
+file (GLOB_RECURSE CBASH_SKYBLIVION "${CMAKE_CURRENT_SOURCE_DIR}/src/Skyblivion/*.cpp")
+
+set (CBASH_SRC  "${CMAKE_CURRENT_SOURCE_DIR}/src/CBash.cpp"
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/Collection.cpp"
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/Common.cpp"
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/GenericChunks.cpp"
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/GenericRecord.cpp"
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/ModFile.cpp"
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/TES4Record.cpp"
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/TES4RecordAPI.cpp"
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/Visitors.cpp"
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/CBash.rc"
                 ${CBASH_FONV}
                 ${CBASH_OBLIVION}
                 ${CBASH_SKYRIM}
+                ${CBASH_SKYBLIVION}
                 )
-
-
-file(GLOB_RECURSE TMP_FILES_HDRS
-    "${CMAKE_SOURCE_DIR}/src/*.h"
-)
-
-foreach(f ${TMP_FILES_HDRS})
-    # Get the path of the file relative to ${DIRECTORY},
-    # then alter it (not compulsory)
-    file(RELATIVE_PATH SRCGR "${CMAKE_SOURCE_DIR}/src/" ${f})
-    set(SRCGR "Headers/${SRCGR}")
-
-    # Extract the folder, ie remove the filename part
-    string(REGEX REPLACE "(.*)(/[^/]*)$" "\\1" SRCGR ${SRCGR})
-
-    # Source_group expects \\ (double antislash), not / (slash)
-    string(REPLACE / \\ SRCGR ${SRCGR})
-    source_group("${SRCGR}" FILES ${f})
-endforeach()
-
-file(GLOB_RECURSE TMP_FILES
-    "${CMAKE_SOURCE_DIR}/src/*.cpp"
-)
-foreach(f ${TMP_FILES})
-    # Get the path of the file relative to ${DIRECTORY},
-    # then alter it (not compulsory)
-    file(RELATIVE_PATH SRCGR "${CMAKE_SOURCE_DIR}/src/" ${f})
-    set(SRCGR "Source Files/${SRCGR}")
-    # Extract the folder, ie remove the filename part
-    string(REGEX REPLACE "(.*)(/[^/]*)$" "\\1" SRCGR ${SRCGR})
-    # Source_group expects \\ (double antislash), not / (slash)
-    string(REPLACE / \\ SRCGR ${SRCGR})
-    source_group("${SRCGR}" FILES ${f})
-endforeach()
 
 IF (CBASH_NO_BOOST_ZLIB)
     add_definitions(-DCBASH_NO_BOOST_ZLIB)
-    find_package(Boost REQUIRED COMPONENTS iostreams)
+    find_package(Boost REQUIRED COMPONENTS iostreams regex)
     find_package(ZLIB REQUIRED)
     set (CBASH_LIBS ${ZLIB_LIBRARY})
 ELSE ()
-    find_package(Boost REQUIRED COMPONENTS iostreams zlib)
+    find_package(Boost REQUIRED COMPONENTS iostreams zlib regex)
     find_package(ZLIB)
     set (CBASH_LIBS "")
 ENDIF ()
 
+IF (NOT ${ZLIB_FOUND})
+	message(FATAL_ERROR "ZLIB was not found, target correct ZLIB_ROOT or use a common path")
+ENDIF ()
+
 # Include source and library directories.
-include_directories ("${CMAKE_SOURCE_DIR}/include/cbash"
+include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/include/cbash"
                      ${Boost_INCLUDE_DIRS}
                      ${ZLIB_INCLUDE_DIR})
 
@@ -106,12 +81,7 @@ IF (CMAKE_SYSTEM_NAME MATCHES "Windows")
 ENDIF ()
 
 IF (MSVC)
-    IF (MSVC_VERSION EQUAL 1800)
-        set (CMAKE_GENERATOR_TOOLSET "v120_xp" CACHE STRING "Platform Toolset" FORCE)
-    ELSEIF (MSVC_VERSION EQUAL 1700)
-        set (CMAKE_GENERATOR_TOOLSET "v110_xp" CACHE STRING "Platform Toolset" FORCE)
-    ENDIF ()
-
+	set (CMAKE_GENERATOR_TOOLSET "v120" CACHE STRING "Platform Toolset" FORCE)
     # Force static C++ runtime linkage.
     IF (PROJECT_STATIC_RUNTIME)
         FOREACH(flag
@@ -133,5 +103,5 @@ ENDIF ()
 ##############################
 
 # Build CBash.
-add_library           (CBash ${CBASH_SRC} ${CBASH_GEN_HDRS} )
+add_library           (CBash STATIC ${CBASH_SRC})
 target_link_libraries (CBash ${Boost_LIBRARIES} ${CBASH_LIBS})

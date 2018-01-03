@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\..\Common.h"
-#include "..\PGRDRecord.h"
+#include "../../../Common.h"
+#include "../PGRDRecord.h"
 
 namespace Ob
 {
@@ -45,160 +45,160 @@ uint32_t PGRDRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
         case 0: //recType
             return GetType();
         case 1: //flags1
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 2: //fid
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 3: //flags2
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 4: //eid
-            return CB_MISSING_FIELD;
+            return MISSING_FIELD;
         case 5: //count
-            return CB_UINT16_FIELD;
+            return UINT16_FIELD;
         case 6: //pgrp
             if(ListFieldID == 0) //pgrp
                 {
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return (uint32_t)PGRP.value.size();
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
                 }
 
             if(ListIndex >= PGRP.value.size())
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             switch(ListFieldID)
                 {
                 case 1: //x
-                    return CB_FLOAT32_FIELD;
+                    return FLOAT32_FIELD;
                 case 2: //y
-                    return CB_FLOAT32_FIELD;
+                    return FLOAT32_FIELD;
                 case 3: //z
-                    return CB_FLOAT32_FIELD;
+                    return FLOAT32_FIELD;
                 case 4: //connections
-                    return CB_UINT8_FIELD;
+                    return UINT8_FIELD;
                 case 5: //unused1
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_UINT8_ARRAY_FIELD;
+                            return UINT8_ARRAY_FIELD;
                         case 1: //fieldSize
                             return 3;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 7: //pgag_p
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return PGAG.GetSize();
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 8: //pgrr_p
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return PGRR.GetSize();
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 9: //pgri
             if(ListFieldID == 0) //pgri
                 {
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return (uint32_t)PGRI.value.size();
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
                 }
 
             if(ListIndex >= PGRI.value.size())
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             switch(ListFieldID)
                 {
                 case 1: //point
-                    return CB_UINT16_FIELD;
+                    return UINT16_FIELD;
                 case 2: //unused1
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_UINT8_ARRAY_FIELD;
+                            return UINT8_ARRAY_FIELD;
                         case 1: //fieldSize
                             return 2;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
                 case 3: //x
-                    return CB_FLOAT32_FIELD;
+                    return FLOAT32_FIELD;
                 case 4: //y
-                    return CB_FLOAT32_FIELD;
+                    return FLOAT32_FIELD;
                 case 5: //z
-                    return CB_FLOAT32_FIELD;
+                    return FLOAT32_FIELD;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 10: //pgrl
             if(ListFieldID == 0) //pgrl
                 {
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return (uint32_t)PGRL.value.size();
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
                 }
 
             if(ListIndex >= PGRL.value.size())
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             switch(ListFieldID)
                 {
                 case 1: //reference
-                    return CB_FORMID_FIELD;
+                    return FORMID_FIELD;
                 case 2: //points
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_UINT32_ARRAY_FIELD;
+                            return UINT32_ARRAY_FIELD;
                         case 1: //fieldSize
                             //The first entry in the points array is actually the reference
                             return (uint32_t)PGRL.value[ListIndex]->points.value.size() - 1;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
         case 11: //Parent
-            return CB_PARENTRECORD_FIELD;
+            return PARENTRECORD_FIELD;
         default:
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         }
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * PGRDRecord::GetField(FIELD_IDENTIFIERS, void **FieldValues)

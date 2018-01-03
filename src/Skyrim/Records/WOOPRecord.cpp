@@ -35,7 +35,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 #include "WOOPRecord.h"
-#include "..\..\ModFile.h"
+#include "../../ModFile.h"
 
 namespace Sk {
 
@@ -110,7 +110,7 @@ int32_t WOOPRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                     printer("  APPA: %08X - Unknown subType = %04x\n", formID, subType);
                     CBASH_CHUNK_DEBUG
                     printer("  Size = %i\n", subSize);
-                    printer("  CurPos = %04x\n", buffer - 6);
+                    printer("  CurPos = %08x\n", buffer - 6);
                     buffer = end_buffer;
                     break;
             }

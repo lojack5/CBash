@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\..\Common.h"
-#include "..\MSETRecord.h"
+#include "../../../Common.h"
+#include "../MSETRecord.h"
 
 namespace FNV
 {
@@ -45,103 +45,103 @@ uint32_t MSETRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
         case 0: //recType
             return GetType();
         case 1: //flags1
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 2: //fid
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 3: //versionControl1
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 4;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 4: //eid
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 5: //formVersion
-            return CB_UINT16_FIELD;
+            return UINT16_FIELD;
         case 6: //versionControl2
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 2;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 7: //full
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 8: //nam1 Type
-            return CB_UINT32_FIELD;
+            return UINT32_FIELD;
         case 9: //nam2 Loop (B) / Battle (D) / Day Outer (L)
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 10: //nam3 Explore (D) / Day Middle (L)
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 11: //nam4 Suspense (D) / Day Inner (L)
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 12: //nam5 Night Outer (L)
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 13: //nam6 Night Middle (L)
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 14: //nam7 Night Inner (L)
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 15: //nam8 Loop dB (B) / Battle dB (D) / Day Outer dB (L)
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 16: //nam9 Explore dB (D) / Day Middle dB (L)
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 17: //nam0 Suspense dB (D) / Day Inner dB (L)
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 18: //anam Night Outer dB (L)
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 19: //bnam Night Middle dB (L)
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 20: //cnam Night Inner dB (L)
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 21: //jnam Day Outer Boundary % (L)
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 22: //knam Day Middle Boundary % (L)
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 23: //lnam Day Inner Boundary % (L)
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 24: //mnam Night Outer Boundary % (L)
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 25: //nnam Night Middle Boundary % (L)
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 26: //onam Night Inner Boundary % (L)
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 27: //pnam Enable Flags
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 28: //dnam Wait Time (B) / Minimum Time On (D,L) / Daytime Min (I)
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 29: //enam Loop Fade Out (B) / Looping/Random Crossfade Overlap (D,L) / Nighttime Min (I)
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 30: //fnam Recovery Time (B) / Layer Crossfade Time (D,L) / Daytime Max (I)
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 31: //gnam Nighttime Max (I)
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 32: //hnam Intro (B,D) / Daytime (I)
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 33: //inam Outro (B,D) / Nighttime (I)
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 34: //data_p Unknown
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return DATA.GetSize();
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
         default:
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         }
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * MSETRecord::GetField(FIELD_IDENTIFIERS, void **FieldValues)

@@ -115,10 +115,9 @@ class GRUPRecords
                 {
                 //Allocates many records at once in a contiguous space
                 //Allocate memory
-                unsigned char *buffer = (unsigned char *)malloc(sizeof(T) * (uint32_t)records.size());
+                unsigned char *buffer = (unsigned char*)pool.add_buffer(sizeof(T) * (uint32_t)records.size());
                 if(buffer == 0)
                     throw std::bad_alloc();
-                pool.add_buffer(buffer);
 
                 //Construct the records
                 for(uint32_t x = 0; x < records.size();++x)
@@ -266,10 +265,9 @@ class FNVGRUPRecords
                 {
                 //Allocates many records at once in a contiguous space
                 //Allocate memory
-                unsigned char *buffer = (unsigned char *)malloc(sizeof(T) * (uint32_t)records.size());
+                unsigned char *buffer = (unsigned char *)pool.add_buffer(sizeof(T) * (uint32_t)records.size());
                 if(buffer == 0)
                     throw std::bad_alloc();
-                pool.add_buffer(buffer);
 
                 //Construct the records
                 for(uint32_t x = 0; x < records.size();++x)
@@ -423,10 +421,9 @@ class TES5GRUPRecords
             {
                 //Allocates many records at once in a contiguous space
                 //Allocate memory
-                unsigned char *buffer = (unsigned char *)malloc(sizeof(T) * (uint32_t)records.size());
+                unsigned char *buffer = (unsigned char *)pool.add_buffer(sizeof(T) * (uint32_t)records.size());
                 if (buffer == 0)
                     throw std::bad_alloc();
-                pool.add_buffer(buffer);
 
                 //Construct the records
                 for(uint32_t x = 0; x < records.size();++x)

@@ -431,145 +431,145 @@ int32_t TES4File::Load(RecordOp &read_parser, RecordOp &indexer, std::vector<For
     return 1;
     }
 
-uint32_t TES4File::GetNumRecords(const uint32_t &RecordType)
+size_t TES4File::GetNumRecords(const uint32_t &RecordType)
     {
     switch(RecordType)
         {
         case REV32(GMST):
-            return (uint32_t)GMST.pool.used_object_capacity();
+            return GMST.pool.used_object_capacity();
         case REV32(GLOB):
-            return (uint32_t)GLOB.pool.used_object_capacity();
+            return GLOB.pool.used_object_capacity();
         case REV32(CLAS):
-            return (uint32_t)CLAS.pool.used_object_capacity();
+            return CLAS.pool.used_object_capacity();
         case REV32(FACT):
-            return (uint32_t)FACT.pool.used_object_capacity();
+            return FACT.pool.used_object_capacity();
         case REV32(HAIR):
-            return (uint32_t)HAIR.pool.used_object_capacity();
+            return HAIR.pool.used_object_capacity();
         case REV32(EYES):
-            return (uint32_t)EYES.pool.used_object_capacity();
+            return EYES.pool.used_object_capacity();
         case REV32(RACE):
-            return (uint32_t)RACE.pool.used_object_capacity();
+            return RACE.pool.used_object_capacity();
         case REV32(SOUN):
-            return (uint32_t)SOUN.pool.used_object_capacity();
+            return SOUN.pool.used_object_capacity();
         case REV32(SKIL):
-            return (uint32_t)SKIL.pool.used_object_capacity();
+            return SKIL.pool.used_object_capacity();
         case REV32(MGEF):
-            return (uint32_t)MGEF.pool.used_object_capacity();
+            return MGEF.pool.used_object_capacity();
         case REV32(SCPT):
-            return (uint32_t)SCPT.pool.used_object_capacity();
+            return SCPT.pool.used_object_capacity();
         case REV32(LTEX):
-            return (uint32_t)LTEX.pool.used_object_capacity();
+            return LTEX.pool.used_object_capacity();
         case REV32(ENCH):
-            return (uint32_t)ENCH.pool.used_object_capacity();
+            return ENCH.pool.used_object_capacity();
         case REV32(SPEL):
-            return (uint32_t)SPEL.pool.used_object_capacity();
+            return SPEL.pool.used_object_capacity();
         case REV32(BSGN):
-            return (uint32_t)BSGN.pool.used_object_capacity();
+            return BSGN.pool.used_object_capacity();
         case REV32(ACTI):
-            return (uint32_t)ACTI.pool.used_object_capacity();
+            return ACTI.pool.used_object_capacity();
         case REV32(APPA):
-            return (uint32_t)APPA.pool.used_object_capacity();
+            return APPA.pool.used_object_capacity();
         case REV32(ARMO):
-            return (uint32_t)ARMO.pool.used_object_capacity();
+            return ARMO.pool.used_object_capacity();
         case REV32(BOOK):
-            return (uint32_t)BOOK.pool.used_object_capacity();
+            return BOOK.pool.used_object_capacity();
         case REV32(CLOT):
-            return (uint32_t)CLOT.pool.used_object_capacity();
+            return CLOT.pool.used_object_capacity();
         case REV32(CONT):
-            return (uint32_t)CONT.pool.used_object_capacity();
+            return CONT.pool.used_object_capacity();
         case REV32(DOOR):
-            return (uint32_t)DOOR.pool.used_object_capacity();
+            return DOOR.pool.used_object_capacity();
         case REV32(INGR):
-            return (uint32_t)INGR.pool.used_object_capacity();
+            return INGR.pool.used_object_capacity();
         case REV32(LIGH):
-            return (uint32_t)LIGH.pool.used_object_capacity();
+            return LIGH.pool.used_object_capacity();
         case REV32(MISC):
-            return (uint32_t)MISC.pool.used_object_capacity();
+            return MISC.pool.used_object_capacity();
         case REV32(STAT):
-            return (uint32_t)STAT.pool.used_object_capacity();
+            return STAT.pool.used_object_capacity();
         case REV32(GRAS):
-            return (uint32_t)GRAS.pool.used_object_capacity();
+            return GRAS.pool.used_object_capacity();
         case REV32(TREE):
-            return (uint32_t)TREE.pool.used_object_capacity();
+            return TREE.pool.used_object_capacity();
         case REV32(FLOR):
-            return (uint32_t)FLOR.pool.used_object_capacity();
+            return FLOR.pool.used_object_capacity();
         case REV32(FURN):
-            return (uint32_t)FURN.pool.used_object_capacity();
+            return FURN.pool.used_object_capacity();
         case REV32(WEAP):
-            return (uint32_t)WEAP.pool.used_object_capacity();
+            return WEAP.pool.used_object_capacity();
         case REV32(AMMO):
-            return (uint32_t)AMMO.pool.used_object_capacity();
+            return AMMO.pool.used_object_capacity();
         case REV32(NPC_):
-            return (uint32_t)NPC_.pool.used_object_capacity();
+            return NPC_.pool.used_object_capacity();
         case REV32(CREA):
-            return (uint32_t)CREA.pool.used_object_capacity();
+            return CREA.pool.used_object_capacity();
         case REV32(LVLC):
-            return (uint32_t)LVLC.pool.used_object_capacity();
+            return LVLC.pool.used_object_capacity();
         case REV32(SLGM):
-            return (uint32_t)SLGM.pool.used_object_capacity();
+            return SLGM.pool.used_object_capacity();
         case REV32(KEYM):
-            return (uint32_t)KEYM.pool.used_object_capacity();
+            return KEYM.pool.used_object_capacity();
         case REV32(ALCH):
-            return (uint32_t)ALCH.pool.used_object_capacity();
+            return ALCH.pool.used_object_capacity();
         case REV32(SBSP):
-            return (uint32_t)SBSP.pool.used_object_capacity();
+            return SBSP.pool.used_object_capacity();
         case REV32(SGST):
-            return (uint32_t)SGST.pool.used_object_capacity();
+            return SGST.pool.used_object_capacity();
         case REV32(LVLI):
-            return (uint32_t)LVLI.pool.used_object_capacity();
+            return LVLI.pool.used_object_capacity();
         case REV32(WTHR):
-            return (uint32_t)WTHR.pool.used_object_capacity();
+            return WTHR.pool.used_object_capacity();
         case REV32(CLMT):
-            return (uint32_t)CLMT.pool.used_object_capacity();
+            return CLMT.pool.used_object_capacity();
         case REV32(REGN):
-            return (uint32_t)REGN.pool.used_object_capacity();
+            return REGN.pool.used_object_capacity();
         case REV32(CELL):
-            return (uint32_t)CELL.cell_pool.used_object_capacity();
+            return CELL.cell_pool.used_object_capacity();
         case REV32(WRLD):
-            return (uint32_t)WRLD.wrld_pool.used_object_capacity();
+            return WRLD.wrld_pool.used_object_capacity();
         case REV32(DIAL):
-            return (uint32_t)DIAL.dial_pool.used_object_capacity();
+            return DIAL.dial_pool.used_object_capacity();
         ///////////////////////////////////////////////
         //These return the absolute total number of these SubRecords
         //Use the GetFieldAttribute API instead if you want the number
         // of SubRecords associated with a specific parent record
         case REV32(PGRD):
-            return (uint32_t)CELL.pgrd_pool.used_object_capacity();
+            return CELL.pgrd_pool.used_object_capacity();
         case REV32(LAND):
-            return (uint32_t)WRLD.land_pool.used_object_capacity();
+            return WRLD.land_pool.used_object_capacity();
         case REV32(ACHR):
-            return (uint32_t)CELL.achr_pool.used_object_capacity();
+            return CELL.achr_pool.used_object_capacity();
         case REV32(ACRE):
-            return (uint32_t)CELL.acre_pool.used_object_capacity();
+            return CELL.acre_pool.used_object_capacity();
         case REV32(REFR):
-            return (uint32_t)CELL.refr_pool.used_object_capacity();
+            return CELL.refr_pool.used_object_capacity();
         case REV32(ROAD):
-            return (uint32_t)WRLD.road_pool.used_object_capacity();
+            return WRLD.road_pool.used_object_capacity();
         case REV32(INFO):
-            return (uint32_t)DIAL.info_pool.used_object_capacity();
+            return DIAL.info_pool.used_object_capacity();
         case REV32(WCEL):
-            return (uint32_t)WRLD.cell_pool.used_object_capacity();
+            return WRLD.cell_pool.used_object_capacity();
         case REV32(CLLS):
-            return (uint32_t)CELL.cell_pool.used_object_capacity() + (uint32_t)WRLD.cell_pool.used_object_capacity();
+            return CELL.cell_pool.used_object_capacity() + (uint32_t)WRLD.cell_pool.used_object_capacity();
         ///////////////////////////////////////////////
         case REV32(QUST):
-            return (uint32_t)QUST.pool.used_object_capacity();
+            return QUST.pool.used_object_capacity();
         case REV32(IDLE):
-            return (uint32_t)IDLE.pool.used_object_capacity();
+            return IDLE.pool.used_object_capacity();
         case REV32(PACK):
-            return (uint32_t)PACK.pool.used_object_capacity();
+            return PACK.pool.used_object_capacity();
         case REV32(CSTY):
-            return (uint32_t)CSTY.pool.used_object_capacity();
+            return CSTY.pool.used_object_capacity();
         case REV32(LSCR):
-            return (uint32_t)LSCR.pool.used_object_capacity();
+            return LSCR.pool.used_object_capacity();
         case REV32(LVSP):
-            return (uint32_t)LVSP.pool.used_object_capacity();
+            return LVSP.pool.used_object_capacity();
         case REV32(ANIO):
-            return (uint32_t)ANIO.pool.used_object_capacity();
+            return ANIO.pool.used_object_capacity();
         case REV32(WATR):
-            return (uint32_t)WATR.pool.used_object_capacity();
+            return WATR.pool.used_object_capacity();
         case REV32(EFSH):
-            return (uint32_t)EFSH.pool.used_object_capacity();
+            return EFSH.pool.used_object_capacity();
         default:
             printer("TES4File::GetNumRecords: Warning - Unable to count records (%c%c%c%c) in mod \"%s\". Unrecognized record type.\n", ((char *)&RecordType)[0], ((char *)&RecordType)[1], ((char *)&RecordType)[2], ((char *)&RecordType)[3], ModName);
             break;
@@ -1368,7 +1368,7 @@ int32_t TES4File::Save(char * const &SaveName, std::vector<FormIDResolver *> &Ex
 
     FileWriter writer(SaveName, BUFFERSIZE);
     if(writer.open() == -1)
-        throw std::exception("TES4File::Save: Error - Unable to open temporary file for writing\n");
+        throw std::runtime_error("TES4File::Save: Error - Unable to open temporary file for writing\n");
 
     uint32_t formCount = 0;
     FormIDResolver expander(FormIDHandler.ExpandTable, FormIDHandler.FileStart, FormIDHandler.FileEnd);

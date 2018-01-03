@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\..\Common.h"
-#include "..\PACKRecord.h"
+#include "../../../Common.h"
+#include "../PACKRecord.h"
 
 namespace Ob
 {
@@ -47,119 +47,119 @@ uint32_t PACKRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
         case 0: //recType
             return GetType();
         case 1: //flags1
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 2: //fid
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 3: //flags2
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 4: //eid
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 5: //flags
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 6: //aiType
-            return CB_UINT8_TYPE_FIELD;
+            return UINT8_TYPE_FIELD;
         case 7: //unused1
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 3;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 8: //locType
-            return CB_SINT32_TYPE_FIELD;
+            return SINT32_TYPE_FIELD;
         case 9: //locId
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_FORMID_OR_UINT32_FIELD;
+                    return FORMID_OR_UINT32_FIELD;
                 case 2: //WhichType
-                    return (PLDT.IsLoaded() && (PLDT->locType < 2 || PLDT->locType == 4)) ? CB_FORMID_FIELD : CB_UINT32_FIELD;
+                    return (PLDT.IsLoaded() && (PLDT->locType < 2 || PLDT->locType == 4)) ? FORMID_FIELD : UINT32_FIELD;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 10: //locRadius
-            return CB_SINT32_FIELD;
+            return SINT32_FIELD;
         case 11: //month
-            return CB_SINT8_FIELD;
+            return SINT8_FIELD;
         case 12: //day
-            return CB_SINT8_FIELD;
+            return SINT8_FIELD;
         case 13: //date
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 14: //time
-            return CB_SINT8_FIELD;
+            return SINT8_FIELD;
         case 15: //duration
-            return CB_SINT32_FIELD;
+            return SINT32_FIELD;
         case 16: //targetType
-            return CB_SINT32_TYPE_FIELD;
+            return SINT32_TYPE_FIELD;
         case 17: //targetId
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_FORMID_OR_UINT32_FIELD;
+                    return FORMID_OR_UINT32_FIELD;
                 case 2: //WhichType
-                    return (PTDT.IsLoaded() && PTDT->targetType != 2) ? CB_FORMID_FIELD : CB_UINT32_FIELD;
+                    return (PTDT.IsLoaded() && PTDT->targetType != 2) ? FORMID_FIELD : UINT32_FIELD;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 18: //targetCount
-            return CB_SINT32_FIELD;
+            return SINT32_FIELD;
         case 19: //conditions
             if(ListFieldID == 0) //conditions
                 {
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return (uint32_t)CTDA.value.size();
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
                 }
 
             if(ListIndex >= CTDA.value.size())
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             switch(ListFieldID)
                 {
                 case 1: //operType
-                    return CB_UINT8_FLAG_TYPE_FIELD;
+                    return UINT8_FLAG_TYPE_FIELD;
                 case 2: //unused1
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_UINT8_ARRAY_FIELD;
+                            return UINT8_ARRAY_FIELD;
                         case 1: //fieldSize
                             return 3;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 case 3: //compValue
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_FORMID_OR_FLOAT32_FIELD;
+                            return FORMID_OR_FLOAT32_FIELD;
                         case 2: //WhichType
-                            return CTDA.value[ListIndex]->IsUseGlobal() ? CB_FORMID_FIELD :  CB_FLOAT32_FIELD;
+                            return CTDA.value[ListIndex]->IsUseGlobal() ? FORMID_FIELD :  FLOAT32_FIELD;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 case 4: //ifunc
-                    return CB_UINT32_TYPE_FIELD;
+                    return UINT32_TYPE_FIELD;
                 case 5: //param1
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_UNKNOWN_OR_FORMID_OR_UINT32_FIELD;
+                            return UNKNOWN_OR_FORMID_OR_UINT32_FIELD;
                         case 2: //WhichType
                             {
                             Function_Arguments_Iterator curCTDAFunction = Function_Arguments.find(CTDA.value[ListIndex]->ifunc);
@@ -169,23 +169,23 @@ uint32_t PACKRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
                                 switch(CTDAFunction.first)
                                     {
                                     case eFORMID:
-                                        return CB_FORMID_FIELD;
+                                        return FORMID_FIELD;
                                     case eUINT32:
-                                        return CB_UINT32_FIELD;
+                                        return UINT32_FIELD;
                                     default:
-                                        return CB_UNKNOWN_FIELD;
+                                        return UNKNOWN_FIELD;
                                     }
                                 }
                             }
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
                 case 6: //param2
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_UNKNOWN_OR_FORMID_OR_UINT32_FIELD;
+                            return UNKNOWN_OR_FORMID_OR_UINT32_FIELD;
                         case 2: //WhichType
                             {
                             Function_Arguments_Iterator curCTDAFunction = Function_Arguments.find(CTDA.value[ListIndex]->ifunc);
@@ -195,36 +195,36 @@ uint32_t PACKRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
                                 switch(CTDAFunction.second)
                                     {
                                     case eFORMID:
-                                        return CB_FORMID_FIELD;
+                                        return FORMID_FIELD;
                                     case eUINT32:
-                                        return CB_UINT32_FIELD;
+                                        return UINT32_FIELD;
                                     default:
-                                        return CB_UNKNOWN_FIELD;
+                                        return UNKNOWN_FIELD;
                                     }
                                 }
                             }
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
                 case 7: //unused2
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_UINT8_ARRAY_FIELD;
+                            return UINT8_ARRAY_FIELD;
                         case 1: //fieldSize
                             return 4;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         default:
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         }
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * PACKRecord::GetField(FIELD_IDENTIFIERS, void **FieldValues)

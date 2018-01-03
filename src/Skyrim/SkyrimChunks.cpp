@@ -237,7 +237,7 @@ bool SKCTDA::VisitFormIDs(FormIDOp &op)
     if (IsUseGlobal())
         op.Accept(compValue);
 
-    if (curCTDAFunction != SKFunction_Arguments.end())
+	if (curCTDAFunction != SKFunction_Arguments.end())
     {
         const FunctionArguments &CTDAFunction = curCTDAFunction->second;
         if (CTDAFunction.first == eFORMID)
@@ -549,6 +549,8 @@ void SKCondition::Write(FileWriter &writer)
     WRITE(CTDA);
     WRITE(CIS1);
     WRITE(CIS2);
+	//CIS1.Write(REV32(CIS1), writer);
+	//CIS2.Write(REV32(CIS2), writer);
 }
 
 bool SKCondition::operator == (const SKCondition &other) const
@@ -616,6 +618,81 @@ bool SKEffect::operator == (const SKEffect &other) const
 bool SKEffect::operator != (const SKEffect &other) const
 {
     return !(*this == other);
+}
+
+void GENATTACK::Write(FileWriter &writer)
+{
+	WRITE(ATKD);
+	WRITE(ATKE);
+}
+
+bool GENATTACK::operator == (const GENATTACK &other) const
+{
+	return (ATKD == other.ATKD && ATKE.equals(other.ATKE));
+}
+
+bool GENATTACK::operator != (const GENATTACK &other) const
+{
+	return !(*this == other);
+}
+
+bool GENATTACK::ATTACKDATA::operator == (const GENATTACK::ATTACKDATA &other) const
+{
+	return (damageMult == other.damageMult &&
+		attackChance == other.attackChance &&
+		attackSpell == other.attackSpell &&
+		flags == other.flags &&
+		attackAngle == other.attackAngle &&
+		strikeAngle == other.strikeAngle &&
+		stagger == other.stagger &&
+		attackType == other.attackType &&
+		knockdown == other.knockdown &&
+		recoveryTime == other.recoveryTime &&
+		fatigueMult == other.fatigueMult);
+}
+
+bool GENATTACK::ATTACKDATA::operator != (const GENATTACK::ATTACKDATA &other) const
+{
+	return !(*this == other);
+}
+
+
+bool SKCNTOCOED::operator == (const SKCNTOCOED &other) const
+{
+	return (CNTO == other.CNTO && COED == other.COED);
+}
+
+bool SKCNTOCOED::operator != (const SKCNTOCOED &other) const
+{
+	return !(*this == other);
+}
+
+
+void GENPRKR::Write(FileWriter &writer)
+{
+	writer.record_write_subrecord(REV32(PRKR), this, sizeof(this));
+}
+
+bool GENPRKR::operator == (const GENPRKR &other) const
+{
+	return (perk == other.perk && rank == other.rank);
+}
+
+bool GENPRKR::operator != (const GENPRKR &other) const
+{
+	return !(*this == other);
+}
+
+GENPRKR::GENPRKR() :
+	perk(0),
+	rank(0)
+{
+	memset(&unused1, 0, sizeof(unused1));
+}
+
+GENPRKR::~GENPRKR()
+{
+	//
 }
 
 } // namespace Sk

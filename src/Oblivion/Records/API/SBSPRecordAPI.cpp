@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\..\Common.h"
-#include "..\SBSPRecord.h"
+#include "../../../Common.h"
+#include "../SBSPRecord.h"
 
 namespace Ob
 {
@@ -45,23 +45,23 @@ uint32_t SBSPRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
         case 0: //recType
             return GetType();
         case 1: //flags1
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 2: //fid
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 3: //flags2
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 4: //eid
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 5: //sizeX
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 6: //sizeY
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 7: //sizeZ
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         default:
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         }
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * SBSPRecord::GetField(FIELD_IDENTIFIERS, void **FieldValues)

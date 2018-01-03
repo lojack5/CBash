@@ -50,8 +50,8 @@ class FormIDOp
         FormIDOp();
         virtual ~FormIDOp();
 
-        virtual bool Accept(uint32_t &curFormID) abstract {};
-        virtual bool AcceptMGEF(uint32_t &curMgefCode) abstract {};
+		virtual bool Accept(uint32_t &curFormID) = 0;
+        virtual bool AcceptMGEF(uint32_t &curMgefCode) = 0;
 
         uint32_t GetCount();
         void ResetCount();
@@ -752,6 +752,10 @@ struct GENMNAM
     {
     int32_t  dimX, dimY;
     int16_t  NWCellX, NWCellY, SECellX, SECellY;
+
+	float minHeight;
+	float maxHeight;
+	float initialPitch;
 
     GENMNAM();
     ~GENMNAM();
@@ -1797,3 +1801,25 @@ struct GENIMPF
     bool operator ==(const GENIMPF &other) const;
     bool operator !=(const GENIMPF &other) const;
     };
+
+
+struct TES5ACBS
+{
+	uint32_t flags;
+	uint16_t magickaOffset;
+	uint16_t staminaOffset;
+	int16_t levelUnion;
+	uint16_t calcMinLevel;
+	uint16_t calcMaxLevel;
+	uint16_t speedMultiplier;
+	int16_t dispositionBase_unused;
+	uint16_t templateFlags;
+	uint16_t healthOffset;
+	uint16_t bleedoutOverride;
+
+	TES5ACBS();
+	~TES5ACBS();
+
+	bool operator ==(const TES5ACBS &other) const;
+	bool operator !=(const TES5ACBS &other) const;
+};

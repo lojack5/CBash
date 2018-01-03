@@ -35,9 +35,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
 #pragma once
-#include "..\..\Common.h"
-#include "..\..\GenericRecord.h"
-#include "..\SkyrimChunks.h"
+#include "../../Common.h"
+#include "../../GenericRecord.h"
+#include "../SkyrimChunks.h"
 
 namespace Sk
 {
@@ -45,7 +45,7 @@ class ANIORecord : public TES5Record //Leveled Item
     {
     public:
         StringRecord EDID; //Editor ID
-        OptSubRecord<MODEL> MODL; // Model
+        MODEL MODL; // Model
         StringRecord BNAM; //Unload Event
 
         ANIORecord(unsigned char *_recData=NULL);
@@ -63,6 +63,7 @@ class ANIORecord : public TES5Record //Leveled Item
         int32_t ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk=false);
         int32_t Unload();
         int32_t WriteRecord(FileWriter &writer);
+		char *GetEditorIDKey() { return EDID.value; }
 
         bool operator ==(const ANIORecord &other) const;
         bool operator !=(const ANIORecord &other) const;

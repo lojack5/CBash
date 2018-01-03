@@ -36,18 +36,27 @@
 #pragma once
 
 // Common.h
-#include <time.h>
+#ifdef _WIN32
 #include <io.h>
-#include <fcntl.h>
-#include <sys/stat.h>
 #include <share.h>
-#include <errno.h>
 #include <exception>
+//Not supported in MSVC 2015, so will be skipped here
+#define NOEXCEPT
+#else
+//Crtdefs.h, not present on nonwin, compatibility
+#define __CLR_OR_THIS_CALL
+#define NOEXCEPT noexcept
+#include <sys/types.h>
+#endif
+
+#include <time.h>
+#include <errno.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
 #include <boost/unordered_set.hpp>
 #include <set>
 #include <map>
-//#include <boost/interprocess/file_mapping.hpp>
-//#include <boost/interprocess/mapped_region.hpp>
 #include <boost/iostreams/device/mapped_file.hpp>
 #include <vector>
 #include "MacroDefinitions.h"
@@ -56,6 +65,78 @@
 extern int (*printer)(const char * _Format, ...);
 extern int32_t (*LoggingCallback)(const char *);
 extern void (*RaiseCallback)(const char *);
+
+enum API_FieldTypes {
+    UNKNOWN_FIELD = 0,
+    MISSING_FIELD,
+    JUNK_FIELD,
+    BOOL_FIELD,
+    SINT8_FIELD,
+    UINT8_FIELD,
+    SINT16_FIELD,
+    UINT16_FIELD,
+    SINT32_FIELD,
+    UINT32_FIELD,
+    FLOAT32_FIELD,
+    RADIAN_FIELD,
+    FORMID_FIELD,
+    MGEFCODE_FIELD,
+    ACTORVALUE_FIELD,
+    FORMID_OR_UINT32_FIELD,
+    FORMID_OR_FLOAT32_FIELD,
+    UINT8_OR_UINT32_FIELD,
+    FORMID_OR_STRING_FIELD,
+    UNKNOWN_OR_FORMID_OR_UINT32_FIELD,
+    UNKNOWN_OR_SINT32_FIELD,
+    UNKNOWN_OR_UINT32_FLAG_FIELD,
+    MGEFCODE_OR_CHAR4_FIELD,
+    FORMID_OR_MGEFCODE_OR_ACTORVALUE_OR_UINT32_FIELD,
+    RESOLVED_MGEFCODE_FIELD,
+    STATIC_MGEFCODE_FIELD,
+    RESOLVED_ACTORVALUE_FIELD,
+    STATIC_ACTORVALUE_FIELD,
+    CHAR_FIELD,
+    CHAR4_FIELD,
+    STRING_FIELD,
+    ISTRING_FIELD,
+    STRING_OR_FLOAT32_OR_SINT32_FIELD,
+    LIST_FIELD,
+    PARENTRECORD_FIELD,
+    SUBRECORD_FIELD,
+    SINT8_FLAG_FIELD,
+    SINT8_TYPE_FIELD,
+    SINT8_FLAG_TYPE_FIELD,
+    SINT8_ARRAY_FIELD,
+    UINT8_FLAG_FIELD,
+    UINT8_TYPE_FIELD,
+    UINT8_FLAG_TYPE_FIELD,
+    UINT8_ARRAY_FIELD,
+    SINT16_FLAG_FIELD,
+    SINT16_TYPE_FIELD,
+    SINT16_FLAG_TYPE_FIELD,
+    SINT16_ARRAY_FIELD,
+    UINT16_FLAG_FIELD,
+    UINT16_TYPE_FIELD,
+    UINT16_FLAG_TYPE_FIELD,
+    UINT16_ARRAY_FIELD,
+    SINT32_FLAG_FIELD,
+    SINT32_TYPE_FIELD,
+    SINT32_FLAG_TYPE_FIELD,
+    SINT32_ARRAY_FIELD,
+    UINT32_FLAG_FIELD,
+    UINT32_TYPE_FIELD,
+    UINT32_FLAG_TYPE_FIELD,
+    UINT32_ARRAY_FIELD,
+    FLOAT32_ARRAY_FIELD,
+    RADIAN_ARRAY_FIELD,
+    FORMID_ARRAY_FIELD,
+    FORMID_OR_UINT32_ARRAY_FIELD,
+    MGEFCODE_OR_UINT32_ARRAY_FIELD,
+    STRING_ARRAY_FIELD,
+    ISTRING_ARRAY_FIELD,
+    SUBRECORD_ARRAY_FIELD,
+    UNDEFINED_FIELD
+    };
 
 enum TopTypes {
     eTop,
@@ -82,25 +163,25 @@ enum varType {
 class Ex_NULL : public std::exception
     {
     public:
-        const char * __CLR_OR_THIS_CALL what() const;
+        const char * __CLR_OR_THIS_CALL what() const NOEXCEPT override;
     };
 
 class Ex_INVALIDINDEX : public std::exception
     {
     public:
-        const char * __CLR_OR_THIS_CALL what() const;
+        const char * __CLR_OR_THIS_CALL what() const NOEXCEPT override;
     };
 
 class Ex_INVALIDCOLLECTIONINDEX : public std::exception
     {
     public:
-        const char * __CLR_OR_THIS_CALL what() const;
+        const char * __CLR_OR_THIS_CALL what() const NOEXCEPT override;
     };
 
 class Ex_INVALIDMODINDEX : public std::exception
     {
     public:
-        const char * __CLR_OR_THIS_CALL what() const;
+        const char * __CLR_OR_THIS_CALL what() const NOEXCEPT override;
     };
 
 //wrappers for _stricmp and strcmp that handle NULL args
@@ -175,7 +256,7 @@ class GenericOp
         GenericOp();
         ~GenericOp();
 
-        virtual bool perform() abstract {};
+		virtual bool perform() = 0;
     };
 
 class RenameOp : public GenericOp
@@ -195,7 +276,6 @@ char * DeGhostModName(char * const ModName);
 bool FileExists(char * const FileName);
 char * GetTemporaryFileName(char * FileName, bool IsBackup=false);
 bool AlmostEqual(float A, float B, int32_t maxUlps);
-void UnrecognizedSubRecord(cb_formid_t formID, uint32_t subType, uint32_t subSize, unsigned char *&buffer, unsigned char *end_buffer);
 
 class FileWriter
     {
@@ -512,10 +592,16 @@ class NonNullStringRecord
     {
     private:
         uint32_t DiskSize;
-        char * _value;
+        uint8_t fIsAllocated;
 
     public:
-        __declspec(property(get=GetString)) char * value;
+		char * value;
+
+		const char *GetString() const {
+			return value;
+		}
+		
+
 
         NonNullStringRecord();
         NonNullStringRecord(const NonNullStringRecord &p);
@@ -523,6 +609,7 @@ class NonNullStringRecord
 
         uint32_t GetSize() const;
         char * GetString();
+        void PutString(char* value, int length);
 
         bool IsLoaded() const;
         void Load();
@@ -954,78 +1041,6 @@ struct OptSimpleSubRecord
         return value != other.value;
         }
     };
-//Used for subrecords that are optional
-//Even if loaded, they are considered unloaded if they're equal to their defaults
-//Should only be used with simple data types (int, float, etc) and not structs
-template<class T>
-struct OptZeroSubRecord
-{
-  T value;
-
-  OptZeroSubRecord()
-  {
-    //
-    Unload();
-  }
-
-  ~OptZeroSubRecord()
-  {
-    //
-  }
-
-  uint32_t GetSize() const
-  {
-    return sizeof(T);
-  }
-
-  bool IsLoaded() const
-  {
-    struct OptZeroSubRecord zero; return (this == zero);
-  }
-
-  void Load()
-  {
-    //
-  }
-
-  void Unload()
-  {
-    memset(&value, 0, GetSize());
-  }
-
-  bool Read(unsigned char *&buffer, const uint32_t &subSize)
-  {
-    return ReadChunk(buffer, subSize, &value, sizeof(T), false);
-  }
-
-  void Write(uint32_t _Type, FileWriter &writer)
-  {
-    if(value != defaultValue)
-      writer.record_write_subrecord(_Type, &value, sizeof(T));
-  }
-
-  void ReqWrite(uint32_t _Type, FileWriter &writer)
-  {
-    writer.record_write_subrecord(_Type, &value, sizeof(T));
-  }
-
-  OptZeroSubRecord<T>& operator = (const OptZeroSubRecord<T> &rhs)
-  {
-    if(this != &rhs)
-      memcpy(value, rhs.value, GetSize());
-    return *this;
-  }
-
-  bool operator ==(const OptZeroSubRecord<T> &other) const
-  {
-    return  !memcmp(&value, &zero.value, GetSize());
-  }
-
-  bool operator !=(const OptZeroSubRecord<T> &other) const
-  {
-    return !!memcmp(&value, &zero.value, GetSize());
-  }
-};
 
 template<const float &defaultValue=flt_0>
 struct OptSimpleFloatSubRecord
@@ -1300,7 +1315,8 @@ struct SubRecord
 
     bool IsLoaded() const
         {
-        return (isLoaded && value != DefaultSingleton<T>::value());
+		static T defaultValue;
+		return (isLoaded && value != defaultValue);
         }
 
     void Load()
@@ -1376,9 +1392,7 @@ struct ReqSubRecord
         }
     void Unload()
         {
-        T newValue;
-        value.~T();
-        value = newValue;
+			value = T();
         }
 
     bool Read(unsigned char *&buffer, const uint32_t &subSize)
@@ -1440,22 +1454,6 @@ struct ReqSubRecord
         }
     };
 
-template<class T>
-class DefaultSingleton
-    {
-    private:
-        DefaultSingleton() {};                                     // Private constructor
-        DefaultSingleton(const DefaultSingleton&);                 // Prevent copy-construction
-        DefaultSingleton& operator=(const DefaultSingleton&);      // Prevent assignment
-
-    public:
-        static T& value()
-            {
-            static T defaultValue;
-            return defaultValue;
-            }
-    };
-
 //Used for subrecords that are optional
 //Even if loaded, they are considered unloaded if they're equal to their defaults
 template<class T>
@@ -1481,7 +1479,8 @@ struct OptSubRecord
 
     bool IsLoaded() const
         {
-        return (value != NULL && *value != DefaultSingleton<T>::value());
+		static T defaultValue;
+        return (value != NULL && *value != defaultValue);
         }
 
     void Load()
@@ -1499,7 +1498,8 @@ struct OptSubRecord
         {
         bool is_loaded = (value != NULL);
         if(!is_loaded)
-            value = new T();
+
+			value = new T();
         return ReadChunk(buffer, subSize, value, sizeof(T), is_loaded);
         //#ifdef CBASH_CHUNK_LCHECK
         //    else if(subSize < sizeof(T))
@@ -1732,12 +1732,14 @@ struct OBMEEFIXSubRecord
             return false;
             }
 
-        return (*value != DefaultSingleton<T>::value());
+		static T defaultValue;
+		return (*value != defaultValue);
         }
 
     bool Internal_IsLoaded() const
         {
-        return (value != NULL && *value != DefaultSingleton<T>::value());
+		static T defaultValue;
+		return (value != NULL && *value != defaultValue);
         }
 
     void Load()
@@ -2524,15 +2526,15 @@ class ReqCounted : public T
 public:
     void Write(FileWriter &writer)
     {
-        countType count = static_cast<countType>(value.size());
+        countType count = (countType)this->value.size();
         writer.record_write_subrecord(countRecord, &count, sizeof(count));
-        for (uint32_t p = 0; p < value.size(); p++)
-            value[p]->Write(writer);
+        for (uint32_t p = 0; p < this->value.size(); p++)
+			this->value[p]->Write(writer);
     }
 
     void Write(uint32_t _Type, FileWriter &writer)
     {
-        countType count = static_cast<countType>(value.size());
+        countType count = (countType)this->value.size();
         writer.record_write_subrecord(countRecord, &count, sizeof(count));
         T::Write(_Type, writer);
     }
@@ -2544,18 +2546,18 @@ class OptCounted : public T
 public:
     void Write(FileWriter &writer)
     {
-        countType count = value.size();
+        countType count = (countType)this->value.size();
         if (count)
         {
             writer.record_write_subrecord(countRecord, &count, sizeof(count));
-            for (uint32_t p = 0; p < value.size(); p++)
-                value[p]->Write(writer);
+            for (uint32_t p = 0; p < this->value.size(); p++)
+				this->value[p]->Write(writer);
         }
     }
 
     void Write(uint32_t _Type, FileWriter &writer)
     {
-        countType count = value.size();
+        countType count = (countType)this->value.size();
         if (count)
         {
             writer.record_write_subrecord(countRecord, &count, sizeof(count));

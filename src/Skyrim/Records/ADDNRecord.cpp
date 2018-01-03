@@ -168,12 +168,10 @@ int32_t ADDNRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
             OBND.Read(buffer, subSize);
             break;
         case REV32(MODL):
-            MODL.Load();
-            MODL->MODL.Read(buffer, subSize, CompressedOnDisk);
+            MODL.MODL.Read(buffer, subSize, CompressedOnDisk);
             break;
         case REV32(MODT):
-            MODL.Load();
-            MODL->MODT.Read(buffer, subSize, CompressedOnDisk);
+            MODL.MODT.Read(buffer, subSize, CompressedOnDisk);
             break;
         case REV32(DATA):
             DATA.Read(buffer, subSize);
@@ -189,7 +187,7 @@ int32_t ADDNRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
             printer("  LVLN: %08X - Unknown subType = %04x\n", formID, subType);
             CBASH_CHUNK_DEBUG
             printer("  Size = %i\n", subSize);
-            printer("  CurPos = %04x\n\n", buffer - 6);
+            printer("  CurPos = %08x\n\n", buffer - 6);
             buffer = end_buffer;
             break;
         }
@@ -203,7 +201,6 @@ int32_t ADDNRecord::Unload()
     IsLoaded(false);
     EDID.Unload();
     OBND.Unload();
-    MODL.Unload();
     DATA.Unload();
     SNAM.Unload();
     DNAM.Unload();
@@ -214,7 +211,7 @@ int32_t ADDNRecord::WriteRecord(FileWriter &writer)
 {
     WRITE(EDID);
     WRITE(OBND);
-    WRITE(MODL);
+	MODL.Write(writer);
     WRITE(DATA);
     WRITE(SNAM);
     WRITE(DNAM);

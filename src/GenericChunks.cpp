@@ -1937,7 +1937,10 @@ GENMNAM::GENMNAM():
     NWCellX(0),
     NWCellY(0),
     SECellX(0),
-    SECellY(0)
+    SECellY(0),
+	minHeight(50000.0f),
+	maxHeight(80000.0f),
+	initialPitch(50.0f)
     {
     //
     }
@@ -2600,7 +2603,7 @@ FNVAlternateTextures& FNVAlternateTextures::operator = (const FNVAlternateTextur
                     {
                     nameSize = (uint32_t)strlen(rhs.MODS[p]->name) + 1;
                     MODS[p]->name = new char[nameSize];
-                    strcpy_s(MODS[p]->name, nameSize, rhs.MODS[p]->name);
+                    strncpy(MODS[p]->name, rhs.MODS[p]->name, nameSize);
                     }
                 MODS[p]->texture = rhs.MODS[p]->texture;
                 MODS[p]->index = rhs.MODS[p]->index;
@@ -4349,3 +4352,44 @@ bool GENIMPF::operator !=(const GENIMPF &other) const
     {
     return !(*this == other);
     }
+
+TES5ACBS::TES5ACBS() :
+	flags(0),
+	magickaOffset(0),
+	staminaOffset(0),
+	levelUnion(0),
+	calcMinLevel(0),
+	calcMaxLevel(0),
+	speedMultiplier(0),
+	dispositionBase_unused(0),
+	templateFlags(0),
+	healthOffset(0),
+	bleedoutOverride(0)
+{
+	//
+}
+
+TES5ACBS::~TES5ACBS()
+{
+	//
+}
+
+bool TES5ACBS::operator ==(const TES5ACBS &other) const
+{
+	return (flags == other.flags &&
+		magickaOffset == other.magickaOffset &&
+		staminaOffset == other.staminaOffset &&
+		levelUnion == other.levelUnion &&
+		calcMinLevel == other.calcMinLevel &&
+		calcMaxLevel == other.calcMaxLevel &&
+		speedMultiplier == other.speedMultiplier &&
+		dispositionBase_unused == other.dispositionBase_unused &&
+		templateFlags == other.templateFlags &&
+		healthOffset == other.healthOffset &&
+		bleedoutOverride == other.bleedoutOverride);
+}
+
+bool TES5ACBS::operator !=(const TES5ACBS &other) const
+{
+	return !(*this == other);
+}

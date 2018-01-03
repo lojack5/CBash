@@ -34,7 +34,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\Common.h"
+#include "../../Common.h"
 #include "LVLNRecord.h"
 
 namespace Sk {
@@ -76,9 +76,7 @@ bool LVLNRecord::VisitFormIDs(FormIDOp &op)
         for(uint32_t x = 0; x < Entries.value.size(); x++)
             op.Accept(Entries.value[x]->listId);
 
-        if (MODL.IsLoaded())
-            if (MODL->Textures.IsLoaded())
-                MODL->Textures.VisitFormIDs(op);
+        MODL.Textures.VisitFormIDs(op);
 
         return op.Stop();
     }
@@ -179,23 +177,20 @@ int32_t LVLNRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                     buffer += subSize;
                     break;
                 case REV32(MODL):
-                    MODL.Load();
-                    MODL->MODL.Read(buffer, subSize, CompressedOnDisk);
+                    MODL.MODL.Read(buffer, subSize, CompressedOnDisk);
                     break;
                 case REV32(MODT):
-                    MODL.Load();
-                    MODL->MODT.Read(buffer, subSize, CompressedOnDisk);
+                    MODL.MODT.Read(buffer, subSize, CompressedOnDisk);
                     break;
                 case REV32(MODS):
-                    MODL.Load();
-                    MODL->Textures.Read(buffer, subSize);
+                    MODL.Textures.Read(buffer, subSize);
                     break;
                 default:
                     //printer("FileName = %s\n", FileName);
                     printer("  LVLN: %08X - Unknown subType = %04x\n", formID, subType);
                     CBASH_CHUNK_DEBUG
                     printer("  Size = %i\n", subSize);
-                    printer("  CurPos = %04x\n\n", buffer - 6);
+                    printer("  CurPos = %08x\n\n", buffer - 6);
                     buffer = end_buffer;
                     break;
                 }
@@ -213,7 +208,6 @@ int32_t LVLNRecord::Unload()
         LVLF.Unload();
         LVLG.Unload();
         Entries.Unload();
-        MODL.Unload();
         return 1;
     }
 
@@ -225,8 +219,8 @@ int32_t LVLNRecord::WriteRecord(FileWriter &writer)
         WRITE(LVLF);
         WRITE(LVLG);
         Entries.Write(writer);
-        WRITE(MODL);
-        return -1;
+		MODL.Write(writer);
+		return -1;
     }
 
 bool LVLNRecord::operator ==(const LVLNRecord &other) const

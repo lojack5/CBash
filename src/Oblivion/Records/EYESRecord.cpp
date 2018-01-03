@@ -33,7 +33,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\Common.h"
+#include "../../Common.h"
 #include "EYESRecord.h"
 
 namespace Ob
@@ -138,7 +138,7 @@ int32_t EYESRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                 //printer("FileName = %s\n", FileName);
                 printer("  EYES: Unknown subType = %04X\n", subType);
                 printer("  Size = %i\n", subSize);
-                printer("  CurPos = %04x\n\n", buffer - 6);
+                printer("  CurPos = %08x\n\n", buffer - 6);
                 buffer = end_buffer;
                 break;
             }

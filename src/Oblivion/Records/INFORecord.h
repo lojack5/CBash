@@ -34,8 +34,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 #pragma once
-#include "..\..\Common.h"
-#include "..\..\GenericRecord.h"
+#include "../../Common.h"
+#include "../../GenericRecord.h"
 
 namespace Ob
 {
@@ -70,45 +70,6 @@ class INFORecord : public Record
             bool operator !=(const INFOTRDT &other) const;
             };
 
-        struct INFOResponse
-            {
-            ReqSubRecord<INFOTRDT> TRDT; //Response Data
-            StringRecord NAM1; //Response Text
-            StringRecord NAM2; //Script Notes
-
-            enum eEmotionType
-                {
-                eNeutral  = 0,
-                eAnger    = 1,
-                eDisgust  = 2,
-                eFear     = 3,
-                eSad      = 4,
-                eHappy    = 5,
-                eSurprise = 6
-                };
-
-            bool   IsNeutral();
-            void   IsNeutral(bool value);
-            bool   IsAnger();
-            void   IsAnger(bool value);
-            bool   IsDisgust();
-            void   IsDisgust(bool value);
-            bool   IsFear();
-            void   IsFear(bool value);
-            bool   IsSad();
-            void   IsSad(bool value);
-            bool   IsHappy();
-            void   IsHappy(bool value);
-            bool   IsSurprise();
-            void   IsSurprise(bool value);
-            bool   IsType(uint32_t Type);
-            void   SetType(uint32_t Type);
-
-            void Write(FileWriter &writer);
-
-            bool operator ==(const INFOResponse &other) const;
-            bool operator !=(const INFOResponse &other) const;
-            };
 
         enum eDialogType
             {
@@ -140,6 +101,48 @@ class INFORecord : public Record
             };
 
     public:
+
+
+		struct INFOResponse
+		{
+			ReqSubRecord<INFOTRDT> TRDT; //Response Data
+			StringRecord NAM1; //Response Text
+			StringRecord NAM2; //Script Notes
+
+			enum eEmotionType
+			{
+				eNeutral = 0,
+				eAnger = 1,
+				eDisgust = 2,
+				eFear = 3,
+				eSad = 4,
+				eHappy = 5,
+				eSurprise = 6
+			};
+
+			bool   IsNeutral();
+			void   IsNeutral(bool value);
+			bool   IsAnger();
+			void   IsAnger(bool value);
+			bool   IsDisgust();
+			void   IsDisgust(bool value);
+			bool   IsFear();
+			void   IsFear(bool value);
+			bool   IsSad();
+			void   IsSad(bool value);
+			bool   IsHappy();
+			void   IsHappy(bool value);
+			bool   IsSurprise();
+			void   IsSurprise(bool value);
+			bool   IsType(uint32_t Type);
+			void   SetType(uint32_t Type);
+
+			void Write(FileWriter &writer);
+
+			bool operator ==(const INFOResponse &other) const;
+			bool operator !=(const INFOResponse &other) const;
+		};
+
         StringRecord EDID; //Editor ID
         ReqSubRecord<INFODATA> DATA; //INFO Data
         ReqSimpleSubRecord<FORMID> QSTI; //Quest

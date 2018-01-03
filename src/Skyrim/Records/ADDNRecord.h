@@ -35,9 +35,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
 #pragma once
-#include "..\..\Common.h"
-#include "..\..\GenericRecord.h"
-#include "..\SkyrimChunks.h"
+#include "../../Common.h"
+#include "../../GenericRecord.h"
+#include "../SkyrimChunks.h"
 
 namespace Sk
 {
@@ -66,7 +66,7 @@ class ADDNRecord : public TES5Record //Leveled Item
     public:
         StringRecord EDID; //Editor ID
         ReqSubRecord<GENOBND> OBND; //Object bounds
-        ReqSubRecord<FNVWORLDMODEL> MODL; // Model - MODL/MODT (MODS unused)
+        FNVMODEL MODL; // Model - MODL/MODT (MODS unused)
         ReqSimpleSubRecord<int32_t> DATA; // Node Index
         OptSimpleSubRecord<FORMID> SNAM; // Sound
         ReqSubRecord<ADDNDNAM> DNAM; // Data
@@ -95,6 +95,7 @@ class ADDNRecord : public TES5Record //Leveled Item
         int32_t ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk=false);
         int32_t Unload();
         int32_t WriteRecord(FileWriter &writer);
+		char *GetEditorIDKey() { return EDID.value; }
 
         bool operator ==(const ADDNRecord &other) const;
         bool operator !=(const ADDNRecord &other) const;

@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\..\Common.h"
-#include "..\ROADRecord.h"
+#include "../../../Common.h"
+#include "../ROADRecord.h"
 
 namespace Ob
 {
@@ -45,88 +45,88 @@ uint32_t ROADRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
         case 0: //recType
             return GetType();
         case 1: //flags1
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 2: //fid
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 3: //flags2
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 4: //eid
-            return CB_MISSING_FIELD;
+            return MISSING_FIELD;
         case 5: //pgrp
             if(ListFieldID == 0) //pgrp
                 {
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return (uint32_t)PGRP.value.size();
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
                 }
 
             if(ListIndex >= PGRP.value.size())
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             switch(ListFieldID)
                 {
                 case 1: //x
-                    return CB_FLOAT32_FIELD;
+                    return FLOAT32_FIELD;
                 case 2: //y
-                    return CB_FLOAT32_FIELD;
+                    return FLOAT32_FIELD;
                 case 3: //z
-                    return CB_FLOAT32_FIELD;
+                    return FLOAT32_FIELD;
                 case 4: //connections
-                    return CB_UINT8_FIELD;
+                    return UINT8_FIELD;
                 case 5: //unused1
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_UINT8_ARRAY_FIELD;
+                            return UINT8_ARRAY_FIELD;
                         case 1: //fieldSize
                             return 3;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 6: //pgrr
             if(ListFieldID == 0) //pgrr
                 {
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return (uint32_t)PGRR.value.size();
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
                 }
 
             if(ListIndex >= PGRR.value.size())
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             switch(ListFieldID)
                 {
                 case 1: //x
-                    return CB_FLOAT32_FIELD;
+                    return FLOAT32_FIELD;
                 case 2: //y
-                    return CB_FLOAT32_FIELD;
+                    return FLOAT32_FIELD;
                 case 3: //z
-                    return CB_FLOAT32_FIELD;
+                    return FLOAT32_FIELD;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
         case 7: //Parent
-            return CB_PARENTRECORD_FIELD;
+            return PARENTRECORD_FIELD;
         default:
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         }
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * ROADRecord::GetField(FIELD_IDENTIFIERS, void **FieldValues)

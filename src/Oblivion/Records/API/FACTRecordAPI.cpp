@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\..\Common.h"
-#include "..\FACTRecord.h"
+#include "../../../Common.h"
+#include "../FACTRecord.h"
 
 namespace Ob
 {
@@ -45,80 +45,80 @@ uint32_t FACTRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
         case 0: //recType
             return GetType();
         case 1: //flags1
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 2: //fid
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 3: //flags2
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 4: //eid
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 5: //full
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 6: //relations
             if(ListFieldID == 0) //relations
                 {
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return (uint32_t)XNAM.value.size();
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
                 }
 
             if(ListIndex >= XNAM.value.size())
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             switch(ListFieldID)
                 {
                 case 1: //faction
-                    return CB_FORMID_FIELD;
+                    return FORMID_FIELD;
                 case 2: //mod
-                    return CB_SINT32_FIELD;
+                    return SINT32_FIELD;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 7: //flags
-            return CB_UINT8_FLAG_FIELD;
+            return UINT8_FLAG_FIELD;
         case 8: //crimeGoldMultiplier
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 9: //ranks
             if(ListFieldID == 0) //ranks
                 {
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return (uint32_t)RNAM.value.size();
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
                 }
 
             if(ListIndex >= RNAM.value.size())
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             switch(ListFieldID)
                 {
                 case 1: //rank
-                    return CB_SINT32_FIELD;
+                    return SINT32_FIELD;
                 case 2: //male
-                    return CB_STRING_FIELD;
+                    return STRING_FIELD;
                 case 3: //female
-                    return CB_STRING_FIELD;
+                    return STRING_FIELD;
                 case 4: //insigniaPath
-                    return CB_ISTRING_FIELD;
+                    return ISTRING_FIELD;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
         default:
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         }
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * FACTRecord::GetField(FIELD_IDENTIFIERS, void **FieldValues)

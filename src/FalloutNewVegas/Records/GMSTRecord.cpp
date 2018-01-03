@@ -33,7 +33,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\Common.h"
+#include "../../Common.h"
 #include "GMSTRecord.h"
 
 namespace FNV
@@ -132,7 +132,7 @@ GMSTRecord::GMSTRecord(GMSTRecord *srcRecord):
         case 's':
             vSize = (uint32_t)strlen(srcRecord->DATA.s) + 1;
             DATA.s = new char [vSize];
-            strcpy_s(DATA.s, vSize, srcRecord->DATA.s);
+            strncpy(DATA.s, srcRecord->DATA.s, vSize);
             break;
         default:
             break;
@@ -207,7 +207,7 @@ int32_t GMSTRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                         //printer("FileName = %s\n", FileName);
                         printer("  GMST: %08X - Unknown GMST format = %c\n", formID, DATA.format);
                         printer("  Size = %i\n", subSize);
-                        printer("  CurPos = %04x\n\n", buffer - 6);
+                        printer("  CurPos = %08x\n\n", buffer - 6);
                         buffer = end_buffer;
                         break;
                     }
@@ -216,7 +216,7 @@ int32_t GMSTRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                 //printer("FileName = %s\n", FileName);
                 printer("  GMST: Unknown subType = %04X\n", subType);
                 printer("  Size = %i\n", subSize);
-                printer("  CurPos = %04x\n\n", buffer - 6);
+                printer("  CurPos = %08x\n\n", buffer - 6);
                 buffer = end_buffer;
                 break;
             }

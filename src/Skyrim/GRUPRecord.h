@@ -34,20 +34,22 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+#include "Records/ACHRRecord.h"
 #include "Records/CELLRecord.h"
+#include "Records/REFRRecord.h"
 #include "Records/LANDRecord.h"
 #include "Records/WRLDRecord.h"
+#include "Records/DIALRecord.h"
 
 template<uint32_t RecType, uint32_t AllocUnit, bool IsKeyedByEditorID>
 class TES5GRUPRecords<Sk::CELLRecord, RecType, AllocUnit, IsKeyedByEditorID>
     {
     public:
         RecordPoolAllocator<Sk::CELLRecord, RecType, AllocUnit> cell_pool;
-        /*
         RecordPoolAllocator<Sk::ACHRRecord, REV32(ACHR), 5> achr_pool;
-        RecordPoolAllocator<Sk::ACRERecord, REV32(ACRE), 5> acre_pool;
         RecordPoolAllocator<Sk::REFRRecord, REV32(REFR), 5> refr_pool;
-        RecordPoolAllocator<Sk::PGRERecord, REV32(PGRE), 5> pgre_pool;
+        /*
+		RecordPoolAllocator<Sk::PGRERecord, REV32(PGRE), 5> pgre_pool;
         RecordPoolAllocator<Sk::PMISRecord, REV32(PMIS), 5> pmis_pool;
         RecordPoolAllocator<Sk::PBEARecord, REV32(PBEA), 5> pbea_pool;
         RecordPoolAllocator<Sk::PFLARecord, REV32(PFLA), 5> pfla_pool;
@@ -88,23 +90,26 @@ class TES5GRUPRecords<Sk::CELLRecord, RecType, AllocUnit, IsKeyedByEditorID>
             RecordHeader header;
 
             Sk::CELLRecord *last_record = NULL, *orphaned_records = NULL;
-            uint32_t numCELL = 0/*, numACHR = 0, numACRE = 0, numREFR = 0, numPGRE = 0,
+            uint32_t numCELL = 0, numREFR = 0, numACHR = 0/*, numPGRE = 0,
                    numPMIS = 0, numPBEA = 0, numPFLA = 0, numPCBE = 0, numNAVM = 0*/;
 
             std::vector<RecordHeader> records;
             records.reserve((uint32_t)(group_buffer_end - buffer_position) / sizeof(Sk::CELLRecord)); //gross overestimation, but good enough
             while(buffer_position < group_buffer_end){
                 if((processor.IsSkipAllRecords && processor.IsTrackNewTypes) &&
-                    processor.NewTypes.count(REV32(CELL)) > 0/* &&
-                    processor.NewTypes.count(REV32(ACHR)) > 0 &&
-                    processor.NewTypes.count(REV32(ACRE)) > 0 &&
-                    processor.NewTypes.count(REV32(REFR)) > 0 &&
+                    processor.NewTypes.count(REV32(CELL)) > 0 &&
+					
+					processor.NewTypes.count(REV32(REFR)) > 0 &&
+					processor.NewTypes.count(REV32(ACHR)) > 0
+					/*
                     processor.NewTypes.count(REV32(PGRE)) > 0 &&
                     processor.NewTypes.count(REV32(PMIS)) > 0 &&
                     processor.NewTypes.count(REV32(PBEA)) > 0 &&
                     processor.NewTypes.count(REV32(PFLA)) > 0 &&
                     processor.NewTypes.count(REV32(PCBE)) > 0 &&
-                    processor.NewTypes.count(REV32(NAVM)) > 0*/)
+                    processor.NewTypes.count(REV32(NAVM)) > 0
+					*/
+					)
                     {
                     buffer_position = group_buffer_end;
                     break;
@@ -148,16 +153,14 @@ class TES5GRUPRecords<Sk::CELLRecord, RecType, AllocUnit, IsKeyedByEditorID>
                             numCELL++;
                             break;
 
-                        /*
                         case REV32(ACHR):
                             numACHR++;
                             break;
-                        case REV32(ACRE):
-                            numACRE++;
-                            break;
+
                         case REV32(REFR):
                             numREFR++;
                             break;
+						/*
                         case REV32(PGRE):
                             numPGRE++;
                             break;
@@ -179,7 +182,7 @@ class TES5GRUPRecords<Sk::CELLRecord, RecType, AllocUnit, IsKeyedByEditorID>
                         */
 
                         default:
-                            printer("GRUPRecords<Sk::CELLRecord>::Read: Warning - Parsing error. Unexpected record type (%c%c%c%c) in file \"%s\".\n", ((char *)&header.type)[0], ((char *)&header.type)[1], ((char *)&header.type)[2], ((char *)&header.type)[3], FileName);
+							//printer("GRUPRecords<Sk::CELLRecord>::Read: Warning - Parsing error. Unexpected record type (%c%c%c%c) in file \"%s\".\n", ((char *)&header.type)[0], ((char *)&header.type)[1], ((char *)&header.type)[2], ((char *)&header.type)[3], FileName);
                             #ifdef CBASH_DEBUG_CHUNK
                                 peek_around(buffer_position, PEEK_SIZE);
                             #endif
@@ -199,40 +202,28 @@ class TES5GRUPRecords<Sk::CELLRecord, RecType, AllocUnit, IsKeyedByEditorID>
                 unsigned char *cell_buffer = NULL;
                 if(numCELL)
                     {
-                    cell_buffer = (unsigned char *)malloc(sizeof(Sk::CELLRecord) * numCELL);
+                    cell_buffer = (unsigned char *)cell_pool.add_buffer(sizeof(Sk::CELLRecord) * numCELL);
                     if(cell_buffer == 0)
                         throw std::bad_alloc();
-                    cell_pool.add_buffer(cell_buffer);
                     }
 
-                /*
                 unsigned char *achr_buffer = NULL;
                 if(numACHR)
                     {
-                    achr_buffer = (unsigned char *)malloc(sizeof(Sk::ACHRRecord) * numACHR);
+                    achr_buffer = (unsigned char *)achr_pool.add_buffer(sizeof(Sk::ACHRRecord) * numACHR);
                     if(achr_buffer == 0)
                         throw std::bad_alloc();
-                    achr_pool.add_buffer(achr_buffer);
-                    }
-
-                unsigned char *acre_buffer = NULL;
-                if(numACRE)
-                    {
-                    acre_buffer = (unsigned char *)malloc(sizeof(Sk::ACRERecord) * numACRE);
-                    if(acre_buffer == 0)
-                        throw std::bad_alloc();
-                    acre_pool.add_buffer(acre_buffer);
                     }
 
                 unsigned char *refr_buffer = NULL;
                 if(numREFR)
                     {
-                    refr_buffer = (unsigned char *)malloc(sizeof(Sk::REFRRecord) * numREFR);
-                    if(refr_buffer == 0)
-                        throw std::bad_alloc();
-                    refr_pool.add_buffer(refr_buffer);
-                    }
-
+                    refr_buffer = (unsigned char *)refr_pool.add_buffer(sizeof(Sk::REFRRecord) * numREFR);
+					if (refr_buffer == 0) {
+						throw std::bad_alloc();
+					}
+				}
+				/*
                 unsigned char *pgre_buffer = NULL;
                 if(numPGRE)
                     {
@@ -303,18 +294,11 @@ class TES5GRUPRecords<Sk::CELLRecord, RecType, AllocUnit, IsKeyedByEditorID>
                             curRecord->SetParent(processor.curModFile, true);
                             break;
 
-                        /*
                         case REV32(ACHR):
                             curRecord = new(achr_buffer) Sk::ACHRRecord(header.data);
                             achr_buffer += sizeof(Sk::ACHRRecord);
                             curRecord->SetParent(last_record, false);
                             last_record->ACHR.push_back(curRecord);
-                            break;
-                        case REV32(ACRE):
-                            curRecord = new(acre_buffer) Sk::ACRERecord(header.data);
-                            acre_buffer += sizeof(Sk::ACRERecord);
-                            curRecord->SetParent(last_record, false);
-                            last_record->ACRE.push_back(curRecord);
                             break;
                         case REV32(REFR):
                             curRecord = new(refr_buffer) Sk::REFRRecord(header.data);
@@ -322,6 +306,7 @@ class TES5GRUPRecords<Sk::CELLRecord, RecType, AllocUnit, IsKeyedByEditorID>
                             curRecord->SetParent(last_record, false);
                             last_record->REFR.push_back(curRecord);
                             break;
+						/*
                         case REV32(PGRE):
                             curRecord = new(pgre_buffer) Sk::PGRERecord(header.data);
                             pgre_buffer += sizeof(Sk::PGRERecord);
@@ -361,7 +346,7 @@ class TES5GRUPRecords<Sk::CELLRecord, RecType, AllocUnit, IsKeyedByEditorID>
                         */
 
                         default:
-                            printer("GRUPRecords<Sk::CELLRecord>::Read: Warning - Parsing error. Unexpected record type (%c%c%c%c) in file \"%s\".\n", ((char *)&header.type)[0], ((char *)&header.type)[1], ((char *)&header.type)[2], ((char *)&header.type)[3], FileName);
+                            //printer("GRUPRecords<Sk::CELLRecord>::Read: Warning - Parsing error. Unexpected record type (%c%c%c%c) in file \"%s\".\n", ((char *)&header.type)[0], ((char *)&header.type)[1], ((char *)&header.type)[2], ((char *)&header.type)[3], FileName);
                             #ifdef CBASH_DEBUG_CHUNK
                                 peek_around(header.data, PEEK_SIZE);
                             #endif
@@ -391,7 +376,6 @@ class TES5GRUPRecords<Sk::CELLRecord, RecType, AllocUnit, IsKeyedByEditorID>
 
                 records.clear();
 
-                /*
                 for(uint32_t x = 0; x < orphaned_records->ACHR.size(); ++x)
                     {
                     curRecord = orphaned_records->ACHR[x];
@@ -401,17 +385,6 @@ class TES5GRUPRecords<Sk::CELLRecord, RecType, AllocUnit, IsKeyedByEditorID>
                         peek_around(curRecord->recData, PEEK_SIZE);
                     #endif
                     achr_pool.destroy(curRecord);
-                    }
-
-                for(uint32_t x = 0; x < orphaned_records->ACRE.size(); ++x)
-                    {
-                    curRecord = orphaned_records->ACRE[x];
-                    processor.OrphanedRecords.push_back(curRecord->formID);
-                    //printer("GRUPRecords<Sk::CELLRecord>::Read: Warning - Parsing error. Skipped orphan ACRE (%08X) at %08X in file \"%s\"\n", curRecord->formID, curRecord->recData - buffer_start, FileName);
-                    #ifdef CBASH_DEBUG_CHUNK
-                        peek_around(curRecord->recData, PEEK_SIZE);
-                    #endif
-                    acre_pool.destroy(curRecord);
                     }
 
                 for(uint32_t x = 0; x < orphaned_records->REFR.size(); ++x)
@@ -425,7 +398,8 @@ class TES5GRUPRecords<Sk::CELLRecord, RecType, AllocUnit, IsKeyedByEditorID>
                     refr_pool.destroy(curRecord);
                     }
 
-                for(uint32_t x = 0; x < orphaned_records->PGRE.size(); ++x)
+				/*
+				for(uint32_t x = 0; x < orphaned_records->PGRE.size(); ++x)
                     {
                     curRecord = orphaned_records->PGRE[x];
                     processor.OrphanedRecords.push_back(curRecord->formID);
@@ -595,7 +569,6 @@ class TES5GRUPRecords<Sk::CELLRecord, RecType, AllocUnit, IsKeyedByEditorID>
                             subBlockSize += curRecord->Write(writer, bMastersChanged, expander, collapser, Expanders);
                             //Place the ACHR, ACRE, REFR, PGRE, PMIS, PBEA, PFLA, PCBE, NAVM records into their proper GRUP
 
-                            /*
                             for(uint32_t y = 0; y < curRecord->ACHR.size(); ++y)
                                 {
                                 if(curRecord->ACHR[y]->IsPersistent())
@@ -606,16 +579,7 @@ class TES5GRUPRecords<Sk::CELLRecord, RecType, AllocUnit, IsKeyedByEditorID>
                                     Temporary.push_back(curRecord->ACHR[y]);
                                 }
 
-                            for(uint32_t y = 0; y < curRecord->ACRE.size(); ++y)
-                                {
-                                if(curRecord->ACRE[y]->IsPersistent())
-                                    Persistent.push_back(curRecord->ACRE[y]);
-                                else if(curRecord->ACRE[y]->IsVWD())
-                                    VWD.push_back(curRecord->ACRE[y]);
-                                else
-                                    Temporary.push_back(curRecord->ACRE[y]);
-                                }
-
+                          
                             for(uint32_t y = 0; y < curRecord->REFR.size(); ++y)
                                 {
                                 if(curRecord->REFR[y]->IsPersistent())
@@ -625,7 +589,7 @@ class TES5GRUPRecords<Sk::CELLRecord, RecType, AllocUnit, IsKeyedByEditorID>
                                 else
                                     Temporary.push_back(curRecord->REFR[y]);
                                 }
-
+							/*
                             for(uint32_t y = 0; y < curRecord->PGRE.size(); ++y)
                                 {
                                 if(curRecord->PGRE[y]->IsPersistent())
@@ -765,16 +729,12 @@ class TES5GRUPRecords<Sk::CELLRecord, RecType, AllocUnit, IsKeyedByEditorID>
                                 }
                             if(CloseMod)
                                 {
-                                /*
                                 for(uint32_t x = 0; x < curRecord->ACHR.size(); ++x)
                                     achr_pool.destroy(curRecord->ACHR[x]);
 
-                                for(uint32_t x = 0; x < curRecord->ACRE.size(); ++x)
-                                    acre_pool.destroy(curRecord->ACRE[x]);
-
                                 for(uint32_t x = 0; x < curRecord->REFR.size(); ++x)
                                     refr_pool.destroy(curRecord->REFR[x]);
-
+								/*
                                 for(uint32_t x = 0; x < curRecord->PGRE.size(); ++x)
                                     pgre_pool.destroy(curRecord->PGRE[x]);
 
@@ -814,9 +774,8 @@ class TES5GRUPRecords<Sk::CELLRecord, RecType, AllocUnit, IsKeyedByEditorID>
             if(CloseMod)
                 {
                 //Can't release the pools entirely since the WRLD group may have entries still
-                //achr_pool.purge_no_destructors();
-                //acre_pool.purge_no_destructors();
-                //refr_pool.purge_no_destructors();
+                achr_pool.purge_no_destructors();
+                refr_pool.purge_no_destructors();
                 //pgre_pool.purge_no_destructors();
                 //pmis_pool.purge_no_destructors();
                 //pbea_pool.purge_no_destructors();
@@ -872,7 +831,7 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
 
             Sk::WRLDRecord *last_wrld_record = NULL, *orphaned_wrld_records = NULL;
             Sk::CELLRecord *last_cell_record = NULL, *orphaned_cell_records = NULL;
-            uint32_t numWRLD = 0, numCELL = 0, numLAND = 0/*, numACHR = 0, numACRE = 0, numREFR = 0,
+            uint32_t numWRLD = 0, numCELL = 0, numLAND = 0, numREFR = 0, numACHR = 0/*, numREFR = 0,
                    numPGRE = 0, numPMIS = 0, numPBEA = 0, numPFLA = 0, numPCBE = 0, numNAVM = 0*/;
 
             std::map<int32_t, std::map<int32_t, Sk::LANDRecord *> > GridXY_LAND;
@@ -888,10 +847,9 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
                 if((processor.IsSkipAllRecords && processor.IsTrackNewTypes) &&
                     processor.NewTypes.count(REV32(WRLD)) > 0 &&
                     processor.NewTypes.count(REV32(CELL)) > 0 &&
-                    processor.NewTypes.count(REV32(LAND)) > 0/* &&
+                    processor.NewTypes.count(REV32(LAND)) > 0 &&
                     processor.NewTypes.count(REV32(ACHR)) > 0 &&
-                    processor.NewTypes.count(REV32(ACRE)) > 0 &&
-                    processor.NewTypes.count(REV32(REFR)) > 0 &&
+                    processor.NewTypes.count(REV32(REFR)) > 0 /*&&
                     processor.NewTypes.count(REV32(PGRE)) > 0 &&
                     processor.NewTypes.count(REV32(PMIS)) > 0 &&
                     processor.NewTypes.count(REV32(PBEA)) > 0 &&
@@ -964,16 +922,13 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
                         case REV32(LAND):
                             numLAND++;
                             break;
-                            /*
                         case REV32(ACHR):
                             numACHR++;
-                            break;
-                        case REV32(ACRE):
-                            numACRE++;
                             break;
                         case REV32(REFR):
                             numREFR++;
                             break;
+						/*
                         case REV32(PGRE):
                             numPGRE++;
                             break;
@@ -995,7 +950,7 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
                             */
 
                         default:
-                            printer("TES5GRUPRecords<Sk::WRLDRecord>::Read: Warning - Parsing error. Unexpected record type (%c%c%c%c) in file \"%s\".\n", ((char *)&header.type)[0], ((char *)&header.type)[1], ((char *)&header.type)[2], ((char *)&header.type)[3], FileName);
+							//printer("TES5GRUPRecords<Sk::WRLDRecord>::Read: Warning - Parsing error. Unexpected record type (%c%c%c%c) in file \"%s\".\n", ((char *)&header.type)[0], ((char *)&header.type)[1], ((char *)&header.type)[2], ((char *)&header.type)[3], FileName);
                             #ifdef CBASH_DEBUG_CHUNK
                                 peek_around(buffer_position, PEEK_SIZE);
                             #endif
@@ -1014,57 +969,43 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
                 unsigned char *wrld_buffer = NULL;
                 if(numWRLD)
                     {
-                    wrld_buffer = (unsigned char *)malloc(sizeof(Sk::WRLDRecord) * numWRLD);
+                    wrld_buffer = (unsigned char *)wrld_pool.add_buffer(sizeof(Sk::WRLDRecord) * numWRLD);
                     if(wrld_buffer == 0)
                         throw std::bad_alloc();
-                    wrld_pool.add_buffer(wrld_buffer);
                     }
 
                 unsigned char *cell_buffer = NULL;
                 if(numCELL)
                     {
-                    cell_buffer = (unsigned char *)malloc(sizeof(Sk::CELLRecord) * numCELL);
+                    cell_buffer = (unsigned char *)cell_pool.add_buffer(sizeof(Sk::CELLRecord) * numCELL);
                     if(cell_buffer == 0)
                         throw std::bad_alloc();
-                    cell_pool.add_buffer(cell_buffer);
                     }
 
                 unsigned char *land_buffer = NULL;
                 if(numLAND)
                     {
-                    land_buffer = (unsigned char *)malloc(sizeof(Sk::LANDRecord) * numLAND);
+                    land_buffer = (unsigned char *)land_pool.add_buffer(sizeof(Sk::LANDRecord) * numLAND);
                     if(land_buffer == 0)
                         throw std::bad_alloc();
-                    land_pool.add_buffer(land_buffer);
                     }
-/*
                 unsigned char *achr_buffer = NULL;
                 if(numACHR)
                     {
-                    achr_buffer = (unsigned char *)malloc(sizeof(Sk::ACHRRecord) * numACHR);
+                    achr_buffer = (unsigned char *)CELL.achr_pool.add_buffer(sizeof(Sk::ACHRRecord) * numACHR);
                     if(achr_buffer == 0)
                         throw std::bad_alloc();
-                    CELL.achr_pool.add_buffer(achr_buffer);
                     }
-
-                unsigned char *acre_buffer = NULL;
-                if(numACRE)
-                    {
-                    acre_buffer = (unsigned char *)malloc(sizeof(Sk::ACRERecord) * numACRE);
-                    if(acre_buffer == 0)
-                        throw std::bad_alloc();
-                    CELL.acre_pool.add_buffer(acre_buffer);
-                    }
-
-                unsigned char *refr_buffer = NULL;
+				unsigned char *refr_buffer = NULL;
                 if(numREFR)
                     {
-                    refr_buffer = (unsigned char *)malloc(sizeof(Sk::REFRRecord) * numREFR);
+					uint32_t sizeRefr = sizeof(Sk::REFRRecord);
+                    refr_buffer = (unsigned char *)CELL.refr_pool.add_buffer(sizeRefr * numREFR);
+					uint32_t err = errno;
                     if(refr_buffer == 0)
                         throw std::bad_alloc();
-                    CELL.refr_pool.add_buffer(refr_buffer);
                     }
-
+				/*
                 unsigned char *pgre_buffer = NULL;
                 if(numPGRE)
                     {
@@ -1206,18 +1147,11 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
                                 GridXY_LAND[last_cell_record->XCLC->posX][last_cell_record->XCLC->posY] = (Sk::LANDRecord *)curRecord;
                                 }
                             break;
-                            /*
                         case REV32(ACHR):
                             curRecord = new(achr_buffer) Sk::ACHRRecord(header.data);
                             achr_buffer += sizeof(Sk::ACHRRecord);
                             curRecord->SetParent(last_cell_record, false);
                             last_cell_record->ACHR.push_back(curRecord);
-                            break;
-                        case REV32(ACRE):
-                            curRecord = new(acre_buffer) Sk::ACRERecord(header.data);
-                            acre_buffer += sizeof(Sk::ACRERecord);
-                            curRecord->SetParent(last_cell_record, false);
-                            last_cell_record->ACRE.push_back(curRecord);
                             break;
                         case REV32(REFR):
                             curRecord = new(refr_buffer) Sk::REFRRecord(header.data);
@@ -1225,6 +1159,7 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
                             curRecord->SetParent(last_cell_record, false);
                             last_cell_record->REFR.push_back(curRecord);
                             break;
+						/*
                         case REV32(PGRE):
                             curRecord = new(pgre_buffer) Sk::PGRERecord(header.data);
                             pgre_buffer += sizeof(Sk::PGRERecord);
@@ -1263,7 +1198,7 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
                             break;
                             */
                         default:
-                            printer("TES5GRUPRecords<Sk::WRLDRecord>::Read: Warning - Parsing error. Unexpected record type (%c%c%c%c) in file \"%s\".\n", ((char *)&header.type)[0], ((char *)&header.type)[1], ((char *)&header.type)[2], ((char *)&header.type)[3], FileName);
+                            //printer("TES5GRUPRecords<Sk::WRLDRecord>::Read: Warning - Parsing error. Unexpected record type (%c%c%c%c) in file \"%s\".\n", ((char *)&header.type)[0], ((char *)&header.type)[1], ((char *)&header.type)[2], ((char *)&header.type)[3], FileName);
                             #ifdef CBASH_DEBUG_CHUNK
                                 peek_around(header.data, PEEK_SIZE);
                             #endif
@@ -1318,15 +1253,14 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
 
                             if(processor.Flags.IsFixupPlaceables && last_wcel_record != NULL)
                                 {
-/*
                                 for(uint32_t x = 0; x < last_wcel_record->ACHR.size();)
                                     {
                                     //Have to test each record to see if it belongs to the cell. This is determined by its positioning.
                                     curRecord = last_wcel_record->ACHR[x];
                                     read_parser.Accept(curRecord);
 
-                                    gridX = (int32_t)floor(((Sk::ACHRRecord *)curRecord)->DATA.value.posX / 4096.0);
-                                    gridY = (int32_t)floor(((Sk::ACHRRecord *)curRecord)->DATA.value.posY / 4096.0);
+                                    gridX = (int32_t)floor(((Sk::ACHRRecord *)curRecord)->DATA.value->posX / 4096.0);
+                                    gridY = (int32_t)floor(((Sk::ACHRRecord *)curRecord)->DATA.value->posY / 4096.0);
 
                                     if(processor.Flags.IsMinLoad)
                                         curRecord->Unload();
@@ -1341,28 +1275,6 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
                                     else ++x;
                                     }
 
-                                for(uint32_t x = 0; x < last_wcel_record->ACRE.size();)
-                                    {
-                                    //Have to test each record to see if it belongs to the cell. This is determined by its positioning.
-                                    curRecord = last_wcel_record->ACRE[x];
-                                    read_parser.Accept(curRecord);
-
-                                    gridX = (int32_t)floor(((Sk::ACRERecord *)curRecord)->DATA.value.posX / 4096.0);
-                                    gridY = (int32_t)floor(((Sk::ACRERecord *)curRecord)->DATA.value.posY / 4096.0);
-
-                                    if(processor.Flags.IsMinLoad)
-                                        curRecord->Unload();
-
-                                    if(gridX == posX && gridY == posY)
-                                        {
-                                        //For easier use later on, go ahead and move it to the parent cell.
-                                        //It will get moved back later during the save process if need be.
-                                        last_cell_record->ACRE.push_back(curRecord);
-                                        last_wcel_record->ACRE.erase(last_wcel_record->ACRE.begin() + x);
-                                        }
-                                    else ++x;
-                                    }
-
                                 for(uint32_t x = 0; x < last_wcel_record->REFR.size();)
                                     {
                                     //Have to test each record to see if it belongs to the cell. This is determined by its positioning.
@@ -1370,8 +1282,8 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
                                     read_parser.Accept(curRecord);
 
                                     //((Sk::REFRRecord *)curRecord)->Data.Load();
-                                    gridX = (int32_t)floor(((Sk::REFRRecord *)curRecord)->DATA.value.posX / 4096.0);
-                                    gridY = (int32_t)floor(((Sk::REFRRecord *)curRecord)->DATA.value.posY / 4096.0);
+                                    gridX = (int32_t)floor(((Sk::REFRRecord *)curRecord)->DATA.value->posX / 4096.0);
+                                    gridY = (int32_t)floor(((Sk::REFRRecord *)curRecord)->DATA.value->posY / 4096.0);
 
                                     if(processor.Flags.IsMinLoad)
                                         curRecord->Unload();
@@ -1385,6 +1297,7 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
                                         }
                                     else ++x;
                                     }
+								/*
                                 for(uint32_t x = 0; x < last_wcel_record->PGRE.size();)
                                     {
                                     curRecord = last_wcel_record->PGRE[x];
@@ -1518,8 +1431,8 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
                             }
                         }
                     }
-/*
-                for(uint32_t x = 0; x < orphaned_cell_records->ACHR.size(); ++x)
+
+				for(uint32_t x = 0; x < orphaned_cell_records->ACHR.size(); ++x)
                     {
                     curRecord = orphaned_cell_records->ACHR[x];
                     processor.OrphanedRecords.push_back(curRecord->formID);
@@ -1529,18 +1442,6 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
                     #endif
                     CELL.achr_pool.destroy(curRecord);
                     }
-
-                for(uint32_t x = 0; x < orphaned_cell_records->ACRE.size(); ++x)
-                    {
-                    curRecord = orphaned_cell_records->ACRE[x];
-                    processor.OrphanedRecords.push_back(curRecord->formID);
-                    //printer("TES5GRUPRecords<Sk::CELLRecord>::Read: Warning - Parsing error. Skipped orphan ACRE (%08X) at %08X in file \"%s\"\n", curRecord->formID, curRecord->recData - buffer_start, FileName);
-                    #ifdef CBASH_DEBUG_CHUNK
-                        peek_around(curRecord->recData, PEEK_SIZE);
-                    #endif
-                    CELL.acre_pool.destroy(curRecord);
-                    }
-
                 for(uint32_t x = 0; x < orphaned_cell_records->REFR.size(); ++x)
                     {
                     curRecord = orphaned_cell_records->REFR[x];
@@ -1551,7 +1452,7 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
                     #endif
                     CELL.refr_pool.destroy(curRecord);
                     }
-
+				/*
                 for(uint32_t x = 0; x < orphaned_cell_records->PGRE.size(); ++x)
                     {
                     curRecord = orphaned_cell_records->PGRE[x];
@@ -1696,11 +1597,6 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
                 for(uint32_t p = 0; p < numCellRecords; ++p)
                     {
                     curCell = (Sk::CELLRecord *)curWorld->CELLS[p];
-/*
-                    //All persistent references must be moved to the world cell
-                    for(uint32_t y = 0; y < curCell->ACRE.size(); ++y)
-                        if(curCell->ACRE[y]->IsPersistent())
-                            FixedPersistent.push_back(curCell->ACRE[y]);
 
                     for(uint32_t y = 0; y < curCell->ACHR.size(); ++y)
                         if(curCell->ACHR[y]->IsPersistent())
@@ -1709,7 +1605,7 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
                     for(uint32_t y = 0; y < curCell->REFR.size(); ++y)
                         if(curCell->REFR[y]->IsPersistent())
                             FixedPersistent.push_back(curCell->REFR[y]);
-
+/*
                     for(uint32_t y = 0; y < curCell->PGRE.size(); ++y)
                         if(curCell->PGRE[y]->IsPersistent())
                             FixedPersistent.push_back(curCell->PGRE[y]);
@@ -1789,19 +1685,10 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
                             curCell->LAND = NULL;
 
                         uint32_t ignored_count = 0;
-/*
                         for(uint32_t y = 0; y < curCell->ACHR.size(); ++y)
                             {
                             if(curCell->ACHR[y]->IsPersistent())
                                 Persistent.push_back(curCell->ACHR[y]);
-                            else
-                                ignored_count++;
-                            }
-
-                        for(uint32_t y = 0; y < curCell->ACRE.size(); ++y)
-                            {
-                            if(curCell->ACRE[y]->IsPersistent())
-                                Persistent.push_back(curCell->ACRE[y]);
                             else
                                 ignored_count++;
                             }
@@ -1814,7 +1701,8 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
                                 ignored_count++;
                             }
 
-                        for(uint32_t y = 0; y < curCell->PGRE.size(); ++y)
+						/*
+						for(uint32_t y = 0; y < curCell->PGRE.size(); ++y)
                             {
                             if(curCell->PGRE[y]->IsPersistent())
                                 Persistent.push_back(curCell->PGRE[y]);
@@ -1902,16 +1790,13 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
                             }
                         if(CloseMod)
                             {
-                            /*
                             for(uint32_t x = 0; x < curCell->ACHR.size(); ++x)
                                 CELL.achr_pool.destroy(curCell->ACHR[x]);
-
-                            for(uint32_t x = 0; x < curCell->ACRE.size(); ++x)
-                                CELL.acre_pool.destroy(curCell->ACRE[x]);
 
                             for(uint32_t x = 0; x < curCell->REFR.size(); ++x)
                                 CELL.refr_pool.destroy(curCell->REFR[x]);
 
+							/*
                             for(uint32_t x = 0; x < curCell->PGRE.size(); ++x)
                                 CELL.pgre_pool.destroy(curCell->PGRE[x]);
 
@@ -1973,21 +1858,13 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
 
                                 if(curCell->LAND != NULL)
                                     Temporary.push_back(curCell->LAND);
-/*
-                                for(uint32_t y = 0; y < curCell->ACHR.size(); ++y)
+
+								for(uint32_t y = 0; y < curCell->ACHR.size(); ++y)
                                     {
                                     if(curCell->ACHR[y]->IsVWD())
                                         VWD.push_back(curCell->ACHR[y]);
                                     else
                                         Temporary.push_back(curCell->ACHR[y]);
-                                    }
-
-                                for(uint32_t y = 0; y < curCell->ACRE.size(); ++y)
-                                    {
-                                    if(curCell->ACRE[y]->IsVWD())
-                                        VWD.push_back(curCell->ACRE[y]);
-                                    else
-                                        Temporary.push_back(curCell->ACRE[y]);
                                     }
 
                                 for(uint32_t y = 0; y < curCell->REFR.size(); ++y)
@@ -1998,7 +1875,8 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
                                         Temporary.push_back(curCell->REFR[y]);
                                     }
 
-                                for(uint32_t y = 0; y < curCell->PGRE.size(); ++y)
+/*
+								for(uint32_t y = 0; y < curCell->PGRE.size(); ++y)
                                     {
                                     if(curCell->PGRE[y]->IsVWD())
                                         VWD.push_back(curCell->PGRE[y]);
@@ -2104,17 +1982,14 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
                                     }
                                 if(CloseMod)
                                     {
-                                    /*
                                     for(uint32_t x = 0; x < curCell->ACHR.size(); ++x)
                                         CELL.achr_pool.destroy(curCell->ACHR[x]);
 
-                                    for(uint32_t x = 0; x < curCell->ACRE.size(); ++x)
-                                        CELL.acre_pool.destroy(curCell->ACRE[x]);
-
-                                    for(uint32_t x = 0; x < curCell->REFR.size(); ++x)
+									for(uint32_t x = 0; x < curCell->REFR.size(); ++x)
                                         CELL.refr_pool.destroy(curCell->REFR[x]);
 
-                                    for(uint32_t x = 0; x < curCell->PGRE.size(); ++x)
+									/*
+									for(uint32_t x = 0; x < curCell->PGRE.size(); ++x)
                                         CELL.pgre_pool.destroy(curCell->PGRE[x]);
 
                                     for(uint32_t x = 0; x < curCell->PMIS.size(); ++x)
@@ -2155,12 +2030,11 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
 
             if(CloseMod)
                 {
-                /*
                 //All destructors ran earlier, pools are entirely free
                 CELL.achr_pool.purge_no_destructors();
-                CELL.acre_pool.purge_no_destructors();
                 CELL.refr_pool.purge_no_destructors();
-                CELL.pgre_pool.purge_no_destructors();
+				/*
+				CELL.pgre_pool.purge_no_destructors();
                 CELL.pmis_pool.purge_no_destructors();
                 CELL.pbea_pool.purge_no_destructors();
                 CELL.pfla_pool.purge_no_destructors();
@@ -2176,3 +2050,261 @@ class TES5GRUPRecords<Sk::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
             return formCount;
             }
     };
+
+
+template<uint32_t RecType, uint32_t AllocUnit, bool IsKeyedByEditorID>
+class TES5GRUPRecords<Sk::DIALRecord, RecType, AllocUnit, IsKeyedByEditorID>
+{
+public:
+	RecordPoolAllocator<Sk::DIALRecord, RecType, AllocUnit> dial_pool;
+	RecordPoolAllocator<Sk::INFORecord, REV32(INFO), 20> info_pool;
+	uint32_t stamp, unknown;
+
+	TES5GRUPRecords() :
+		stamp(134671),
+		unknown(0)
+	{
+		//
+	}
+
+	~TES5GRUPRecords()
+	{
+		//
+	}
+
+	bool Read(unsigned char *&buffer_start, unsigned char *&buffer_position, unsigned char *&group_buffer_end, RecordOp &indexer, RecordOp &parser, std::vector<Record *> &DeletedRecords, RecordProcessor &processor, char * &FileName)
+	{
+		stamp = *(uint32_t *)buffer_position;
+		buffer_position += 4;
+		if (group_buffer_end <= buffer_position)
+		{
+			printer("TES5GRUPRecords<Sk::DIALRecord>::Read: Error - Unable to load group in file \"%s\". The group has a size of 0.\n", FileName);
+#ifdef CBASH_DEBUG_CHUNK
+			peek_around(buffer_position, PEEK_SIZE);
+#endif
+			return false;
+		}
+
+		Record * curRecord = NULL;
+		uint32_t recordSize = 0;
+		RecordHeader header;
+
+		Sk::DIALRecord *last_record = NULL, *orphaned_records = NULL;
+		uint32_t numDIAL = 0, numINFO = 0;
+
+		std::vector<RecordHeader> records;
+		records.reserve((uint32_t)(group_buffer_end - buffer_position) / sizeof(Sk::DIALRecord)); //gross overestimation, but good enough
+		while (buffer_position < group_buffer_end){
+			if ((processor.IsSkipAllRecords && processor.IsTrackNewTypes) &&
+				processor.NewTypes.count(REV32(DIAL)) > 0 &&
+				processor.NewTypes.count(REV32(INFO)) > 0)
+			{
+				buffer_position = group_buffer_end;
+				break;
+			}
+
+			//Assumes that all records in a generic group are of the same type
+			header.type = *(uint32_t *)buffer_position;
+			buffer_position += 4;
+			recordSize = *(uint32_t *)buffer_position;
+			buffer_position += 4;
+
+			if (header.type == REV32(GRUP)) //All GRUPs will be recreated from scratch on write (saves memory)
+			{
+				if (recordSize == 20)
+					processor.EmptyGRUPs++;
+				buffer_position += 16;
+				continue;
+			}
+
+			header.flags = *(uint32_t *)buffer_position;
+			buffer_position += 4;
+			header.formID = *(FORMID *)buffer_position;
+			buffer_position += 4;
+			header.flagsUnk = *(uint32_t *)buffer_position; //VersionControl1
+			buffer_position += 4;
+			header.formVersion = *(uint16_t *)buffer_position;
+			buffer_position += 2;
+			header.versionControl2[0] = *(uint8_t *)buffer_position;
+			buffer_position++;
+			header.versionControl2[1] = *(uint8_t *)buffer_position;
+			buffer_position++;
+
+			if (processor.Accept(header))
+			{
+				header.data = buffer_position;
+				records.push_back(header);
+
+				switch (header.type)
+				{
+				case REV32(DIAL):
+					numDIAL++;
+					break;
+				case REV32(INFO):
+					numINFO++;
+					break;
+				default:
+					printer("TES5GRUPRecords<Sk::DIALRecord>::Read: Warning - Parsing error. Unexpected record type (%c%c%c%c) in file \"%s\".\n", ((char *)&header.type)[0], ((char *)&header.type)[1], ((char *)&header.type)[2], ((char *)&header.type)[3], FileName);
+#ifdef CBASH_DEBUG_CHUNK
+					peek_around(buffer_position, PEEK_SIZE);
+#endif
+					records.pop_back();
+					break;
+				}
+			}
+
+			buffer_position += recordSize;
+		};
+
+		if (records.size())
+		{
+			//Allocates many records at once in a contiguous space
+			//Allocate memory
+			unsigned char *dial_buffer = NULL;
+			if (numDIAL)
+			{
+				dial_buffer = (unsigned char *)dial_pool.add_buffer(sizeof(Sk::DIALRecord) * numDIAL);
+				if (dial_buffer == 0)
+					throw std::bad_alloc();
+			}
+
+			unsigned char *info_buffer = NULL;
+			if (numINFO)
+			{
+				info_buffer = (unsigned char *)info_pool.add_buffer(sizeof(Sk::INFORecord) * numINFO);
+				if (info_buffer == 0)
+					throw std::bad_alloc();
+			}
+
+			last_record = orphaned_records = new Sk::DIALRecord();
+
+			//Construct the records
+			for (uint32_t x = 0; x < records.size(); ++x)
+			{
+				header = records[x];
+
+				switch (header.type)
+				{
+				case REV32(DIAL):
+					curRecord = last_record = new(dial_buffer)Sk::DIALRecord(header.data);
+					dial_buffer += sizeof(Sk::DIALRecord);
+					curRecord->SetParent(processor.curModFile, true);
+					break;
+				case REV32(INFO):
+					curRecord = new(info_buffer)Sk::INFORecord(header.data);
+					info_buffer += sizeof(Sk::INFORecord);
+					curRecord->SetParent(last_record, false);
+					last_record->INFO.push_back(curRecord);
+					break;
+				default:
+					printer("TES5GRUPRecords<Sk::DIALRecord>::Read: Warning - Parsing error. Unexpected record type (%c%c%c%c) in file \"%s\".\n", ((char *)&header.type)[0], ((char *)&header.type)[1], ((char *)&header.type)[2], ((char *)&header.type)[3], FileName);
+#ifdef CBASH_DEBUG_CHUNK
+					peek_around(header.data, PEEK_SIZE);
+#endif
+					continue;
+					break;
+				}
+
+				curRecord->flags = header.flags;
+				curRecord->formID = header.formID;
+				curRecord->flagsUnk = header.flagsUnk;
+				//Testing Messages
+				//if((flags & 0x4000) != 0)
+				//    printer("0x4000 used: %08X!!!!\n", curRecord->formID);
+
+				//Read (if FullLoad), no-op otherwise
+				parser.Accept(curRecord);
+				//Save any deleted records for post-processing
+				if (curRecord->IsDeleted())
+					DeletedRecords.push_back(curRecord);
+				//Index it for fast, random lookup
+				indexer.Accept(curRecord);
+			}
+
+			records.clear();
+
+			for (uint32_t x = 0; x < orphaned_records->INFO.size(); ++x)
+			{
+				curRecord = orphaned_records->INFO[x];
+				processor.OrphanedRecords.push_back(curRecord->formID);
+				//printer("TES5GRUPRecords<Sk::DIALRecord>::Read: Warning - Parsing error. Skipped orphan INFO (%08X) at %08X in file \"%s\"\n", curRecord->formID, curRecord->recData - buffer_start, FileName);
+#ifdef CBASH_DEBUG_CHUNK
+				peek_around(curRecord->recData, PEEK_SIZE);
+#endif
+				info_pool.destroy(curRecord);
+			}
+			delete orphaned_records;
+		}
+
+		return true;
+	}
+
+	uint32_t Write(FileWriter &writer, std::vector<FormIDResolver *> &Expanders, FormIDResolver &expander, FormIDResolver &collapser, const bool &bMastersChanged, bool CloseMod)
+	{
+		std::vector<Record *> Records;
+		dial_pool.MakeRecordsVector(Records);
+		uint32_t numDIALRecords = (uint32_t)Records.size(); //Parent Records
+		if (numDIALRecords == 0)
+			return 0;
+
+		uint32_t type = REV32(GRUP);
+		uint32_t gType = eTop;
+		uint32_t TopSize = 0;
+		uint32_t ChildrenSize = 0;
+		uint32_t formCount = 0;
+		uint32_t TopLabel = REV32(DIAL);
+		uint32_t numINFORecords = 0;
+		uint32_t parentFormID = 0;
+		Sk::DIALRecord *curRecord = NULL;
+
+		//Top GRUP Header
+		writer.file_write(&type, 4);
+		uint32_t TopSizePos = writer.file_tell();
+		writer.file_write(&TopSize, 4); //Placeholder: will be overwritten with correct value later.
+		writer.file_write(&TopLabel, 4);
+		writer.file_write(&gType, 4);
+		writer.file_write(&stamp, 4);
+		writer.file_write(&unknown, 4);
+		++formCount;
+		TopSize = 24;
+
+
+		gType = eTopicChildren;
+		formCount += numDIALRecords;
+		for (uint32_t p = 0; p < numDIALRecords; ++p)
+		{
+			curRecord = (Sk::DIALRecord *)Records[p];
+			parentFormID = curRecord->formID;
+			collapser.Accept(parentFormID);
+			TopSize += curRecord->Write(writer, bMastersChanged, expander, collapser, Expanders);
+
+			numINFORecords = (uint32_t)curRecord->INFO.size();
+			if (numINFORecords)
+			{
+				writer.file_write(&type, 4);
+				uint32_t ChildrenSizePos = writer.file_tell();
+				writer.file_write(&ChildrenSize, 4); //Placeholder: will be overwritten with correct value later.
+				writer.file_write(&parentFormID, 4);
+				writer.file_write(&gType, 4);
+				writer.file_write(&stamp, 4);
+				writer.file_write(&unknown, 4);
+				++formCount;
+				ChildrenSize = 24;
+
+				formCount += numINFORecords;
+				for (uint32_t y = 0; y < numINFORecords; ++y)
+					ChildrenSize += curRecord->INFO[y]->Write(writer, bMastersChanged, expander, collapser, Expanders);
+				writer.file_write(ChildrenSizePos, &ChildrenSize, 4);
+				TopSize += ChildrenSize;
+			}
+		}
+		writer.file_write(TopSizePos, &TopSize, 4);
+		if (CloseMod)
+		{
+			info_pool.purge_with_destructors();
+			dial_pool.purge_with_destructors();
+		}
+		return formCount;
+	}
+
+};

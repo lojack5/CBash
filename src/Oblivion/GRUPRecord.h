@@ -148,19 +148,17 @@ class GRUPRecords<Ob::DIALRecord, RecType, AllocUnit, IsKeyedByEditorID>
                 unsigned char *dial_buffer = NULL;
                 if(numDIAL)
                     {
-                    dial_buffer = (unsigned char *)malloc(sizeof(Ob::DIALRecord) * numDIAL);
+                    dial_buffer = (unsigned char *)dial_pool.add_buffer(sizeof(Ob::DIALRecord) * numDIAL);
                     if(dial_buffer == 0)
                         throw std::bad_alloc();
-                    dial_pool.add_buffer(dial_buffer);
                     }
 
                 unsigned char *info_buffer = NULL;
                 if(numINFO)
                     {
-                    info_buffer = (unsigned char *)malloc(sizeof(Ob::INFORecord) * numINFO);
+                    info_buffer = (unsigned char *)info_pool.add_buffer(sizeof(Ob::INFORecord) * numINFO);
                     if(info_buffer == 0)
                         throw std::bad_alloc();
-                    info_pool.add_buffer(info_buffer);
                     }
 
                 last_record = orphaned_records = new Ob::DIALRecord();
@@ -413,46 +411,41 @@ class GRUPRecords<Ob::CELLRecord, RecType, AllocUnit, IsKeyedByEditorID>
                 unsigned char *cell_buffer = NULL;
                 if(numCELL)
                     {
-                    cell_buffer = (unsigned char *)malloc(sizeof(Ob::CELLRecord) * numCELL);
+                    cell_buffer = (unsigned char *)cell_pool.add_buffer(sizeof(Ob::CELLRecord) * numCELL);
                     if(cell_buffer == 0)
                         throw std::bad_alloc();
-                    cell_pool.add_buffer(cell_buffer);
                     }
 
                 unsigned char *achr_buffer = NULL;
                 if(numACHR)
                     {
-                    achr_buffer = (unsigned char *)malloc(sizeof(Ob::ACHRRecord) * numACHR);
+                    achr_buffer = (unsigned char *)achr_pool.add_buffer(sizeof(Ob::ACHRRecord) * numACHR);
                     if(achr_buffer == 0)
                         throw std::bad_alloc();
-                    achr_pool.add_buffer(achr_buffer);
                     }
 
                 unsigned char *acre_buffer = NULL;
                 if(numACRE)
                     {
-                    acre_buffer = (unsigned char *)malloc(sizeof(Ob::ACRERecord) * numACRE);
+                    acre_buffer = (unsigned char *)acre_pool.add_buffer(sizeof(Ob::ACRERecord) * numACRE);
                     if(acre_buffer == 0)
                         throw std::bad_alloc();
-                    acre_pool.add_buffer(acre_buffer);
                     }
 
                 unsigned char *refr_buffer = NULL;
                 if(numREFR)
                     {
-                    refr_buffer = (unsigned char *)malloc(sizeof(Ob::REFRRecord) * numREFR);
+                    refr_buffer = (unsigned char *)refr_pool.add_buffer(sizeof(Ob::REFRRecord) * numREFR);
                     if(refr_buffer == 0)
                         throw std::bad_alloc();
-                    refr_pool.add_buffer(refr_buffer);
                     }
 
                 unsigned char *pgrd_buffer = NULL;
                 if(numPGRD)
                     {
-                    pgrd_buffer = (unsigned char *)malloc(sizeof(Ob::PGRDRecord) * numPGRD);
+                    pgrd_buffer = (unsigned char *)pgrd_pool.add_buffer(sizeof(Ob::PGRDRecord) * numPGRD);
                     if(pgrd_buffer == 0)
                         throw std::bad_alloc();
-                    pgrd_pool.add_buffer(pgrd_buffer);
                     }
 
                 last_record = orphaned_records = new Ob::CELLRecord();
@@ -990,73 +983,65 @@ class GRUPRecords<Ob::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
                 unsigned char *wrld_buffer = NULL;
                 if(numWRLD)
                     {
-                    wrld_buffer = (unsigned char *)malloc(sizeof(Ob::WRLDRecord) * numWRLD);
+                    wrld_buffer = (unsigned char *)wrld_pool.add_buffer(sizeof(Ob::WRLDRecord) * numWRLD);
                     if(wrld_buffer == 0)
                         throw std::bad_alloc();
-                    wrld_pool.add_buffer(wrld_buffer);
                     }
 
                 unsigned char *road_buffer = NULL;
                 if(numROAD)
                     {
-                    road_buffer = (unsigned char *)malloc(sizeof(Ob::ROADRecord) * numROAD);
+                    road_buffer = (unsigned char *)road_pool.add_buffer(sizeof(Ob::ROADRecord) * numROAD);
                     if(road_buffer == 0)
                         throw std::bad_alloc();
-                    road_pool.add_buffer(road_buffer);
                     }
 
                 unsigned char *cell_buffer = NULL;
                 if(numCELL)
                     {
-                    cell_buffer = (unsigned char *)malloc(sizeof(Ob::CELLRecord) * numCELL);
+                    cell_buffer = (unsigned char *)cell_pool.add_buffer(sizeof(Ob::CELLRecord) * numCELL);
                     if(cell_buffer == 0)
                         throw std::bad_alloc();
-                    cell_pool.add_buffer(cell_buffer);
                     }
 
                 unsigned char *achr_buffer = NULL;
                 if(numACHR)
                     {
-                    achr_buffer = (unsigned char *)malloc(sizeof(Ob::ACHRRecord) * numACHR);
+                    achr_buffer = (unsigned char *)CELL.achr_pool.add_buffer(sizeof(Ob::ACHRRecord) * numACHR);
                     if(achr_buffer == 0)
                         throw std::bad_alloc();
-                    CELL.achr_pool.add_buffer(achr_buffer);
                     }
 
                 unsigned char *acre_buffer = NULL;
                 if(numACRE)
                     {
-                    acre_buffer = (unsigned char *)malloc(sizeof(Ob::ACRERecord) * numACRE);
+                    acre_buffer = (unsigned char *)CELL.acre_pool.add_buffer(sizeof(Ob::ACRERecord) * numACRE);
                     if(acre_buffer == 0)
                         throw std::bad_alloc();
-                    CELL.acre_pool.add_buffer(acre_buffer);
                     }
 
                 unsigned char *refr_buffer = NULL;
                 if(numREFR)
                     {
-                    refr_buffer = (unsigned char *)malloc(sizeof(Ob::REFRRecord) * numREFR);
+                    refr_buffer = (unsigned char *)CELL.refr_pool.add_buffer(sizeof(Ob::REFRRecord) * numREFR);
                     if(refr_buffer == 0)
                         throw std::bad_alloc();
-                    CELL.refr_pool.add_buffer(refr_buffer);
                     }
 
                 unsigned char *pgrd_buffer = NULL;
                 if(numPGRD)
                     {
-                    pgrd_buffer = (unsigned char *)malloc(sizeof(Ob::PGRDRecord) * numPGRD);
+                    pgrd_buffer = (unsigned char *)CELL.pgrd_pool.add_buffer(sizeof(Ob::PGRDRecord) * numPGRD);
                     if(pgrd_buffer == 0)
                         throw std::bad_alloc();
-                    CELL.pgrd_pool.add_buffer(pgrd_buffer);
                     }
 
                 unsigned char *land_buffer = NULL;
                 if(numLAND)
                     {
-                    land_buffer = (unsigned char *)malloc(sizeof(Ob::LANDRecord) * numLAND);
+                    land_buffer = (unsigned char *)land_pool.add_buffer(sizeof(Ob::LANDRecord) * numLAND);
                     if(land_buffer == 0)
                         throw std::bad_alloc();
-                    land_pool.add_buffer(land_buffer);
                     }
 
                 last_wrld_record = orphaned_wrld_records = new Ob::WRLDRecord();

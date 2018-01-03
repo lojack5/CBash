@@ -197,7 +197,7 @@ void Record::IsExtendedWinning(bool value)
 
 uint32_t Record::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribute)
     {
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * Record::GetField(FIELD_IDENTIFIERS, void **FieldValues)
@@ -236,29 +236,35 @@ bool Record::VisitFormIDs(FormIDOp &op)
     return false;
     }
 
+
+bool Record::ReadRecord(int32_t sizeDistance)
+{
+	if (IsLoaded() || IsChanged())
+		return false;
+	uint32_t recSize = *(uint32_t*)&recData[-sizeDistance];
+
+	//Check against the original record flags to see if it is compressed since the current flags may have changed
+	if ((*(uint32_t*)&recData[-sizeDistance + 4] & fIsCompressed) != 0)
+	{
+		unsigned char localBuffer[BUFFERSIZE];
+		uLongf expandedRecSize = *(uint32_t*)recData;
+		unsigned char *buffer = (expandedRecSize >= BUFFERSIZE) ? new unsigned char[expandedRecSize] : &localBuffer[0];
+		uncompress(buffer, (uLongf*)&expandedRecSize, &recData[4], recSize - 4);
+		ParseRecord(buffer, buffer + expandedRecSize, true);
+		if (buffer != &localBuffer[0])
+			delete[] buffer;
+	}
+	else
+		ParseRecord(recData, recData + recSize);
+
+	IsLoaded(true);
+	return true;
+}
+
 bool Record::Read()
-    {
-    if(IsLoaded() || IsChanged())
-        return false;
-    uint32_t recSize = *(uint32_t*)&recData[-16];
-
-    //Check against the original record flags to see if it is compressed since the current flags may have changed
-    if ((*(uint32_t*)&recData[-12] & fIsCompressed) != 0)
-        {
-        unsigned char localBuffer[BUFFERSIZE];
-        uint32_t expandedRecSize = *(uint32_t*)recData;
-        unsigned char *buffer = (expandedRecSize >= BUFFERSIZE) ? new unsigned char[expandedRecSize] : &localBuffer[0];
-        uncompress(buffer, (uLongf*)&expandedRecSize, &recData[4], recSize - 4);
-        ParseRecord(buffer, buffer + expandedRecSize, true);
-        if(buffer != &localBuffer[0])
-            delete [] buffer;
-        }
-    else
-        ParseRecord(recData, recData + recSize);
-
-    IsLoaded(true);
-    return true;
-    }
+{
+		return ReadRecord(16);
+}
 
 uint32_t Record::Write(FileWriter &writer, const bool &bMastersChanged, FormIDResolver &expander, FormIDResolver &collapser, std::vector<FormIDResolver *> &Expanders)
     {
@@ -615,28 +621,9 @@ FNVRecord::~FNVRecord()
     }
 
 bool FNVRecord::Read()
-    {
-    if(IsLoaded() || IsChanged())
-        return false;
-    uint32_t recSize = *(uint32_t*)&recData[-20];
-
-    //Check against the original record flags to see if it is compressed since the current flags may have changed
-    if ((*(uint32_t*)&recData[-16] & fIsCompressed) != 0)
-        {
-        unsigned char localBuffer[BUFFERSIZE];
-        uint32_t expandedRecSize = *(uint32_t*)recData;
-        unsigned char *buffer = (expandedRecSize >= BUFFERSIZE) ? new unsigned char[expandedRecSize] : &localBuffer[0];
-        uncompress(buffer, (uLongf*)&expandedRecSize, &recData[4], recSize - 4);
-        ParseRecord(buffer, buffer + expandedRecSize, true);
-        if(buffer != &localBuffer[0])
-            delete [] buffer;
-        }
-    else
-        ParseRecord(recData, recData + recSize);
-
-    IsLoaded(true);
-    return true;
-    }
+{
+	return ReadRecord(20);
+}
 
 uint32_t FNVRecord::Write(FileWriter &writer, const bool &bMastersChanged, FormIDResolver &expander, FormIDResolver &collapser, std::vector<FormIDResolver *> &Expanders)
     {
@@ -767,28 +754,9 @@ TES5Record::~TES5Record()
     }
 
 bool TES5Record::Read()
-    {
-    if(IsLoaded() || IsChanged())
-        return false;
-    uint32_t recSize = *(uint32_t*)&recData[-20];
-
-    //Check against the original record flags to see if it is compressed since the current flags may have changed
-    if ((*(uint32_t*)&recData[-16] & fIsCompressed) != 0)
-        {
-        unsigned char localBuffer[BUFFERSIZE];
-        uint32_t expandedRecSize = *(uint32_t*)recData;
-        unsigned char *buffer = (expandedRecSize >= BUFFERSIZE) ? new unsigned char[expandedRecSize] : &localBuffer[0];
-        uncompress(buffer, (uLongf*)&expandedRecSize, &recData[4], recSize - 4);
-        ParseRecord(buffer, buffer + expandedRecSize, true);
-        if(buffer != &localBuffer[0])
-            delete [] buffer;
-        }
-    else
-        ParseRecord(recData, recData + recSize);
-
-    IsLoaded(true);
-    return true;
-    }
+{
+		return ReadRecord(20);
+}
 
 uint32_t TES5Record::Write(FileWriter &writer, const bool &bMastersChanged, FormIDResolver &expander, FormIDResolver &collapser, std::vector<FormIDResolver *> &Expanders)
     {

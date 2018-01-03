@@ -35,9 +35,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
 #pragma once
-#include "..\..\Common.h"
-#include "..\..\GenericRecord.h"
-#include "..\SkyrimChunks.h"
+#include "../../Common.h"
+#include "../../GenericRecord.h"
+#include "../SkyrimChunks.h"
 
 namespace Sk {
 
@@ -53,7 +53,7 @@ class ARTORecord : public TES5Record // Action record
     public:
         StringRecord EDID; // Editor ID
         ReqSubRecord<GENOBND> OBND; // Bounds
-        SemiOptSubRecord<MODEL> MODL; // Model
+        MODEL MODL; // Model
         ReqSimpleSubRecord<uint32_t> DNAM; // Flags
 
         ARTORecord(unsigned char *_recData=NULL);
@@ -78,6 +78,7 @@ class ARTORecord : public TES5Record // Action record
         int32_t ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk=false);
         int32_t Unload();
         int32_t WriteRecord(FileWriter &writer);
+		char *GetEditorIDKey() { return EDID.value; }
 
         bool operator ==(const ARTORecord &other) const;
         bool operator !=(const ARTORecord &other) const;

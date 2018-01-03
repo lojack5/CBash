@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\..\Common.h"
-#include "..\SOUNRecord.h"
+#include "../../../Common.h"
+#include "../SOUNRecord.h"
 
 namespace FNV
 {
@@ -45,99 +45,99 @@ uint32_t SOUNRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
         case 0: //recType
             return GetType();
         case 1: //flags1
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 2: //fid
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 3: //versionControl1
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 4;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 4: //eid
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 5: //formVersion
-            return CB_UINT16_FIELD;
+            return UINT16_FIELD;
         case 6: //versionControl2
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 2;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 7: //boundX1
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 8: //boundY1
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 9: //boundZ1
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 10: //boundX2
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 11: //boundY2
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 12: //boundZ2
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 13: //soundPath
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 14: //chance
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 15: //minDistance
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 16: //maxDistance
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 17: //freqAdjustment
-            return CB_SINT8_FIELD;
+            return SINT8_FIELD;
         case 18: //unused1
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 1;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 19: //flags
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 20: //staticAtten
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 21: //stopTime
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 22: //startTime
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 23: //attenCurve
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_SINT16_ARRAY_FIELD;
+                    return SINT16_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 5;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 24: //reverb
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 25: //priority
-            return CB_SINT32_FIELD;
+            return SINT32_FIELD;
         case 26: //x
-            return CB_SINT32_FIELD;
+            return SINT32_FIELD;
         case 27: //y
-            return CB_SINT32_FIELD;
+            return SINT32_FIELD;
         default:
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         }
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * SOUNRecord::GetField(FIELD_IDENTIFIERS, void **FieldValues)

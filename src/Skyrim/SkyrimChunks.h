@@ -75,6 +75,21 @@ struct SKLVLOCOED
         bool operator !=(const SKLVLOCOED &other) const;
     };
 
+// CNTO/COED pair for NPC_ records
+struct SKCNTOCOED
+    {
+        ReqSubRecord<GENCNTO> CNTO;
+        OptSubRecord<GENCOED> COED;
+
+        bool IsGlobal() const;
+        bool IsRank() const;
+
+        void Write(FileWriter &writer);
+
+        bool operator ==(const SKCNTOCOED &other) const;
+        bool operator !=(const SKCNTOCOED &other) const;
+    };
+
 struct MODEL
     {
         StringRecord MODL;  // Model Filename
@@ -282,5 +297,175 @@ struct SKEffect
     bool operator !=(const SKEffect &other) const;
 };
 
+struct GENATTACK
+{
+	struct ATTACKDATA
+	{
+		
+        float damageMult;
+        float attackChance;
+        FORMID attackSpell;
+        uint32_t flags;
+        /*
+		0x01 - Ignore Weapon
+		0x02 - Bash Attack
+		0x04 - Power Attack
+		0x08 - Left Attack
+		0x10 - Rotating Attack
+        */
+
+        float attackAngle;
+        float strikeAngle;
+        float stagger;
+        FORMID attackType;
+        float knockdown;
+        float recoveryTime;
+        float fatigueMult;
+
+
+		bool operator ==(const ATTACKDATA &other) const;
+		bool operator !=(const ATTACKDATA &other) const;
+		
+	};
+    ReqSubRecord<ATTACKDATA> ATKD; // attack data
+	StringRecord ATKE; // attack event
+
+	void Write(FileWriter &writer);
+
+    bool operator ==(const GENATTACK &other) const;
+    bool operator !=(const GENATTACK &other) const;
+};
+
+struct GENPRKR
+{
+	FORMID  perk;
+	uint8_t   rank, unused1[3];
+
+	GENPRKR();
+	~GENPRKR();
+
+	void Write(FileWriter &writer);
+
+	bool operator ==(const GENPRKR &other) const;
+	bool operator !=(const GENPRKR &other) const;
+};
+
+
+struct XWCU {
+	float x, y, z, unk;
+
+	bool operator ==(const XWCU &other) const {
+		return (this->x == other.x &&
+			this->y == other.y &&
+			this->z == other.z);
+	}
+	bool operator !=(const XWCU &other) const {
+		return !(*this == other);
+	}
+};
+
+struct GenXLKR {
+	FORMID kywd;
+	FORMID formid;
+	bool operator ==(const GenXLKR &other) const {
+		return (this->kywd == other.kywd &&
+			this->formid == other.formid);
+	}
+	bool operator !=(const GenXLKR &other) const {
+		return !(*this == other);
+	}
+};
+
+struct GenXLOC {
+	uint32_t difficulty;
+	FORMID key;
+	uint32_t flags;
+	uint8_t zeros[8];
+
+	bool operator ==(const GenXLOC &other) const {
+		return (this->difficulty == other.difficulty &&
+			this->key == other.key &&
+			this->flags == other.flags);
+	}
+	bool operator !=(const GenXLOC &other) const {
+		return !(*this == other);
+	}
+};
+
+/**
+* When not lazy to wait for compilation - move to common
+*/
+struct COORDINATES {
+	float x, y, z;
+	bool operator ==(const COORDINATES &other) const {
+		return (this->x == other.x &&
+			this->y == other.y &&
+			this->z == other.z
+			);
+	}
+	bool operator !=(const COORDINATES &other) const {
+		return !(*this == other);
+	}
+};
+
+struct ContainerItems {
+	FORMID itemID;
+	uint32_t itemCount;
+
+	bool operator ==(const ContainerItems  &other) const {
+
+		return (
+			this->itemID == other.itemID &&
+			this->itemCount == other.itemCount);
+
+	}
+
+	bool operator !=(const ContainerItems &other) const {
+		return !(*this == other);
+	}
+};
+
+
+struct EffectItem {
+	float magnitude;
+	uint32_t areaOfEffect;
+	uint32_t duration;
+
+	bool operator == (const EffectItem &other) const {
+		return (
+			this->magnitude == other.magnitude &&
+			this->areaOfEffect == other.areaOfEffect &&
+			this->duration == other.duration
+		);
+	}
+	bool operator != (const EffectItem &other) const {
+		return !(*this == other);
+	}
+};
+
+struct SpellEffect {
+
+	ReqSimpleSubRecord<FORMID> EFID;
+	ReqSubRecord<EffectItem> EFIT;
+	UnorderedSparseArray<SKCTDA *> CTDA;
+
+	bool operator == (const SpellEffect &other) const {
+		return (
+			this->EFID == other.EFID &&
+			this->EFIT == other.EFIT &&
+			this->CTDA == other.CTDA 
+			);
+	}
+	bool operator != (const SpellEffect &other) {
+		return !(*this == other);
+	}
+
+	void Write(FileWriter &writer)
+	{
+		WRITE(EFID);
+		WRITE(EFIT);
+		WRITE(CTDA);
+	}
+};
 
 } // namespace Sk

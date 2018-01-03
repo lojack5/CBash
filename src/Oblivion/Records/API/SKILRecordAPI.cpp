@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\..\Common.h"
-#include "..\SKILRecord.h"
+#include "../../../Common.h"
+#include "../SKILRecord.h"
 
 namespace Ob
 {
@@ -45,41 +45,41 @@ uint32_t SKILRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
         case 0: //recType
             return GetType();
         case 1: //flags1
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 2: //fid
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 3: //flags2
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 4: //eid
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 5: //skill
-            return CB_SINT32_FIELD;
+            return SINT32_FIELD;
         case 6: //description
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 7: //iconPath
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 8: //action
-            return CB_SINT32_FIELD;
+            return SINT32_FIELD;
         case 9: //attribute
-            return CB_SINT32_FIELD;
+            return SINT32_FIELD;
         case 10: //specialization
-            return CB_UINT32_FIELD;
+            return UINT32_FIELD;
         case 11: //use0
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 12: //use1
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 13: //apprentice
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 14: //journeyman
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 15: //expert
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 16: //master
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         default:
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         }
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * SKILRecord::GetField(FIELD_IDENTIFIERS, void **FieldValues)

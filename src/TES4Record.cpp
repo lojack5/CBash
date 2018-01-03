@@ -35,7 +35,7 @@
  * ***** END LICENSE BLOCK ***** */
 #include "Common.h"
 #include "TES4Record.h"
-#include "Skyrim\SkyrimCommon.h" // StringLookups
+#include "Skyrim/SkyrimCommon.h" // StringLookups
 #include "zlib.h"
 
 TES4Record::TES4HEDR::TES4HEDR(float _version, uint32_t _numRecords, uint32_t _nextObject):
@@ -232,7 +232,7 @@ int32_t TES4Record::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
             //printer("FileName = %s\n", FileName);
             printer("  TES4: %08X - Unknown subType = %04x [%c%c%c%c]\n", formID, subType, (subType >> 0) & 0xFF, (subType >> 8) & 0xFF, (subType >> 16) & 0xFF, (subType >> 24) & 0xFF);
             printer("  Size = %i\n", subSize);
-            printer("  CurPos = %04x\n\n", buffer - 6);
+            printer("  CurPos = %08x\n\n", buffer - 6);
             buffer = end_buffer;
             break;
         }
@@ -251,7 +251,7 @@ int32_t TES4Record::WriteRecord(FileWriter &writer)
     uint8_t DATA[8] = {0};
     switch(whichGame)
     {
-    case CB_OBLIVION:
+    case eIsOblivion:
         WRITE(HEDR);
         WRITE(OFST);
         WRITE(DELE);
@@ -263,10 +263,10 @@ int32_t TES4Record::WriteRecord(FileWriter &writer)
             writer.record_write_subrecord(REV32(DATA), &DATA[0], sizeof(DATA));
         }
         break;
-    case CB_FALLOUT3:
+    case eIsFallout3:
         printer("TES4Record::WriteRecord: Error - Unable to write TES4 record. Fallout 3 support not yet implemented.\n");
         return -1;
-    case CB_FALLOUT_NEW_VEGAS:
+    case eIsFalloutNewVegas:
         WRITE(HEDR);
         WRITE(OFST);
         WRITE(DELE);
@@ -280,7 +280,7 @@ int32_t TES4Record::WriteRecord(FileWriter &writer)
         WRITE(ONAM);
         WRITE(SCRN);
         break;
-    case CB_SKYRIM:
+    case eIsSkyrim:
         WRITE(HEDR);
         WRITE(OFST);
         WRITE(DELE);
@@ -301,6 +301,16 @@ int32_t TES4Record::WriteRecord(FileWriter &writer)
     return -1;
 }
 
+bool TES4Record::Read()
+{
+	if (whichGame == eIsFalloutNewVegas)
+		return ReadRecord(20);
+	else if (whichGame == eIsSkyrim)
+		return ReadRecord(20);
+	else
+		return ReadRecord(16);
+}
+
 uint32_t TES4Record::Write(FileWriter &writer, const bool &bMastersChanged, FormIDResolver &expander, FormIDResolver &collapser, std::vector<FormIDResolver *> &Expanders)
 {
     IsCompressed(false);
@@ -319,12 +329,12 @@ uint32_t TES4Record::Write(FileWriter &writer, const bool &bMastersChanged, Form
     writer.file_write(&formID, 4);
     writer.file_write(&flagsUnk, 4);
 
-    if(whichGame == CB_FALLOUT_NEW_VEGAS)
+    if(whichGame == eIsFalloutNewVegas)
     {
         writer.file_write(&formVersion, 2);
         writer.file_write(&versionControl2[0], 2);
     }
-    else if(whichGame == CB_SKYRIM)
+    else if(whichGame == eIsSkyrim)
     {
         writer.file_write(&formVersion, 2);
         writer.file_write(&versionControl2[0], 2);
@@ -338,9 +348,9 @@ uint32_t TES4Record::Write(FileWriter &writer, const bool &bMastersChanged, Form
     else
         Unload();
 
-    if(whichGame == CB_FALLOUT_NEW_VEGAS)
+    if(whichGame == eIsFalloutNewVegas)
         return recSize + 24;
-    else if(whichGame == CB_SKYRIM)
+    else if(whichGame == eIsSkyrim)
         return recSize + 24;
     else
         return recSize + 20;

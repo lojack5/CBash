@@ -40,11 +40,12 @@ local.properties
 *.suo
 *.user
 *.sln.docstates
+*.vcxproj
 
 # Build results
 
-[Dd]ebug*/
-[Rr]elease*/
+[Dd]ebug/
+[Rr]elease/
 x64/
 build/
 [Bb]in/

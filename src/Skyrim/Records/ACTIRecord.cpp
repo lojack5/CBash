@@ -34,7 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 #include "ACTIRecord.h"
-#include "..\..\ModFile.h"
+#include "../../ModFile.h"
 
 namespace Sk
 {
@@ -76,8 +76,7 @@ bool ACTIRecord::VisitFormIDs(FormIDOp &op)
     if(!IsLoaded())
         return false;
 
-    if (MODL.IsLoaded())
-        MODL->Textures.VisitFormIDs(op);
+    MODL.Textures.VisitFormIDs(op);
 
     if (Destructable.IsLoaded())
         Destructable->VisitFormIDs(op);
@@ -145,16 +144,13 @@ int32_t ACTIRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
             FULL.Read(buffer, subSize, CompressedOnDisk, LookupStrings);
             break;
         case REV32(MODL):
-            MODL.Load();
-            MODL->MODL.Read(buffer, subSize, CompressedOnDisk);
+            MODL.MODL.Read(buffer, subSize, CompressedOnDisk);
             break;
         case REV32(MODT):
-            MODL.Load();
-            MODL->MODT.Read(buffer, subSize, CompressedOnDisk);
+            MODL.MODT.Read(buffer, subSize, CompressedOnDisk);
             break;
         case REV32(MODS):
-            MODL.Load();
-            MODL->Textures.Read(buffer, subSize);
+            MODL.Textures.Read(buffer, subSize);
             break;
         case REV32(DEST):
             Destructable.Load();
@@ -220,7 +216,7 @@ int32_t ACTIRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
             printer("  ACTI: %08X - Unknown subType = %04x\n", formID, subType);
             CBASH_CHUNK_DEBUG
             printer("  Size = %i\n", subSize);
-            printer("  CurPos = %04x\n\n", buffer - 6);
+            printer("  CurPos = %08x\n\n", buffer - 6);
             buffer = end_buffer;
             break;
         }
@@ -236,7 +232,6 @@ int32_t ACTIRecord::Unload()
     VMAD.Unload();
     OBND.Unload();
     FULL.Unload();
-    MODL.Unload();
     Destructable.Unload();
     KWDA.Unload();
     PNAM.Unload();

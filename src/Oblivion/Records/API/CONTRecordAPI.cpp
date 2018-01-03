@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\..\Common.h"
-#include "..\CONTRecord.h"
+#include "../../../Common.h"
+#include "../CONTRecord.h"
 
 namespace Ob
 {
@@ -45,71 +45,71 @@ uint32_t CONTRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
         case 0: //recType
             return GetType();
         case 1: //flags1
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 2: //fid
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 3: //flags2
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 4: //eid
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 5: //full
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 6: //modPath
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 7: //modb
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 8: //modt_p
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return MODL.IsLoaded() ? MODL->MODT.GetSize() : 0;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 9: //script
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 10: //items
             if(ListFieldID == 0) //items
                 {
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return (uint32_t)CNTO.value.size();
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
                 }
 
             if(ListIndex >= CNTO.value.size())
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             switch(ListFieldID)
                 {
                 case 1: //item
-                    return CB_FORMID_FIELD;
+                    return FORMID_FIELD;
                 case 2: //count
-                    return CB_SINT32_FIELD;
+                    return SINT32_FIELD;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 11: //flags
-            return CB_UINT8_FLAG_FIELD;
+            return UINT8_FLAG_FIELD;
         case 12: //weight
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 13: //soundOpen
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 14: //soundClose
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         default:
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         }
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * CONTRecord::GetField(FIELD_IDENTIFIERS, void **FieldValues)

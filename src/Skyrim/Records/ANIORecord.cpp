@@ -98,12 +98,10 @@ int32_t ANIORecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
             EDID.Read(buffer, subSize, CompressedOnDisk);
             break;
         case REV32(MODL):
-            MODL.Load();
-            MODL->MODL.Read(buffer, subSize, CompressedOnDisk);
+            MODL.MODL.Read(buffer, subSize, CompressedOnDisk);
             break;
         case REV32(MODT):
-            MODL.Load();
-            MODL->MODT.Read(buffer, subSize, CompressedOnDisk);
+            MODL.MODT.Read(buffer, subSize, CompressedOnDisk);
             break;
         case REV32(BNAM):
             BNAM.Read(buffer, subSize, CompressedOnDisk);
@@ -113,7 +111,7 @@ int32_t ANIORecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
             printer("  LVLN: %08X - Unknown subType = %04x\n", formID, subType);
             CBASH_CHUNK_DEBUG
             printer("  Size = %i\n", subSize);
-            printer("  CurPos = %04x\n\n", buffer - 6);
+            printer("  CurPos = %08x\n\n", buffer - 6);
             buffer = end_buffer;
             break;
         }
@@ -126,7 +124,6 @@ int32_t ANIORecord::Unload()
     IsChanged(false);
     IsLoaded(false);
     EDID.Unload();
-    MODL.Unload();
     BNAM.Unload();
     return 1;
 }
@@ -134,8 +131,8 @@ int32_t ANIORecord::Unload()
 int32_t ANIORecord::WriteRecord(FileWriter &writer)
 {
     WRITE(EDID);
-    WRITE(MODL);
-    WRITE(BNAM);
+	MODL.Write(writer);
+	WRITE(BNAM);
     return -1;
 }
 

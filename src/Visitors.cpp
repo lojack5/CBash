@@ -137,19 +137,21 @@ bool FormIDSwapper::AcceptMGEF(uint32_t &curMgefCode)
     return stop;
     }
 
-RecordIndexer::RecordIndexer(ModFile *_curModFile, EditorID_Map &_EditorID_Map, FormID_Map &_FormID_Map):
+RecordIndexer::RecordIndexer(ModFile *_curModFile, EditorID_Map &_EditorID_Map, FormID_Map &_FormID_Map, EditorID_Map &EDIDIndex):
     RecordOp(),
     curModFile(_curModFile),
     EditorID_ModFile_Record(_EditorID_Map),
-    FormID_ModFile_Record(_FormID_Map)
+    FormID_ModFile_Record(_FormID_Map),
+	EDIDIndex(EDIDIndex)
     {
     //
     }
 
-RecordIndexer::RecordIndexer(EditorID_Map &_EditorID_Map, FormID_Map &_FormID_Map):
+RecordIndexer::RecordIndexer(EditorID_Map &_EditorID_Map, FormID_Map &_FormID_Map, EditorID_Map &EDIDIndex):
     RecordOp(),
     EditorID_ModFile_Record(_EditorID_Map),
-    FormID_ModFile_Record(_FormID_Map)
+    FormID_ModFile_Record(_FormID_Map),
+	EDIDIndex(EDIDIndex)
     {
     //
     }
@@ -165,6 +167,11 @@ bool RecordIndexer::Accept(Record *&curRecord)
         FormID_ModFile_Record.insert(std::make_pair(curRecord->formID,curRecord));
     if(curRecord->IsKeyedByEditorID() && curRecord->GetEditorIDKey() != NULL) //Should only be null on deleted records (they'll get indexed after being undeleted)
         EditorID_ModFile_Record.insert(std::make_pair(curRecord->GetEditorIDKey(),curRecord));
+
+	if (curRecord->GetEditorIDKey() != NULL) {
+		EDIDIndex.insert(std::make_pair(curRecord->GetEditorIDKey(), curRecord));
+	}
+
     return false;
     }
 

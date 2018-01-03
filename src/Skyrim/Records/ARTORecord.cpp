@@ -34,7 +34,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\Common.h"
+#include "../../Common.h"
 #include "ARTORecord.h"
 
 namespace Sk {
@@ -133,12 +133,10 @@ int32_t ARTORecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                     OBND.Read(buffer, subSize);
                     break;
                 case REV32(MODL):
-                    MODL.Load();
-                    MODL->MODL.Read(buffer, subSize, CompressedOnDisk);
+                    MODL.MODL.Read(buffer, subSize, CompressedOnDisk);
                     break;
                 case REV32(MODT):
-                    MODL.Load();
-                    //MODL->MODT.Read(buffer, subSize, CompressedOnDisk);
+                    MODL.MODT.Read(buffer, subSize, CompressedOnDisk);
                     break;
                 case REV32(DNAM):
                     DNAM.Read(buffer, subSize);
@@ -148,7 +146,7 @@ int32_t ARTORecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                     printer("  AARTO: %08X - Unknown subType = %04x\n", formID, subType);
                     CBASH_CHUNK_DEBUG
                     printer("  Size = %i\n", subSize);
-                    printer("  CurPos = %04x\n", buffer - 6);
+                    printer("  CurPos = %08x\n", buffer - 6);
                     buffer = end_buffer;
                     break;
             }
@@ -162,7 +160,6 @@ int32_t ARTORecord::Unload()
         IsChanged(false);
         EDID.Unload();
         OBND.Unload();
-        MODL.Unload();
         DNAM.Unload();
         return 1;
     }
@@ -171,8 +168,8 @@ int32_t ARTORecord::WriteRecord(FileWriter &writer)
     {
         WRITE(EDID);
         WRITE(OBND);
-        WRITE(MODL);
-        WRITE(DNAM);
+		MODL.Write(writer);
+		WRITE(DNAM);
         return -1;
     }
 

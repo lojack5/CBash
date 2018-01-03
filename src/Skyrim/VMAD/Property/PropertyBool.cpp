@@ -52,6 +52,8 @@ void PropertyBool::Read(unsigned char *&buffer, const int16_t &version, const in
 
 void PropertyBool::Write(FileWriter &writer)
 {
+	//Workaround for a strange bug - type is resetted to 0x00 even though we explicitly set it to 0x01.
+	this->type = eBool;
     Property::Write(writer);
     uint8_t b = value ? 1 : 0;
     writer.record_write(&b, sizeof(b));
@@ -90,7 +92,7 @@ PropertyBool & PropertyBool::operator = (const PropertyBool &other)
 uint32_t PropertyBoolArray::GetSize() const
 {
     // common + itemCount + items
-    return Property::GetSize() + sizeof(uint32_t) + (size() * sizeof(uint8_t));
+    return Property::GetSize() + sizeof(uint32_t) + ((uint32_t)size() * sizeof(uint8_t));
 }
 
 void PropertyBoolArray::Read(unsigned char *&buffer, const int16_t &version, const int16_t &objFormat, const bool &CompressedOnDisk)
@@ -109,9 +111,9 @@ void PropertyBoolArray::Read(unsigned char *&buffer, const int16_t &version, con
 void PropertyBoolArray::Write(FileWriter &writer)
 {
     Property::Write(writer);
-    uint32_t count = size();
-    writer.record_write(&count, sizeof(count));
-    for (uint32_t i = 0; i < count; ++i)
+    size_t count = size();
+    writer.record_write(&count, sizeof(uint32_t));
+    for (size_t i = 0; i < count; ++i)
     {
         uint8_t b = (*this)[i] ? 1 : 0;
         writer.record_write(&b, sizeof(b));

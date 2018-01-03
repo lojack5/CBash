@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\..\Common.h"
-#include "..\ASPCRecord.h"
+#include "../../../Common.h"
+#include "../ASPCRecord.h"
 
 namespace FNV
 {
@@ -45,69 +45,69 @@ uint32_t ASPCRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
         case 0: //recType
             return GetType();
         case 1: //flags1
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 2: //fid
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 3: //versionControl1
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 4;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 4: //eid
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 5: //formVersion
-            return CB_UINT16_FIELD;
+            return UINT16_FIELD;
         case 6: //versionControl2
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 2;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 7: //boundX1
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 8: //boundY1
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 9: //boundZ1
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 10: //boundX2
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 11: //boundY2
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 12: //boundZ2
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 13: //dawnOrDefaultLoop
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 14: //afternoon
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 15: //dusk
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 16: //night
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 17: //walla
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 18: //wallaTriggerCount
-            return CB_UINT32_FIELD;
+            return UINT32_FIELD;
         case 19: //regionSound
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 20: //environmentType
-            return CB_UINT32_TYPE_FIELD;
+            return UINT32_TYPE_FIELD;
         case 21: //spaceType
-            return CB_UINT32_TYPE_FIELD;
+            return UINT32_TYPE_FIELD;
         default:
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         }
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * ASPCRecord::GetField(FIELD_IDENTIFIERS, void **FieldValues)

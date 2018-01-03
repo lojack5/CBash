@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\..\Common.h"
-#include "..\IDLERecord.h"
+#include "../../../Common.h"
+#include "../IDLERecord.h"
 
 namespace Ob
 {
@@ -47,79 +47,79 @@ uint32_t IDLERecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
         case 0: //recType
             return GetType();
         case 1: //flags1
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 2: //fid
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 3: //flags2
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 4: //eid
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 5: //modPath
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 6: //modb
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 7: //modt_p
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return MODL.IsLoaded() ? MODL->MODT.GetSize() : 0;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 8: //conditions
             if(ListFieldID == 0) //conditions
                 {
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return (uint32_t)CTDA.value.size();
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
                 }
 
             if(ListIndex >= CTDA.value.size())
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             switch(ListFieldID)
                 {
                 case 1: //operType
-                    return CB_UINT8_FLAG_TYPE_FIELD;
+                    return UINT8_FLAG_TYPE_FIELD;
                 case 2: //unused1
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_UINT8_ARRAY_FIELD;
+                            return UINT8_ARRAY_FIELD;
                         case 1: //fieldSize
                             return 3;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 case 3: //compValue
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_FORMID_OR_FLOAT32_FIELD;
+                            return FORMID_OR_FLOAT32_FIELD;
                         case 2: //WhichType
-                            return CTDA.value[ListIndex]->IsUseGlobal() ? CB_FORMID_FIELD :  CB_FLOAT32_FIELD;
+                            return CTDA.value[ListIndex]->IsUseGlobal() ? FORMID_FIELD :  FLOAT32_FIELD;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 case 4: //ifunc
-                    return CB_UINT32_TYPE_FIELD;
+                    return UINT32_TYPE_FIELD;
                 case 5: //param1
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_UNKNOWN_OR_FORMID_OR_UINT32_FIELD;
+                            return UNKNOWN_OR_FORMID_OR_UINT32_FIELD;
                         case 2: //WhichType
                             {
                             Function_Arguments_Iterator curCTDAFunction = Function_Arguments.find(CTDA.value[ListIndex]->ifunc);
@@ -129,23 +129,23 @@ uint32_t IDLERecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
                                 switch(CTDAFunction.first)
                                     {
                                     case eFORMID:
-                                        return CB_FORMID_FIELD;
+                                        return FORMID_FIELD;
                                     case eUINT32:
-                                        return CB_UINT32_FIELD;
+                                        return UINT32_FIELD;
                                     default:
-                                        return CB_UNKNOWN_FIELD;
+                                        return UNKNOWN_FIELD;
                                     }
                                 }
                             }
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
                 case 6: //param2
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_UNKNOWN_OR_FORMID_OR_UINT32_FIELD;
+                            return UNKNOWN_OR_FORMID_OR_UINT32_FIELD;
                         case 2: //WhichType
                             {
                             Function_Arguments_Iterator curCTDAFunction = Function_Arguments.find(CTDA.value[ListIndex]->ifunc);
@@ -155,42 +155,42 @@ uint32_t IDLERecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
                                 switch(CTDAFunction.second)
                                     {
                                     case eFORMID:
-                                        return CB_FORMID_FIELD;
+                                        return FORMID_FIELD;
                                     case eUINT32:
-                                        return CB_UINT32_FIELD;
+                                        return UINT32_FIELD;
                                     default:
-                                        return CB_UNKNOWN_FIELD;
+                                        return UNKNOWN_FIELD;
                                     }
                                 }
                             }
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
                 case 7: //unused2
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_UINT8_ARRAY_FIELD;
+                            return UINT8_ARRAY_FIELD;
                         case 1: //fieldSize
                             return 4;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 9: //group
-            return CB_UINT8_FLAG_TYPE_FIELD;
+            return UINT8_FLAG_TYPE_FIELD;
         case 10: //parent
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 11: //prevId
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         default:
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         }
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * IDLERecord::GetField(FIELD_IDENTIFIERS, void **FieldValues)

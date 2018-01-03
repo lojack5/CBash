@@ -125,9 +125,9 @@ void FragmentPERK::Write(FileWriter &writer) const
 {
     writer.record_write(&unk1, sizeof(unk1));
     fileName.Write16(writer);
-    uint16_t count = static_cast<uint16_t>(fragments.size());
+	uint16_t count = (uint16_t)fragments.size();
     writer.record_write(&count, sizeof(count));
-    for (uint16_t i = 0; i < count; ++i)
+    for (size_t i = 0; i < count; ++i)
     {
         writer.record_write(&(fragments[i]->index), sizeof(uint16_t));
         writer.record_write(&(fragments[i]->unk1), sizeof(uint16_t));

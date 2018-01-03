@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\..\Common.h"
-#include "..\LVSPRecord.h"
+#include "../../../Common.h"
+#include "../LVSPRecord.h"
 
 namespace Ob
 {
@@ -45,79 +45,79 @@ uint32_t LVSPRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
         case 0: //recType
             return GetType();
         case 1: //flags1
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 2: //fid
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 3: //flags2
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 4: //eid
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 5: //chanceNone
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 6: //flags
-            return CB_UINT8_FLAG_FIELD;
+            return UINT8_FLAG_FIELD;
         case 7: //script
             //This field and the template field do not exist on LVLI or LVSP records
             //Otherwise, they are identical
             //This is simply a placeholder so that LVLC, LVLI, and LVSP may be read using the same FieldID's
-            return CB_MISSING_FIELD;
+            return MISSING_FIELD;
         case 8: //template
             //This field and the script field do not exist on LVLI or LVSP records
             //Otherwise, they are identical
             //This is simply a placeholder so that LVLC, LVLI, and LVSP may be read using the same FieldID's
-            return CB_MISSING_FIELD;
+            return MISSING_FIELD;
         case 9: //entries
             if(ListFieldID == 0) //entries
                 {
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return (uint32_t)Entries.value.size();
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
                 }
 
             if(ListIndex >= Entries.value.size())
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             switch(ListFieldID)
                 {
                 case 1: //level
-                    return CB_SINT16_FIELD;
+                    return SINT16_FIELD;
                 case 2: //unused1
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_UINT8_ARRAY_FIELD;
+                            return UINT8_ARRAY_FIELD;
                         case 1: //fieldSize
                             return 2;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
                 case 3: //listId
-                    return CB_FORMID_FIELD;
+                    return FORMID_FIELD;
                 case 4: //count
-                    return CB_SINT16_FIELD;
+                    return SINT16_FIELD;
                 case 5: //unused2
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_UINT8_ARRAY_FIELD;
+                            return UINT8_ARRAY_FIELD;
                         case 1: //fieldSize
                             return 2;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
         default:
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         }
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * LVSPRecord::GetField(FIELD_IDENTIFIERS, void **FieldValues)

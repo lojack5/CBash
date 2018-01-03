@@ -34,9 +34,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
 #pragma once
-#include "..\..\Common.h"
-#include "..\..\GenericRecord.h"
-#include "..\..\Allocator.h"
+#include "../../Common.h"
+#include "../../GenericRecord.h"
+#include "../../Allocator.h"
 #include "CELLRecord.h"
 //#include "ROADRecord.h"
 #include <vector>
@@ -68,7 +68,6 @@ class WRLDRecord : public Record
         OptSimpleSubRecord<FORMID> CNAM; //Climate
         OptSimpleSubRecord<FORMID/*, 0x18*/> NAM2; //Water
         SemiOptSimpleFloatSubRecord<flt_0> NAM4; //LOD Water Height
-        OptZeroSubRecord<GENDNAM> DNAM; //Land Data
         StringRecord ICON; //Large Icon Filename
         SemiOptSubRecord<GENMNAM> MNAM; //Map Data
         ReqSimpleSubRecord<uint8_t, fSmallWorld> DATA; //Flags

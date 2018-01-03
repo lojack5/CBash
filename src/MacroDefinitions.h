@@ -38,15 +38,23 @@
 
 #include "Types.h"
 
-#ifdef _M_X64
-    //#pragma message("Compiling with x64 compatibility")
-    #define CBASH_X64_COMPATIBILITY
-    //#error "CBASH is untested as a x64 build"
-#elif defined(_M_IX86)
-    //#pragma message("Compiling with x86 compatibility")
-    #define CBASH_X64_COMPATIBILITY
+#ifdef _WIN32
+
+	#ifdef _M_X64
+		//#pragma message("Compiling with x64 compatibility")
+		#define CBASH_X64_COMPATIBILITY
+		//#error "CBASH is untested as a x64 build"
+	#elif defined(_M_IX86)
+		//#pragma message("Compiling with x86 compatibility")
+		#define CBASH_X64_COMPATIBILITY
+	#else
+		#error "Unknown platform"
+	#endif
+
 #else
-    #error "Unknown platform"
+	#if __x86_64__ || __ppc64__
+		#define CBASH_X64_COMPATIBILITY
+	#endif
 #endif
 
 //#define CBASH_X64_COMPATIBILITY
@@ -57,7 +65,7 @@
 #undef CBASH_CHUNK_LCHECK
 #define CBASH_DEBUG_VARS
 
-#define CBASH_DEBUG_CHUNK
+//#define CBASH_DEBUG_CHUNK
 
 //Peek into the data before and after to see what's up
 #ifdef CBASH_DEBUG_CHUNK
@@ -240,7 +248,6 @@
     #define VATSFUNCTIONSIZE 18
 #endif
 
-typedef cb_formid_t FORMID;
 typedef uint32_t MGEFCODE;
 typedef uint32_t ACTORVALUE;
 typedef uint32_t FORMID_OR_UINT32;
@@ -275,32 +282,41 @@ typedef Record ** RECORDIDARRAY;
 #define VSDPRINT(_var)       DPRINT(#_var " = %s",_var)
 #define VDDPRINT(_var)       DPRINT(#_var " = %d",_var)
 
-
+//Stringify-based, probably slower, but charsify is not supported on other compilers than MSVC
+#ifdef _WIN32
 #define REV32(x)            ((#@x & 0x000000FFU) << 24 | (#@x & 0x0000FF00U) << 8 | (#@x & 0x00FF0000U) >> 8 | (#@x & 0xFF000000U) >> 24)
+#else
+#define REV32(x)            (#x[3] << 24 | #x[2] << 16 | #x[1] << 8 | #x[0])
+#endif
+
 #define WRITE(x)            x.Write(REV32(x), writer)
 #define WRITEREQ(x)         x.ReqWrite(REV32(x), writer)
 #define WRITEAS(x,y)        x.Write(REV32(y), writer)
 #define WRITEEMPTY(x)       writer.record_write_subheader(REV32(x), 0);
 
 // 3 methods to flip bits conditionally
-#ifdef BITSET_BRANCHING // slowest method
-    #define SETBIT(var,mask,set) var = set ? (var | mask) : (var & ~mask)
-#elif defined BITSET_NO_SUPERSCALAR
-    // Uses more operations, but avoids branching
-    // Usually about 5-10% faster than branching
-    #define SETBIT(var,mask,set) \
-        __pragma(warning(push)) \
-        __pragma(warning(disable:4804)) \
-        var ^= (-set ^ var) & mask \
-        __pramga(warning(pop))
-#else // Superscalar CPU method
-      // Pretty much all modern CPU's are superscalar
-      // About 16% faster than the non-branching method
-    #define SETBIT(var,mask,set) \
-        __pragma(warning(push)) \
-        __pragma(warning(disable:4804)) \
-        var = (var & ~mask) | (-set & mask) \
-        __pragma(warning(pop))
+#ifdef _WIN32
+	#ifdef BITSET_BRANCHING // slowest method
+		#define SETBIT(var,mask,set) var = set ? (var | mask) : (var & ~mask)
+	#elif defined BITSET_NO_SUPERSCALAR
+		// Uses more operations, but avoids branching
+		// Usually about 5-10% faster than branching
+		#define SETBIT(var,mask,set) \
+			__pragma(warning(push)) \
+			__pragma(warning(disable:4804)) \
+			var ^= (-set ^ var) & mask \
+			__pramga(warning(pop))
+	#else // Superscalar CPU method
+		// Pretty much all modern CPU's are superscalar
+		// About 16% faster than the non-branching method
+		#define SETBIT(var,mask,set) \
+			__pragma(warning(push)) \
+			__pragma(warning(disable:4804)) \
+			var = (var & ~mask) | (-set & mask) \
+			__pragma(warning(pop))
+	#endif
+#else
+	#define SETBIT(var,mask,set) var = set ? (var | mask) : (var & ~mask)
 #endif
 
 // Quick macro to debug struct sizes at compile time
@@ -312,3 +328,4 @@ typedef Record ** RECORDIDARRAY;
 // fill in the fields.
 #define SIZE_CHECK(type, size) \
     SIZE_CHECK_MSG(type, size, #type " must be " #size " bytes")
+
