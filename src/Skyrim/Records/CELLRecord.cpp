@@ -77,6 +77,8 @@ CELLRecord::CELLRecord(CELLRecord *srcRecord):
     if(srcRecord == NULL || !srcRecord->IsChanged())
         return;
 
+    ACHR = srcRecord->ACHR;
+    REFR = srcRecord->REFR;
     EDID = srcRecord->EDID;
     FULL = srcRecord->FULL;
     DATA = srcRecord->DATA;

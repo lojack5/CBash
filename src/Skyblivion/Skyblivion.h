@@ -220,6 +220,7 @@ namespace Skyblivion {
 		std::map<std::string, FORMID> *prepareSkyblivionEdidMap();
 
 		void insertToEdidMap(std::string edid, FORMID formid);
+		FORMID findRecordFormidByEDID(std::string edid);
 		
 		TES4File *getOblivionFile() { return (TES4File*)this->oblivionCollection.ModFileByName("Oblivion.esm"); }
 		TES5File *getSkyrimFile() { return (TES5File*)this->skyrimCollection.ModFileByName("Skyrim.esm"); }
