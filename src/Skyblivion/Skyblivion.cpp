@@ -75,6 +75,13 @@ namespace Skyblivion {
 		this->edidMap->insert(std::pair<std::string,FORMID>(edid,formid));
 	}
 
+	FORMID SkyblivionConverter::findRecordFormidByEDID(std::string edid) {
+		if (this->edidMap->find(edid) != this->edidMap->end())
+			return (*this->edidMap)[edid];
+
+		return NULL;
+	}
+
 	Record * SkyblivionConverter::findRecordByFormidGeneric(FORMID_OR_UINT32 formid)
 	{
 		uint32_t count = this->oblivionCollection.FormID_ModFile_Record.count(formid);
