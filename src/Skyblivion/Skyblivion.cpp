@@ -2508,6 +2508,44 @@ namespace Skyblivion {
 
 		case 14:
 		case 277: {
+			std::vector<FORMID_OR_UINT32> indexMap(72, 0xA5);
+
+			indexMap[8] = 0x18; //Health
+			indexMap[9] = 0x19; //Magicka
+			indexMap[10] = 0x20; //Fatigue -> Stamina
+			indexMap[11] = 0x1F; //Encumbrance -> InventoryWeight
+			indexMap[12] = 0xA; //Armorer -> Smithing
+			indexMap[14] = 0x6; //Blade -> OneHanded
+			indexMap[15] = 0x9; //Block
+			indexMap[16] = 0x6; //Blunt -> OneHanded
+			indexMap[18] = 0xB; //HeavyArmor
+			indexMap[19] = 0x10; //Alchemy
+			indexMap[20] = 0x12; //Alteration
+			indexMap[21] = 0x13; //Conjuration
+			indexMap[22] = 0x14; //Destruction
+			indexMap[23] = 0x15; //Illusion
+			indexMap[24] = 0x15; //Mysticism -> Illusion
+			indexMap[25] = 0x16; //Restoration
+			indexMap[26] = 0xF; //Acrobatics -> Sneak
+			indexMap[27] = 0xC; //LightArmor
+			indexMap[28] = 0x8; //Marksman
+			indexMap[29] = 0x11; //Mercantile -> Speechcraft
+			indexMap[30] = 0xE; //Security -> Lockpicking
+			indexMap[31] = 0xF; //Sneak
+			indexMap[32] = 0x11; //Speechcraft
+			indexMap[35] = 0x2; //Energy
+			indexMap[45] = 0x54; //Blindness
+			indexMap[47] = 0x36; //Invisibility
+			indexMap[48] = 0x35; //Paralysis
+			indexMap[52] = 0x53; //SpellAbsorbChance -> AbsorbChance
+			indexMap[55] = 0x39; //WaterBreathing
+			indexMap[56] = 0x3A; //WaterWalking
+			indexMap[61] = 0x29; //ResistFire -> FireResist
+			indexMap[62] = 0x2B; //ResistFrost -> FrostResist
+			indexMap[63] = 0x2D; //ResistDisease -> DiseaseResist
+			indexMap[64] = 0x2C; //ResistMagic -> MagicResist
+			indexMap[67] = 0x28; //ResistPoison -> PoisonResist
+			indexMap[68] = 0x2A; //ResistShock -> ElectricResist
 
 			/**
 			 * Change GetActorValue(Fame/Infamy) to checking global value. By the way, this behavior is even not recommended by CS.elderscrolls manual yet they were doing it.. <facepalm> 
@@ -2522,6 +2560,10 @@ namespace Skyblivion {
 			}
 			else {
 				skyrimIndice = oCTDA->ifunc;
+				if (indexMap[parameterOne] == 0xA5) {
+					throw std::runtime_error("Actor value is not implemented yet");
+				}
+				parameterOne = indexMap[parameterOne];
 			}
 
 			break;
