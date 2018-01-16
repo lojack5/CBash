@@ -61,6 +61,12 @@
 #include <vector>
 #include "MacroDefinitions.h"
 #include "Types.h"
+#include "Logger.h"
+
+#define log_info (*logger.getLogger(0))
+#define log_warning (*logger.getLogger(1))<<"WARNING: "
+#define log_debug (*logger.getLogger(2))<<"DEBUG: "
+#define log_error (*logger.getLogger(3))<<"ERROR: "
 
 extern int (*printer)(const char * _Format, ...);
 extern int32_t (*LoggingCallback)(const char *);
@@ -238,6 +244,8 @@ extern const float flt_0;
 extern const float flt_1;
 extern const float flt_3;
 extern const float flt_n2147483648;
+
+extern Logger logger;
 
 #ifdef CBASH_CALLTIMING
     extern std::map<char *, double> CallTime;

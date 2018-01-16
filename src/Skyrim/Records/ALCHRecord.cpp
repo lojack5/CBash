@@ -108,7 +108,7 @@ bool ALCHRecord::VisitFormIDs(FormIDOp &op)
     for (uint32_t i = 0; i < KWDA.value.size(); ++i)
         op.Accept(KWDA.value[i]);
     
-	MODL.Textures.VisitFormIDs(op);
+    MODL.Textures.VisitFormIDs(op);
     if (Destructable.IsLoaded())
         Destructable->VisitFormIDs(op);
     if (YNAM.IsLoaded())
@@ -319,11 +319,8 @@ int32_t ALCHRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
             Effects.value.back()->CTDA.value.back()->CIS2.Read(buffer, subSize, CompressedOnDisk);
             break;
         default:
-            //printer("Filename = %s\n", FileName);
-            printer("  AACT: %08X - Unknown subType = %04x\n", formID, subType);
+            CBASH_SUBTYPE_UNKNOWN
             CBASH_CHUNK_DEBUG
-            printer("  Size = %i\n", subSize);
-            printer("  CurPos = %08x\n", buffer - 6);
             buffer = end_buffer;
             break;
         }
@@ -359,8 +356,8 @@ int32_t ALCHRecord::WriteRecord(FileWriter &writer)
     WRITE(FULL);
     WRITE(KWDA);
     WRITE(DESC);
-	MODL.Write(writer);
-	Destructable.Write(writer);
+    MODL.Write(writer);
+    Destructable.Write(writer);
     WRITE(ICON);
     WRITE(MICO);
     WRITE(YNAM);

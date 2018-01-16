@@ -101,11 +101,8 @@ int32_t AACTRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                     CNAM.Read(buffer, subSize);
                     break;
                 default:
-                    //printer("Filename = %s\n", FileName);
-                    printer("  AACT: %08X - Unknown subType = %04x\n", formID, subType);
+                    CBASH_SUBTYPE_UNKNOWN
                     CBASH_CHUNK_DEBUG
-                    printer("  Size = %i\n", subSize);
-                    printer("  CurPos = %08x\n", buffer - 6);
                     buffer = end_buffer;
                     break;
             }

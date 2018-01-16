@@ -167,11 +167,8 @@ int32_t LVSPRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                     buffer += subSize;
                     break;
                 default:
-                    //printer("FileName = %s\n", FileName);
-                    printer("  LVSP: %08X - Unknown subType = %04x\n", formID, subType);
+                    CBASH_SUBTYPE_UNKNOWN
                     CBASH_CHUNK_DEBUG
-                    printer("  Size = %i\n", subSize);
-                    printer("  CurPos = %08x\n\n", buffer - 6);
                     buffer = end_buffer;
                     break;
                 }

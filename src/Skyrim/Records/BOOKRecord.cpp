@@ -39,254 +39,251 @@
 
 namespace Sk
 {
-	BOOKRecord::BOOKRecord(unsigned char *_recData) :
-		TES5Record(_recData)
-	{
-		//
-	}
+    BOOKRecord::BOOKRecord(unsigned char *_recData) :
+        TES5Record(_recData)
+    {
+        //
+    }
 
-	BOOKRecord::BOOKRecord(BOOKRecord *srcRecord) :
-		TES5Record()
-	{
-		if (srcRecord == NULL)
-			return;
+    BOOKRecord::BOOKRecord(BOOKRecord *srcRecord) :
+        TES5Record()
+    {
+        if (srcRecord == NULL)
+            return;
 
-		flags = srcRecord->flags;
-		formID = srcRecord->formID;
-		flagsUnk = srcRecord->flagsUnk;
-		formVersion = srcRecord->formVersion;
-		versionControl2[0] = srcRecord->versionControl2[0];
-		versionControl2[1] = srcRecord->versionControl2[1];
+        flags = srcRecord->flags;
+        formID = srcRecord->formID;
+        flagsUnk = srcRecord->flagsUnk;
+        formVersion = srcRecord->formVersion;
+        versionControl2[0] = srcRecord->versionControl2[0];
+        versionControl2[1] = srcRecord->versionControl2[1];
 
-		recData = srcRecord->recData;
-		if (!srcRecord->IsChanged())
-			return;
+        recData = srcRecord->recData;
+        if (!srcRecord->IsChanged())
+            return;
 
-		EDID = srcRecord->EDID;
-		VMAD = srcRecord->VMAD;
-		OBND = srcRecord->OBND;
-		FULL = srcRecord->FULL;
-		MODL = srcRecord->MODL;
-		ICON = srcRecord->ICON;
-		MICO = srcRecord->MICO;
-		DESC = srcRecord->DESC;
-		DEST = srcRecord->DEST;
-		YNAM = srcRecord->YNAM;
-		ZNAM = srcRecord->ZNAM;
-		KWDA = srcRecord->KWDA;
-		DATA = srcRecord->DATA;
-		INAM = srcRecord->INAM;
-		CNAM = srcRecord->CNAM;
+        EDID = srcRecord->EDID;
+        VMAD = srcRecord->VMAD;
+        OBND = srcRecord->OBND;
+        FULL = srcRecord->FULL;
+        MODL = srcRecord->MODL;
+        ICON = srcRecord->ICON;
+        MICO = srcRecord->MICO;
+        DESC = srcRecord->DESC;
+        DEST = srcRecord->DEST;
+        YNAM = srcRecord->YNAM;
+        ZNAM = srcRecord->ZNAM;
+        KWDA = srcRecord->KWDA;
+        DATA = srcRecord->DATA;
+        INAM = srcRecord->INAM;
+        CNAM = srcRecord->CNAM;
 
-		if (!srcRecord->IsChanged())
-			return;
+        if (!srcRecord->IsChanged())
+            return;
 
-		return;
-	}
+        return;
+    }
 
-	BOOKRecord::~BOOKRecord()
-	{
-		//
-	}
+    BOOKRecord::~BOOKRecord()
+    {
+        //
+    }
 
-	uint32_t BOOKRecord::GetType()
-	{
-		return REV32(BOOK);
-	}
+    uint32_t BOOKRecord::GetType()
+    {
+        return REV32(BOOK);
+    }
 
-	char * BOOKRecord::GetStrType()
-	{
-		return "BOOK";
-	}
-
-
-	bool BOOKRecord::VisitFormIDs(FormIDOp &op)
-	{
-		if (!IsLoaded())
-			return false;
-		//TODO - implement VisitFormIDs for struct GENOBND
-
-		if (DEST.IsLoaded()) {
-			//TODO - implement VisitFormIDs for struct GENDESTRUCT
-		}
-		op.Accept(YNAM.value);
-		op.Accept(ZNAM.value);
-		if (KWDA.IsLoaded()) {
-			for (uint32_t i = 0; i < KWDA.value.size(); ++i) {
-
-				op.Accept(KWDA.value[i]);
-
-			};
-		}
-		if (DATA.IsLoaded()) {
-			//TODO - implement VisitFormIDs for struct BOOKDATA
-		}
-		if (INAM.IsLoaded()) {
-			op.Accept(INAM.value);
-		}
-
-		return op.Stop();
-	}
+    char * BOOKRecord::GetStrType()
+    {
+        return "BOOK";
+    }
 
 
-	int32_t BOOKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk)
-	{
-		uint32_t subType = 0;
-		uint32_t subSize = 0;
-		StringLookups *LookupStrings = GetParentMod()->TES4.LookupStrings;
-		while (buffer < end_buffer) {
-			subType = *(uint32_t *)buffer;
-			buffer += 4;
-			switch (subType)
-			{
-			case REV32(XXXX):
-				buffer += 2;
-				subSize = *(uint32_t *)buffer;
-				buffer += 4;
-				subType = *(uint32_t *)buffer;
-				buffer += 6;
-				break;
-			default:
-				subSize = *(uint16_t *)buffer;
-				buffer += 2;
-				break;
-			}
-			switch (subType)
-			{
-			case REV32(EDID):
-				EDID.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(VMAD):
-				VMAD.Read(buffer, subSize, GetType(), CompressedOnDisk);
-				break;
-			case REV32(OBND):
-				OBND.Read(buffer, subSize);
-				break;
-			case REV32(FULL):
-				FULL.Read(buffer, subSize, CompressedOnDisk, LookupStrings);
-				break;
-			case REV32(MODL):
-				MODL.MODL.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(MODT):
-				MODL.MODT.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(ICON):
-				ICON.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(MICO):
-				MICO.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(DESC):
-				DESC.Read(buffer, subSize, CompressedOnDisk, LookupStrings);
-				break;
-			case REV32(DEST):
-				DEST.Read(buffer, subSize);
-				break;
-			case REV32(YNAM):
-				YNAM.Read(buffer, subSize);
-				break;
-			case REV32(ZNAM):
-				ZNAM.Read(buffer, subSize);
-				break;
-			case REV32(KSIZ):
-				// Ignore on read
-				buffer += subSize;
-				break;
-			case REV32(KWDA):
-				KWDA.Read(buffer, subSize);
-				break;
-			case REV32(DATA):
-				DATA.Read(buffer, subSize);
-				break;
-			case REV32(INAM):
-				INAM.Read(buffer, subSize);
-				break;
-			case REV32(CNAM):
-				CNAM.Read(buffer, subSize, CompressedOnDisk, LookupStrings);
-				break;
+    bool BOOKRecord::VisitFormIDs(FormIDOp &op)
+    {
+        if (!IsLoaded())
+            return false;
+        //TODO - implement VisitFormIDs for struct GENOBND
 
-			default:
-				//printer("FileName = %s\n", FileName);
-				printer("  BOOK: %08X - Unknown subType = %04x [%c%c%c%c]\n", formID, subType, (subType >> 0) & 0xFF, (subType >> 8) & 0xFF, (subType >> 16) & 0xFF, (subType >> 24) & 0xFF);
-				CBASH_CHUNK_DEBUG
-					printer("  Size = %i\n", subSize);
-				printer("  CurPos = %08x\n\n", buffer - 6);
-				buffer = end_buffer;
-				break;
-			}
-		};
-		return 0;
-	}
+        if (DEST.IsLoaded()) {
+            //TODO - implement VisitFormIDs for struct GENDESTRUCT
+        }
+        op.Accept(YNAM.value);
+        op.Accept(ZNAM.value);
+        if (KWDA.IsLoaded()) {
+            for (uint32_t i = 0; i < KWDA.value.size(); ++i) {
 
-	int32_t BOOKRecord::Unload()
-	{
-		IsChanged(false);
-		IsLoaded(false);
-		EDID.Unload();
-		VMAD.Unload();
-		OBND.Unload();
-		FULL.Unload();
-		ICON.Unload();
-		MICO.Unload();
-		DESC.Unload();
-		DEST.Unload();
-		YNAM.Unload();
-		ZNAM.Unload();
-		KWDA.Unload();
-		DATA.Unload();
-		INAM.Unload();
-		CNAM.Unload();
+                op.Accept(KWDA.value[i]);
 
-		return 1;
-	}
+            };
+        }
+        if (DATA.IsLoaded()) {
+            //TODO - implement VisitFormIDs for struct BOOKDATA
+        }
+        if (INAM.IsLoaded()) {
+            op.Accept(INAM.value);
+        }
 
-	int32_t BOOKRecord::WriteRecord(FileWriter &writer)
-	{
-		WRITE(EDID);
-		WRITE(VMAD);
-		WRITE(OBND);
-		WRITE(FULL);
-		MODL.Write(writer);
-		WRITE(ICON);
-		WRITE(MICO);
-		WRITE(DESC);
-		WRITE(DEST);
-		WRITE(YNAM);
-		WRITE(ZNAM);
-		WRITE(KWDA);
-		WRITE(DATA);
-		WRITE(INAM);
-		WRITE(CNAM);
-		return -1;
-	}
+        return op.Stop();
+    }
 
-	bool BOOKRecord::operator ==(const BOOKRecord &other) const
-	{
-		return (EDID.equalsi(other.EDID) &&
-			VMAD == other.VMAD &&
-			OBND == other.OBND &&
-			FULL.equalsi(other.FULL) &&
-			MODL == other.MODL &&
-			ICON.equalsi(other.ICON) &&
-			MICO.equalsi(other.MICO) &&
-			DESC.equalsi(other.DESC) &&
-			DEST == other.DEST &&
-			YNAM == other.YNAM &&
-			ZNAM == other.ZNAM &&
-			KWDA == other.KWDA &&
-			DATA == other.DATA &&
-			INAM == other.INAM &&
-			CNAM.equalsi(other.CNAM));
-	}
 
-	bool BOOKRecord::operator !=(const BOOKRecord &other) const
-	{
-		return !(*this == other);
-	}
+    int32_t BOOKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk)
+    {
+        uint32_t subType = 0;
+        uint32_t subSize = 0;
+        StringLookups *LookupStrings = GetParentMod()->TES4.LookupStrings;
+        while (buffer < end_buffer) {
+            subType = *(uint32_t *)buffer;
+            buffer += 4;
+            switch (subType)
+            {
+            case REV32(XXXX):
+                buffer += 2;
+                subSize = *(uint32_t *)buffer;
+                buffer += 4;
+                subType = *(uint32_t *)buffer;
+                buffer += 6;
+                break;
+            default:
+                subSize = *(uint16_t *)buffer;
+                buffer += 2;
+                break;
+            }
+            switch (subType)
+            {
+            case REV32(EDID):
+                EDID.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(VMAD):
+                VMAD.Read(buffer, subSize, GetType(), CompressedOnDisk);
+                break;
+            case REV32(OBND):
+                OBND.Read(buffer, subSize);
+                break;
+            case REV32(FULL):
+                FULL.Read(buffer, subSize, CompressedOnDisk, LookupStrings);
+                break;
+            case REV32(MODL):
+                MODL.MODL.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(MODT):
+                MODL.MODT.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(ICON):
+                ICON.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(MICO):
+                MICO.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(DESC):
+                DESC.Read(buffer, subSize, CompressedOnDisk, LookupStrings);
+                break;
+            case REV32(DEST):
+                DEST.Read(buffer, subSize);
+                break;
+            case REV32(YNAM):
+                YNAM.Read(buffer, subSize);
+                break;
+            case REV32(ZNAM):
+                ZNAM.Read(buffer, subSize);
+                break;
+            case REV32(KSIZ):
+                // Ignore on read
+                buffer += subSize;
+                break;
+            case REV32(KWDA):
+                KWDA.Read(buffer, subSize);
+                break;
+            case REV32(DATA):
+                DATA.Read(buffer, subSize);
+                break;
+            case REV32(INAM):
+                INAM.Read(buffer, subSize);
+                break;
+            case REV32(CNAM):
+                CNAM.Read(buffer, subSize, CompressedOnDisk, LookupStrings);
+                break;
 
-	bool BOOKRecord::equals(Record *other)
-	{
-		return *this == *(BOOKRecord *)other;
-	}
+            default:
+                CBASH_SUBTYPE_UNKNOWN
+                CBASH_CHUNK_DEBUG
+                buffer = end_buffer;
+                break;
+            }
+        };
+        return 0;
+    }
+
+    int32_t BOOKRecord::Unload()
+    {
+        IsChanged(false);
+        IsLoaded(false);
+        EDID.Unload();
+        VMAD.Unload();
+        OBND.Unload();
+        FULL.Unload();
+        ICON.Unload();
+        MICO.Unload();
+        DESC.Unload();
+        DEST.Unload();
+        YNAM.Unload();
+        ZNAM.Unload();
+        KWDA.Unload();
+        DATA.Unload();
+        INAM.Unload();
+        CNAM.Unload();
+
+        return 1;
+    }
+
+    int32_t BOOKRecord::WriteRecord(FileWriter &writer)
+    {
+        WRITE(EDID);
+        WRITE(VMAD);
+        WRITE(OBND);
+        WRITE(FULL);
+        MODL.Write(writer);
+        WRITE(ICON);
+        WRITE(MICO);
+        WRITE(DESC);
+        WRITE(DEST);
+        WRITE(YNAM);
+        WRITE(ZNAM);
+        WRITE(KWDA);
+        WRITE(DATA);
+        WRITE(INAM);
+        WRITE(CNAM);
+        return -1;
+    }
+
+    bool BOOKRecord::operator ==(const BOOKRecord &other) const
+    {
+        return (EDID.equalsi(other.EDID) &&
+            VMAD == other.VMAD &&
+            OBND == other.OBND &&
+            FULL.equalsi(other.FULL) &&
+            MODL == other.MODL &&
+            ICON.equalsi(other.ICON) &&
+            MICO.equalsi(other.MICO) &&
+            DESC.equalsi(other.DESC) &&
+            DEST == other.DEST &&
+            YNAM == other.YNAM &&
+            ZNAM == other.ZNAM &&
+            KWDA == other.KWDA &&
+            DATA == other.DATA &&
+            INAM == other.INAM &&
+            CNAM.equalsi(other.CNAM));
+    }
+
+    bool BOOKRecord::operator !=(const BOOKRecord &other) const
+    {
+        return !(*this == other);
+    }
+
+    bool BOOKRecord::equals(Record *other)
+    {
+        return *this == *(BOOKRecord *)other;
+    }
 }

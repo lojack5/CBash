@@ -55,14 +55,14 @@ WRLDRecord::WRLDRecord(WRLDRecord *srcRecord):
     EDID = srcRecord->EDID;
     FULL = srcRecord->FULL;
     XEZN = srcRecord->XEZN;
-	XLCN = srcRecord->XLCN;
-	WNAM = srcRecord->WNAM;
+    XLCN = srcRecord->XLCN;
+    WNAM = srcRecord->WNAM;
     PNAM = srcRecord->PNAM;
     CNAM = srcRecord->CNAM;
     NAM2 = srcRecord->NAM2;
     NAM3 = srcRecord->NAM3;
     NAM4 = srcRecord->NAM4;
-	MODL = srcRecord->MODL;
+    MODL = srcRecord->MODL;
     DNAM = srcRecord->DNAM;
     ICON = srcRecord->ICON;
     MICO = srcRecord->MICO;
@@ -101,17 +101,17 @@ bool WRLDRecord::VisitFormIDs(FormIDOp &op)
 
     if(XEZN.IsLoaded())
         op.Accept(XEZN.value);
-	if (XLCN.IsLoaded())
-		op.Accept(XLCN.value);
-	if(WNAM.IsLoaded())
+    if (XLCN.IsLoaded())
+        op.Accept(XLCN.value);
+    if(WNAM.IsLoaded())
         op.Accept(WNAM.value);
     if(CNAM.IsLoaded())
         op.Accept(CNAM.value);
     op.Accept(NAM2.value);
     op.Accept(NAM3.value);
 
-	if (MODL.IsLoaded())
-		MODL->Textures.VisitFormIDs(op);
+    if (MODL.IsLoaded())
+        MODL->Textures.VisitFormIDs(op);
 
     if(INAM.IsLoaded())
         op.Accept(INAM.value);
@@ -350,10 +350,10 @@ int32_t WRLDRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
             case REV32(XEZN):
                 XEZN.Read(buffer, subSize);
                 break;
-			case REV32(XLCN):
-				XLCN.Read(buffer, subSize);
-				break;
-			case REV32(WNAM):
+            case REV32(XLCN):
+                XLCN.Read(buffer, subSize);
+                break;
+            case REV32(WNAM):
                 WNAM.Read(buffer, subSize);
                 break;
             case REV32(PNAM):
@@ -429,24 +429,26 @@ int32_t WRLDRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
             case REV32(UNAM): // 53 bytes, Data\Textures\Landscape\Mountains\MountainSlab02_N.dds
                 UNAM.Read(buffer, subSize, CompressedOnDisk);
                 break;
-			case REV32(MODL):
-				MODL.Load();
-				MODL->MODL.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(MODT):
-				MODL.Load();
-				MODL->MODT.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(MODS):
-				MODL.Load();
-				MODL->Textures.Read(buffer, subSize);
-				break;
+            case REV32(MODL):
+                MODL.Load();
+                MODL->MODL.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(MODT):
+                MODL.Load();
+                MODL->MODT.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(MODS):
+                MODL.Load();
+                MODL->Textures.Read(buffer, subSize);
+                break;
+            case REV32(MHDT):
+            case REV32(WCTR):
+                CBASH_SUBTYPE_NOT_IMPLEMENTED
+                buffer = end_buffer;
+                break;
             default:
-                //printer("FileName = %s\n", FileName);
-                printer("  WRLD: %08X - Unknown subType = %04x [%c%c%c%c]\n", formID, subType, (subType >> 0) & 0xFF, (subType >> 8) & 0xFF, (subType >> 16) & 0xFF, (subType >> 24) & 0xFF);
+                CBASH_SUBTYPE_UNKNOWN
                 CBASH_CHUNK_DEBUG
-                printer("  Size = %i\n", subSize);
-                printer("  CurPos = %08x\n\n", buffer - 6);
                 buffer = end_buffer;
                 break;
             }
@@ -461,14 +463,14 @@ int32_t WRLDRecord::Unload()
     EDID.Unload();
     FULL.Unload();
     XEZN.Unload();
-	XLCN.Unload();
-	WNAM.Unload();
+    XLCN.Unload();
+    WNAM.Unload();
     PNAM.Unload();
     CNAM.Unload();
     NAM2.Unload();
     NAM3.Unload();
     NAM4.Unload();
-	MODL.Unload();
+    MODL.Unload();
     DNAM.Unload();
     ICON.Unload();
     MICO.Unload();
@@ -496,14 +498,14 @@ int32_t WRLDRecord::WriteRecord(FileWriter &writer)
     WRITE(EDID);
     WRITE(FULL);
     WRITE(XEZN);
-	WRITE(XLCN);
+    WRITE(XLCN);
     WRITE(WNAM);
     WRITE(PNAM);
     WRITE(CNAM);
     WRITE(NAM2);
     WRITE(NAM3);
     WRITE(NAM4);
-	MODL.Write(writer);
+    MODL.Write(writer);
     WRITE(DNAM);
     WRITE(ICON);
     WRITE(MICO);
@@ -531,14 +533,14 @@ bool WRLDRecord::operator ==(const WRLDRecord &other) const
     {
     return (XEZN == other.XEZN &&
             XLCN == other.XLCN &&
-			WNAM == other.WNAM &&
+            WNAM == other.WNAM &&
             PNAM == other.PNAM &&
             CNAM == other.CNAM &&
             NAM2 == other.NAM2 &&
             NAM3 == other.NAM3 &&
             NAM4 == other.NAM4 &&
             DNAM == other.DNAM &&
-			MODL == other.MODL &&
+            MODL == other.MODL &&
             MNAM == other.MNAM &&
             ONAM == other.ONAM &&
             INAM == other.INAM &&

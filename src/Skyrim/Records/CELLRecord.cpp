@@ -97,17 +97,17 @@ CELLRecord::CELLRecord(CELLRecord *srcRecord):
     XCCM = srcRecord->XCCM;
     XCWT = srcRecord->XCWT;
 /*  Ownership = srcRecord->Ownership;*/
-	XOWN = srcRecord->XOWN;
-	XRNK = srcRecord->XRNK;
-	XCAS = srcRecord->XCAS;
+    XOWN = srcRecord->XOWN;
+    XRNK = srcRecord->XRNK;
+    XCAS = srcRecord->XCAS;
     XCMT = srcRecord->XCMT;
     XCMO = srcRecord->XCMO;
     TVDT = srcRecord->TVDT;
     MHDT = srcRecord->MHDT;
     XLCN = srcRecord->XLCN;
     XWCU = srcRecord->XWCU;
-	XILL = srcRecord->XILL;
-	XWEM = srcRecord->XWEM;
+    XILL = srcRecord->XILL;
+    XWEM = srcRecord->XWEM;
     }
 
 CELLRecord::~CELLRecord()
@@ -138,8 +138,8 @@ bool CELLRecord::VisitFormIDs(FormIDOp &op)
         op.Accept(XCWT.value);
 /*  if(Ownership.IsLoaded())
         op.Accept(Ownership->XOWN.value);*/
-	if(XOWN.IsLoaded())
-		op.Accept(XOWN.value);
+    if(XOWN.IsLoaded())
+        op.Accept(XOWN.value);
     if(XCAS.IsLoaded())
         op.Accept(XCAS.value);
     if(XCMO.IsLoaded())
@@ -489,7 +489,7 @@ int32_t CELLRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                 XOWN.Read(buffer, subSize);
                 break;
             case REV32(XRNK):
-				XRNK.Read(buffer, subSize);
+                XRNK.Read(buffer, subSize);
                 break;
             case REV32(XCAS):
                 XCAS.Read(buffer, subSize);
@@ -513,16 +513,20 @@ int32_t CELLRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
             case REV32(XWCU): // 64 bytes
                 XWCU.Read(buffer, subSize);
                 break;
-			case REV32(XILL):
-				XILL.Read(buffer, subSize);
-			case REV32(XWEM):
-				XWEM.Read(buffer, subSize, CompressedOnDisk);
+            case REV32(XILL):
+                XILL.Read(buffer, subSize);
+                break;
+            case REV32(XWEM):
+                XWEM.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(XWCN):
+            case REV32(XWCS):
+                CBASH_SUBTYPE_NOT_IMPLEMENTED
+                    buffer = end_buffer;
+                break;
             default:
-                //printer("FileName = %s\n", FileName);
-                printer("  CELL: %08X - Unknown subType = %04x [%c%c%c%c]\n", formID, subType, (subType >> 0) & 0xFF, (subType >> 8) & 0xFF, (subType >> 16) & 0xFF, (subType >> 24) & 0xFF);
+                CBASH_SUBTYPE_UNKNOWN
                 CBASH_CHUNK_DEBUG
-                printer("  Size = %i\n", subSize);
-                printer("  CurPos = %08x\n\n", buffer - 6);
                 buffer = end_buffer;
                 break;
             }
@@ -551,17 +555,17 @@ int32_t CELLRecord::Unload()
     XEZN.Unload();
     XCCM.Unload();
     XCWT.Unload();
-	XOWN.Unload();
-	XRNK.Unload();
-	XCAS.Unload();
+    XOWN.Unload();
+    XRNK.Unload();
+    XCAS.Unload();
     XCMT.Unload();
     XCMO.Unload();
     TVDT.Unload();
     MHDT.Unload();
     XLCN.Unload();
     XWCU.Unload();
-	XILL.Unload();
-	XWEM.Unload();
+    XILL.Unload();
+    XWEM.Unload();
     return 1;
     }
 
@@ -591,10 +595,10 @@ int32_t CELLRecord::WriteRecord(FileWriter &writer)
     WRITE(XCCM);
     WRITE(XCWT);
 /*  Ownership.Write(writer);*/
-	WRITE(XOWN);
-	WRITE(XILL);
-	WRITE(XWEM);
-	WRITE(XRNK);
+    WRITE(XOWN);
+    WRITE(XILL);
+    WRITE(XWEM);
+    WRITE(XRNK);
     WRITE(XCAS);
     WRITE(XCMT);
     WRITE(XCMO);
@@ -623,9 +627,9 @@ bool CELLRecord::operator ==(const CELLRecord &other) const
             IMPS == other.IMPS &&
             XCLR == other.XCLR &&
 /*          Ownership == other.Ownership &&*/
-			XOWN == other.XOWN &&
+            XOWN == other.XOWN &&
             XRNK == other.XRNK &&
-			EDID.equalsi(other.EDID) &&
+            EDID.equalsi(other.EDID) &&
             FULL.equals(other.FULL) &&
             XNAM.equalsi(other.XNAM) &&
             XCET == other.XCET &&
@@ -670,8 +674,8 @@ bool CELLRecord::deep_equals(Record *master, RecordOp &read_self, RecordOp &read
         return false;
     if(REFR.size() > master_cell->REFR.size())
         return false;
-	/*
-	if(PGRE.size() > master_cell->PGRE.size())
+    /*
+    if(PGRE.size() > master_cell->PGRE.size())
         return false;
     if(PMIS.size() > master_cell->PMIS.size())
         return false;
@@ -695,15 +699,15 @@ bool CELLRecord::deep_equals(Record *master, RecordOp &read_self, RecordOp &read
             return false;
         }
 
-	for(uint32_t ListIndex = 0; ListIndex < ACHR.size(); ++ListIndex)
+    for(uint32_t ListIndex = 0; ListIndex < ACHR.size(); ++ListIndex)
         if(identical_records.count(ACHR[ListIndex]) == 0)
             return false;
 
     for(uint32_t ListIndex = 0; ListIndex < REFR.size(); ++ListIndex)
         if(identical_records.count(REFR[ListIndex]) == 0)
             return false;
-	/*
-	for(uint32_t ListIndex = 0; ListIndex < PGRE.size(); ++ListIndex)
+    /*
+    for(uint32_t ListIndex = 0; ListIndex < PGRE.size(); ++ListIndex)
         if(identical_records.count(PGRE[ListIndex]) == 0)
             return false;
 
@@ -744,45 +748,45 @@ fogMax(0.0f),
 lightFadeDistancesStart(0.0f),
 lightFadeDistancesEnd(0.0f)
 {
-	//
+    //
 }
 
 CELLRecord::TES5LIGHT::~TES5LIGHT()
 {
-	//
+    //
 }
 
 bool CELLRecord::TES5LIGHT::operator ==(const TES5LIGHT &other) const
 {
-	return (ambient == other.ambient &&
-		directional == other.directional &&
-		fog == other.fog &&
-		AlmostEqual(fogNear, other.fogNear, 2) &&
-		AlmostEqual(fogFar, other.fogFar, 2) &&
-		directionalXY == other.directionalXY &&
-		directionalZ == other.directionalZ &&
-		AlmostEqual(directionalFade, other.directionalFade, 2) &&
-		AlmostEqual(fogClip, other.fogClip, 2) &&
-		AlmostEqual(fogPower, other.fogPower, 2) &&
-		ambientXp == other.ambientXp &&
-		ambientXm == other.ambientXm &&
-		ambientYp == other.ambientYp &&
-		ambientYm == other.ambientYm &&
-		ambientZp == other.ambientZp &&
-		ambientZm == other.ambientZm &&
-		specular == other.specular &&
-		AlmostEqual(fresnelPow, other.fresnelPow, 2) &&
-		fogFarTwo == other.fogFarTwo &&
-		AlmostEqual(fogMax, other.fogMax, 2) &&
-		AlmostEqual(lightFadeDistancesStart, other.lightFadeDistancesStart, 2) &&
-		AlmostEqual(lightFadeDistancesEnd, other.lightFadeDistancesEnd, 2) &&
-		inheritFlags == other.inheritFlags
-		);
+    return (ambient == other.ambient &&
+        directional == other.directional &&
+        fog == other.fog &&
+        AlmostEqual(fogNear, other.fogNear, 2) &&
+        AlmostEqual(fogFar, other.fogFar, 2) &&
+        directionalXY == other.directionalXY &&
+        directionalZ == other.directionalZ &&
+        AlmostEqual(directionalFade, other.directionalFade, 2) &&
+        AlmostEqual(fogClip, other.fogClip, 2) &&
+        AlmostEqual(fogPower, other.fogPower, 2) &&
+        ambientXp == other.ambientXp &&
+        ambientXm == other.ambientXm &&
+        ambientYp == other.ambientYp &&
+        ambientYm == other.ambientYm &&
+        ambientZp == other.ambientZp &&
+        ambientZm == other.ambientZm &&
+        specular == other.specular &&
+        AlmostEqual(fresnelPow, other.fresnelPow, 2) &&
+        fogFarTwo == other.fogFarTwo &&
+        AlmostEqual(fogMax, other.fogMax, 2) &&
+        AlmostEqual(lightFadeDistancesStart, other.lightFadeDistancesStart, 2) &&
+        AlmostEqual(lightFadeDistancesEnd, other.lightFadeDistancesEnd, 2) &&
+        inheritFlags == other.inheritFlags
+        );
 }
 
 bool CELLRecord::TES5LIGHT::operator !=(const TES5LIGHT &other) const
 {
-	return !(*this == other);
+    return !(*this == other);
 }
 
 }

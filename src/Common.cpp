@@ -3325,3 +3325,5 @@ const float flt_3 = 3.0f;
 const float flt_1 = 1.0f;
 const float flt_0 = 0.0f;
 const float flt_n2147483648 = -2147483648.0f;
+
+Logger logger = Logger::getInstance();

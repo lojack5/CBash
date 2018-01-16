@@ -158,13 +158,13 @@ int32_t APPARecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                 case REV32(FULL):
                     FULL.Read(buffer, subSize, CompressedOnDisk, LookupStrings);
                     break;
-				case REV32(MODL):
-					MODL.MODL.Read(buffer, subSize, CompressedOnDisk);
-					break;
-				case REV32(MODT):
-					MODL.MODT.Read(buffer, subSize, CompressedOnDisk);
-					break;
-				case REV32(ICON):
+                case REV32(MODL):
+                    MODL.MODL.Read(buffer, subSize, CompressedOnDisk);
+                    break;
+                case REV32(MODT):
+                    MODL.MODT.Read(buffer, subSize, CompressedOnDisk);
+                    break;
+                case REV32(ICON):
                     ICON.Read(buffer, subSize, CompressedOnDisk);
                     break;
                 case REV32(MICO):
@@ -189,11 +189,8 @@ int32_t APPARecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                     DATA.Read(buffer, subSize);
                     break;
                 default:
-                    //printer("Filename = %s\n", FileName);
-                    printer("  APPA: %08X - Unknown subType = %04x\n", formID, subType);
+                    CBASH_SUBTYPE_UNKNOWN
                     CBASH_CHUNK_DEBUG
-                    printer("  Size = %i\n", subSize);
-                    printer("  CurPos = %08x\n", buffer - 6);
                     buffer = end_buffer;
                     break;
             }
@@ -226,8 +223,8 @@ int32_t APPARecord::WriteRecord(FileWriter &writer)
         WRITE(VMAD);
         WRITE(OBND);
         WRITE(FULL);
-		MODL.Write(writer);
-		WRITE(ICON);
+        MODL.Write(writer);
+        WRITE(ICON);
         WRITE(MICO);
         WRITE(DEST);
         WRITE(YNAM);

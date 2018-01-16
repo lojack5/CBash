@@ -39,261 +39,257 @@
 
 namespace Sk
 {
-	INGRRecord::INGRRecord(unsigned char *_recData) :
-		TES5Record(_recData)
-	{
-		//
-	}
-	
-	INGRRecord::INGRRecord(INGRRecord *srcRecord) :
-		TES5Record()
-	{
-		if (srcRecord == NULL)
-			return;
-			
-		flags = srcRecord->flags;
-		formID = srcRecord->formID;
-		flagsUnk = srcRecord->flagsUnk;
-		formVersion = srcRecord->formVersion;
-		versionControl2[0] = srcRecord->versionControl2[0];
-		versionControl2[1] = srcRecord->versionControl2[1];
+    INGRRecord::INGRRecord(unsigned char *_recData) :
+        TES5Record(_recData)
+    {
+        //
+    }
+    
+    INGRRecord::INGRRecord(INGRRecord *srcRecord) :
+        TES5Record()
+    {
+        if (srcRecord == NULL)
+            return;
+            
+        flags = srcRecord->flags;
+        formID = srcRecord->formID;
+        flagsUnk = srcRecord->flagsUnk;
+        formVersion = srcRecord->formVersion;
+        versionControl2[0] = srcRecord->versionControl2[0];
+        versionControl2[1] = srcRecord->versionControl2[1];
 
-		recData = srcRecord->recData;
-		if(!srcRecord->IsChanged())
-			return;
-		EDID = srcRecord->EDID;
-		VMAD = srcRecord->VMAD;
-		OBND = srcRecord->OBND;
-		FULL = srcRecord->FULL;
-		MODL = srcRecord->MODL;
-		KWDA = srcRecord->KWDA;
-		ICON = srcRecord->ICON;
-		YNAM = srcRecord->YNAM;
-		ZNAM = srcRecord->ZNAM;
-		DATA = srcRecord->DATA;
-		ENIT = srcRecord->ENIT;
-		effects = srcRecord->effects;
-
-
-		return;
-	}
-
-	INGRRecord::~INGRRecord()
-	{
-		//
-	}
-
-	uint32_t INGRRecord::GetType()
-	{
-		return REV32(INGR);
-	}
-
-	char * INGRRecord::GetStrType()
-	{
-		return "INGR";
-	}
+        recData = srcRecord->recData;
+        if(!srcRecord->IsChanged())
+            return;
+        EDID = srcRecord->EDID;
+        VMAD = srcRecord->VMAD;
+        OBND = srcRecord->OBND;
+        FULL = srcRecord->FULL;
+        MODL = srcRecord->MODL;
+        KWDA = srcRecord->KWDA;
+        ICON = srcRecord->ICON;
+        YNAM = srcRecord->YNAM;
+        ZNAM = srcRecord->ZNAM;
+        DATA = srcRecord->DATA;
+        ENIT = srcRecord->ENIT;
+        effects = srcRecord->effects;
 
 
-	bool INGRRecord::VisitFormIDs(FormIDOp &op)
-	{
-		if (!IsLoaded())
-			return false;
-		if (VMAD.IsLoaded()) {
-			//TODO - implement VisitFormIDs for struct VMADRecord
-		}
-		//TODO - implement VisitFormIDs for struct GENOBND
+        return;
+    }
 
-		if (KWDA.IsLoaded()) {
-			for (uint32_t i = 0; i < KWDA.value.size(); ++i) {
+    INGRRecord::~INGRRecord()
+    {
+        //
+    }
 
-				op.Accept(KWDA.value[i]);
+    uint32_t INGRRecord::GetType()
+    {
+        return REV32(INGR);
+    }
 
-			};
-		}
-		if (YNAM.IsLoaded()) {
-			op.Accept(YNAM.value);
-		}
-		if (ZNAM.IsLoaded()) {
-			op.Accept(ZNAM.value);
-		}
-		//TODO - implement VisitFormIDs for struct ItemData
-
-		//TODO - implement VisitFormIDs for struct EnchantedItem
+    char * INGRRecord::GetStrType()
+    {
+        return "INGR";
+    }
 
 
-		return op.Stop();
-	}
+    bool INGRRecord::VisitFormIDs(FormIDOp &op)
+    {
+        if (!IsLoaded())
+            return false;
+        if (VMAD.IsLoaded()) {
+            //TODO - implement VisitFormIDs for struct VMADRecord
+        }
+        //TODO - implement VisitFormIDs for struct GENOBND
+
+        if (KWDA.IsLoaded()) {
+            for (uint32_t i = 0; i < KWDA.value.size(); ++i) {
+
+                op.Accept(KWDA.value[i]);
+
+            };
+        }
+        if (YNAM.IsLoaded()) {
+            op.Accept(YNAM.value);
+        }
+        if (ZNAM.IsLoaded()) {
+            op.Accept(ZNAM.value);
+        }
+        //TODO - implement VisitFormIDs for struct ItemData
+
+        //TODO - implement VisitFormIDs for struct EnchantedItem
 
 
-	int32_t INGRRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk)
-	{
-		uint32_t subType = 0;
-		uint32_t subSize = 0;
-		StringLookups *LookupStrings = GetParentMod()->TES4.LookupStrings;
-		SpellEffect *currentEffect = NULL;
-		while (buffer < end_buffer){
-			subType = *(uint32_t *)buffer;
-			buffer += 4;
-			switch (subType)
-			{
-			case REV32(XXXX):
-				buffer += 2;
-				subSize = *(uint32_t *)buffer;
-				buffer += 4;
-				subType = *(uint32_t *)buffer;
-				buffer += 6;
-				break;
-			default:
-				subSize = *(uint16_t *)buffer;
-				buffer += 2;
-				break;
-			}
-			switch (subType)
-			{
-			case REV32(EDID):
-				EDID.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(VMAD):
+        return op.Stop();
+    }
+
+
+    int32_t INGRRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk)
+    {
+        uint32_t subType = 0;
+        uint32_t subSize = 0;
+        StringLookups *LookupStrings = GetParentMod()->TES4.LookupStrings;
+        SpellEffect *currentEffect = NULL;
+        while (buffer < end_buffer){
+            subType = *(uint32_t *)buffer;
+            buffer += 4;
+            switch (subType)
+            {
+            case REV32(XXXX):
+                buffer += 2;
+                subSize = *(uint32_t *)buffer;
+                buffer += 4;
+                subType = *(uint32_t *)buffer;
+                buffer += 6;
+                break;
+            default:
+                subSize = *(uint16_t *)buffer;
+                buffer += 2;
+                break;
+            }
+            switch (subType)
+            {
+            case REV32(EDID):
+                EDID.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(VMAD):
                 VMAD.Load();
                 VMAD.value->Read(buffer, subSize, REV32(INGR), CompressedOnDisk);
-				break;
-			case REV32(OBND):
-				OBND.Read(buffer, subSize);
-				break;
-			case REV32(FULL):
-				FULL.Read(buffer, subSize, CompressedOnDisk, LookupStrings);
-				break;
-			case REV32(KSIZ):
-				// Number of KWDAs
-				buffer += subSize;
-				break;
-			case REV32(KWDA):
-				KWDA.Read(buffer, subSize);
-				break;
-			case REV32(MODL):
-				MODL.MODL.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(MODT):
-				MODL.MODT.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(MODS):
-				MODL.Textures.Read(buffer, subSize);
-				break;				
-			case REV32(ICON):
-				ICON.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(YNAM):
-				YNAM.Read(buffer, subSize);
-				break;
-			case REV32(ZNAM):
-				ZNAM.Read(buffer, subSize);
-				break;
-			case REV32(DATA):
-				DATA.Read(buffer, subSize);
-				break;
-			case REV32(ENIT):
-				ENIT.Read(buffer, subSize);
-				break;
-			case REV32(EFID):
-				currentEffect = new SpellEffect();
-				effects.value.push_back(currentEffect);
-				currentEffect->EFID.Read(buffer, subSize);
-				break;
-				
-			case REV32(EFIT):
-				if(currentEffect != NULL) {
-					currentEffect->EFIT.Read(buffer, subSize);
-				} else {
-					printer("  INGR: %08X - EFIT found without an effect initialized\n", formID);
-					buffer += subSize;
-				} 
-				
-				break;
-										
-			case REV32(CTDA):
-				if(currentEffect != NULL) {
-					currentEffect->CTDA.Read(buffer, subSize);
-				} else {
-					printer("  INGR: %08X - CTDA found without an effect initialized\n", formID);
-					buffer += subSize;
-				} 
-			
-				break;
-											
-			
-		default:
-				//printer("FileName = %s\n", FileName);
-				printer("  INGR: %08X - Unknown subType = %04x [%c%c%c%c]\n", formID, subType, (subType >> 0) & 0xFF, (subType >> 8) & 0xFF, (subType >> 16) & 0xFF, (subType >> 24) & 0xFF);
-				CBASH_CHUNK_DEBUG
-					printer("  Size = %i\n", subSize);
-				printer("  CurPos = %08x\n\n", buffer - 6);
-				buffer = end_buffer;
-				break;
-			}
-		};
-		return 0;
-	}
+                break;
+            case REV32(OBND):
+                OBND.Read(buffer, subSize);
+                break;
+            case REV32(FULL):
+                FULL.Read(buffer, subSize, CompressedOnDisk, LookupStrings);
+                break;
+            case REV32(KSIZ):
+                // Number of KWDAs
+                buffer += subSize;
+                break;
+            case REV32(KWDA):
+                KWDA.Read(buffer, subSize);
+                break;
+            case REV32(MODL):
+                MODL.MODL.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(MODT):
+                MODL.MODT.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(MODS):
+                MODL.Textures.Read(buffer, subSize);
+                break;
+            case REV32(ICON):
+                ICON.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(YNAM):
+                YNAM.Read(buffer, subSize);
+                break;
+            case REV32(ZNAM):
+                ZNAM.Read(buffer, subSize);
+                break;
+            case REV32(DATA):
+                DATA.Read(buffer, subSize);
+                break;
+            case REV32(ENIT):
+                ENIT.Read(buffer, subSize);
+                break;
+            case REV32(EFID):
+                currentEffect = new SpellEffect();
+                effects.value.push_back(currentEffect);
+                currentEffect->EFID.Read(buffer, subSize);
+                break;
+                
+            case REV32(EFIT):
+                if(currentEffect != NULL) {
+                    currentEffect->EFIT.Read(buffer, subSize);
+                } else {
+                    printer("  INGR: %08X - EFIT found without an effect initialized\n", formID);
+                    buffer += subSize;
+                } 
+                
+                break;
 
-	int32_t INGRRecord::Unload()
-	{
-		IsChanged(false);
-		IsLoaded(false);
-		EDID.Unload();
-		VMAD.Unload();
-		OBND.Unload();
-		FULL.Unload();
-		//MODL.Unload();
-		KWDA.Unload();
-		ICON.Unload();
-		YNAM.Unload();
-		ZNAM.Unload();
-		DATA.Unload();
-		ENIT.Unload();
-		//effects.Unload();
+            case REV32(CTDA):
+                if(currentEffect != NULL) {
+                    currentEffect->CTDA.Read(buffer, subSize);
+                } else {
+                    printer("  INGR: %08X - CTDA found without an effect initialized\n", formID);
+                    buffer += subSize;
+                } 
 
-		return 1;
-	}
+                break;
 
-	int32_t INGRRecord::WriteRecord(FileWriter &writer)
-	{	
-		WRITE(EDID);
-		WRITE(VMAD);
-		WRITE(OBND);
-		WRITE(FULL);
-		MODL.Write(writer);
-		WRITE(KWDA);
-		WRITE(ICON);
-		WRITE(YNAM);
-		WRITE(ZNAM);
-		WRITE(DATA);
-		WRITE(ENIT);
-		effects.Write(writer);
-		return -1;
-	}
+            default:
+                CBASH_SUBTYPE_UNKNOWN
+                CBASH_CHUNK_DEBUG
+                buffer = end_buffer;
+                break;
+            }
+        };
+        return 0;
+    }
 
-	bool INGRRecord::operator ==(const INGRRecord &other) const
-	{
-		return (EDID.equalsi(other.EDID) &&
-			VMAD == other.VMAD &&
-			OBND == other.OBND &&
-			FULL.equalsi(other.FULL) &&
-			KWDA == other.KWDA &&
-			MODL == other.MODL &&
-			ICON.equalsi(other.ICON) &&
-			YNAM == other.YNAM &&
-			ZNAM == other.ZNAM &&
-			DATA == other.DATA &&
-			ENIT == other.ENIT &&
-			effects == other.effects);
-	}
+    int32_t INGRRecord::Unload()
+    {
+        IsChanged(false);
+        IsLoaded(false);
+        EDID.Unload();
+        VMAD.Unload();
+        OBND.Unload();
+        FULL.Unload();
+        //MODL.Unload();
+        KWDA.Unload();
+        ICON.Unload();
+        YNAM.Unload();
+        ZNAM.Unload();
+        DATA.Unload();
+        ENIT.Unload();
+        //effects.Unload();
 
-	bool INGRRecord::operator !=(const INGRRecord &other) const
-	{
-		return !(*this == other);
-	}
+        return 1;
+    }
 
-	bool INGRRecord::equals(Record *other)
-	{
-		return *this == *(INGRRecord *)other;
-	}
+    int32_t INGRRecord::WriteRecord(FileWriter &writer)
+    {    
+        WRITE(EDID);
+        WRITE(VMAD);
+        WRITE(OBND);
+        WRITE(FULL);
+        MODL.Write(writer);
+        WRITE(KWDA);
+        WRITE(ICON);
+        WRITE(YNAM);
+        WRITE(ZNAM);
+        WRITE(DATA);
+        WRITE(ENIT);
+        effects.Write(writer);
+        return -1;
+    }
+
+    bool INGRRecord::operator ==(const INGRRecord &other) const
+    {
+        return (EDID.equalsi(other.EDID) &&
+            VMAD == other.VMAD &&
+            OBND == other.OBND &&
+            FULL.equalsi(other.FULL) &&
+            KWDA == other.KWDA &&
+            MODL == other.MODL &&
+            ICON.equalsi(other.ICON) &&
+            YNAM == other.YNAM &&
+            ZNAM == other.ZNAM &&
+            DATA == other.DATA &&
+            ENIT == other.ENIT &&
+            effects == other.effects);
+    }
+
+    bool INGRRecord::operator !=(const INGRRecord &other) const
+    {
+        return !(*this == other);
+    }
+
+    bool INGRRecord::equals(Record *other)
+    {
+        return *this == *(INGRRecord *)other;
+    }
 }

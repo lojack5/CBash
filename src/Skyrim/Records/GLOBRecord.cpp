@@ -39,141 +39,138 @@
 
 namespace Sk
 {
-	GLOBRecord::GLOBRecord(unsigned char *_recData) :
-		TES5Record(_recData)
-	{
-		//
-	}
+    GLOBRecord::GLOBRecord(unsigned char *_recData) :
+        TES5Record(_recData)
+    {
+        //
+    }
 
-	GLOBRecord::GLOBRecord(GLOBRecord *srcRecord) :
-		TES5Record()
-	{
-		if (srcRecord == NULL)
-			return;
+    GLOBRecord::GLOBRecord(GLOBRecord *srcRecord) :
+        TES5Record()
+    {
+        if (srcRecord == NULL)
+            return;
 
-		flags = srcRecord->flags;
-		formID = srcRecord->formID;
-		flagsUnk = srcRecord->flagsUnk;
-		formVersion = srcRecord->formVersion;
-		versionControl2[0] = srcRecord->versionControl2[0];
-		versionControl2[1] = srcRecord->versionControl2[1];
+        flags = srcRecord->flags;
+        formID = srcRecord->formID;
+        flagsUnk = srcRecord->flagsUnk;
+        formVersion = srcRecord->formVersion;
+        versionControl2[0] = srcRecord->versionControl2[0];
+        versionControl2[1] = srcRecord->versionControl2[1];
 
-		recData = srcRecord->recData;
-		if (!srcRecord->IsChanged())
-			return;
-		EDID = srcRecord->EDID;
-		FNAM = srcRecord->FNAM;
-		FLTV = srcRecord->FLTV;
-
-
-		return;
-	}
-
-	GLOBRecord::~GLOBRecord()
-	{
-		//
-	}
-
-	uint32_t GLOBRecord::GetType()
-	{
-		return REV32(GLOB);
-	}
-
-	char * GLOBRecord::GetStrType()
-	{
-		return "GLOB";
-	}
+        recData = srcRecord->recData;
+        if (!srcRecord->IsChanged())
+            return;
+        EDID = srcRecord->EDID;
+        FNAM = srcRecord->FNAM;
+        FLTV = srcRecord->FLTV;
 
 
-	bool GLOBRecord::VisitFormIDs(FormIDOp &op)
-	{
-		if (!IsLoaded())
-			return false;
+        return;
+    }
 
-		return op.Stop();
-	}
+    GLOBRecord::~GLOBRecord()
+    {
+        //
+    }
+
+    uint32_t GLOBRecord::GetType()
+    {
+        return REV32(GLOB);
+    }
+
+    char * GLOBRecord::GetStrType()
+    {
+        return "GLOB";
+    }
 
 
-	int32_t GLOBRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk)
-	{
-		uint32_t subType = 0;
-		uint32_t subSize = 0;
-		StringLookups *LookupStrings = GetParentMod()->TES4.LookupStrings;
-		while (buffer < end_buffer) {
-			subType = *(uint32_t *)buffer;
-			buffer += 4;
-			switch (subType)
-			{
-			case REV32(XXXX):
-				buffer += 2;
-				subSize = *(uint32_t *)buffer;
-				buffer += 4;
-				subType = *(uint32_t *)buffer;
-				buffer += 6;
-				break;
-			default:
-				subSize = *(uint16_t *)buffer;
-				buffer += 2;
-				break;
-			}
-			switch (subType)
-			{
-			case REV32(EDID):
-				EDID.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(FNAM):
-				FNAM.Read(buffer, subSize);
-				break;
-			case REV32(FLTV):
-				FLTV.Read(buffer, subSize);
-				break;
+    bool GLOBRecord::VisitFormIDs(FormIDOp &op)
+    {
+        if (!IsLoaded())
+            return false;
 
-			default:
-				//printer("FileName = %s\n", FileName);
-				printer("  GLOB: %08X - Unknown subType = %04x [%c%c%c%c]\n", formID, subType, (subType >> 0) & 0xFF, (subType >> 8) & 0xFF, (subType >> 16) & 0xFF, (subType >> 24) & 0xFF);
-				CBASH_CHUNK_DEBUG
-					printer("  Size = %i\n", subSize);
-				printer("  CurPos = %08x\n\n", buffer - 6);
-				buffer = end_buffer;
-				break;
-			}
-		};
-		return 0;
-	}
+        return op.Stop();
+    }
 
-	int32_t GLOBRecord::Unload()
-	{
-		IsChanged(false);
-		IsLoaded(false);
-		EDID.Unload();
-		FNAM.Unload();
-		FLTV.Unload();
 
-		return 1;
-	}
+    int32_t GLOBRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk)
+    {
+        uint32_t subType = 0;
+        uint32_t subSize = 0;
+        StringLookups *LookupStrings = GetParentMod()->TES4.LookupStrings;
+        while (buffer < end_buffer) {
+            subType = *(uint32_t *)buffer;
+            buffer += 4;
+            switch (subType)
+            {
+            case REV32(XXXX):
+                buffer += 2;
+                subSize = *(uint32_t *)buffer;
+                buffer += 4;
+                subType = *(uint32_t *)buffer;
+                buffer += 6;
+                break;
+            default:
+                subSize = *(uint16_t *)buffer;
+                buffer += 2;
+                break;
+            }
+            switch (subType)
+            {
+            case REV32(EDID):
+                EDID.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(FNAM):
+                FNAM.Read(buffer, subSize);
+                break;
+            case REV32(FLTV):
+                FLTV.Read(buffer, subSize);
+                break;
 
-	int32_t GLOBRecord::WriteRecord(FileWriter &writer)
-	{
-		WRITE(EDID);
-		WRITE(FNAM);
-		WRITE(FLTV);
-		return -1;
-	}
+            default:
+                CBASH_SUBTYPE_UNKNOWN
+                CBASH_CHUNK_DEBUG
+                buffer = end_buffer;
+                break;
+            }
+        };
+        return 0;
+    }
 
-	bool GLOBRecord::operator ==(const GLOBRecord &other) const
-	{
-		return (EDID.equalsi(other.EDID) &&
-			FNAM == other.FNAM &&
-			FLTV == other.FLTV);
-	}
+    int32_t GLOBRecord::Unload()
+    {
+        IsChanged(false);
+        IsLoaded(false);
+        EDID.Unload();
+        FNAM.Unload();
+        FLTV.Unload();
 
-	bool GLOBRecord::operator !=(const GLOBRecord &other) const
-	{
-		return !(*this == other);
-	}
+        return 1;
+    }
 
-	bool GLOBRecord::equals(Record *other)
-	{
-		return *this == *(GLOBRecord *)other;
-	}
+    int32_t GLOBRecord::WriteRecord(FileWriter &writer)
+    {
+        WRITE(EDID);
+        WRITE(FNAM);
+        WRITE(FLTV);
+        return -1;
+    }
+
+    bool GLOBRecord::operator ==(const GLOBRecord &other) const
+    {
+        return (EDID.equalsi(other.EDID) &&
+            FNAM == other.FNAM &&
+            FLTV == other.FLTV);
+    }
+
+    bool GLOBRecord::operator !=(const GLOBRecord &other) const
+    {
+        return !(*this == other);
+    }
+
+    bool GLOBRecord::equals(Record *other)
+    {
+        return *this == *(GLOBRecord *)other;
+    }
 }

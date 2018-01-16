@@ -39,208 +39,210 @@
 
 namespace Sk
 {
-	SPELRecord::SPELRecord(unsigned char *_recData) :
-		TES5Record(_recData)
-	{
-		//
-	}
-	
-	SPELRecord::SPELRecord(SPELRecord *srcRecord) :
-		TES5Record()
-	{
-		if (srcRecord == NULL)
-			return;
-			
-		flags = srcRecord->flags;
-		formID = srcRecord->formID;
-		flagsUnk = srcRecord->flagsUnk;
-		formVersion = srcRecord->formVersion;
-		versionControl2[0] = srcRecord->versionControl2[0];
-		versionControl2[1] = srcRecord->versionControl2[1];
+    SPELRecord::SPELRecord(unsigned char *_recData) :
+        TES5Record(_recData)
+    {
+        //
+    }
+    
+    SPELRecord::SPELRecord(SPELRecord *srcRecord) :
+        TES5Record()
+    {
+        if (srcRecord == NULL)
+            return;
+            
+        flags = srcRecord->flags;
+        formID = srcRecord->formID;
+        flagsUnk = srcRecord->flagsUnk;
+        formVersion = srcRecord->formVersion;
+        versionControl2[0] = srcRecord->versionControl2[0];
+        versionControl2[1] = srcRecord->versionControl2[1];
 
-		recData = srcRecord->recData;
-		if(!srcRecord->IsChanged())
-			return;
-		EDID = srcRecord->EDID;
-		OBND = srcRecord->OBND;
-		FULL = srcRecord->FULL;
-		DESC = srcRecord->DESC;
-		MDOB = srcRecord->MDOB;
-		ETYP = srcRecord->ETYP;
-		SPIT = srcRecord->SPIT;
-		effects = srcRecord->effects;
+        recData = srcRecord->recData;
+        if(!srcRecord->IsChanged())
+            return;
+        EDID = srcRecord->EDID;
+        OBND = srcRecord->OBND;
+        FULL = srcRecord->FULL;
+        DESC = srcRecord->DESC;
+        MDOB = srcRecord->MDOB;
+        ETYP = srcRecord->ETYP;
+        SPIT = srcRecord->SPIT;
+        effects = srcRecord->effects;
 
-		return;
-	}
+        return;
+    }
 
-	SPELRecord::~SPELRecord()
-	{
-		//
-	}
+    SPELRecord::~SPELRecord()
+    {
+        //
+    }
 
-	uint32_t SPELRecord::GetType()
-	{
-		return REV32(SPEL);
-	}
+    uint32_t SPELRecord::GetType()
+    {
+        return REV32(SPEL);
+    }
 
-	char * SPELRecord::GetStrType()
-	{
-		return "SPEL";
-	}
-
-
-	bool SPELRecord::VisitFormIDs(FormIDOp &op)
-	{
-		if (!IsLoaded())
-			return false;
-		//TODO - implement VisitFormIDs for struct GENOBND
-
-		if (MDOB.IsLoaded()) {
-			op.Accept(MDOB.value);
-		}
-		op.Accept(ETYP.value);
-
-		return op.Stop();
-	}
+    char * SPELRecord::GetStrType()
+    {
+        return "SPEL";
+    }
 
 
-	int32_t SPELRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk)
-	{
-		uint32_t subType = 0;
-		uint32_t subSize = 0;
-		StringLookups *LookupStrings = GetParentMod()->TES4.LookupStrings;
-		
-		SpellEffect *currentEffect = NULL;
-		
-		while (buffer < end_buffer){
-			subType = *(uint32_t *)buffer;
-			buffer += 4;
-			switch (subType)
-			{
-			case REV32(XXXX):
-				buffer += 2;
-				subSize = *(uint32_t *)buffer;
-				buffer += 4;
-				subType = *(uint32_t *)buffer;
-				buffer += 6;
-				break;
-			default:
-				subSize = *(uint16_t *)buffer;
-				buffer += 2;
-				break;
-			}
-			switch (subType)
-			{
-			case REV32(EDID):
-				EDID.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(OBND):
-				OBND.Read(buffer, subSize);
-				break;
-			case REV32(FULL):
-				FULL.Read(buffer, subSize, CompressedOnDisk, LookupStrings);
-				break;
-			case REV32(MDOB):
-				MDOB.Read(buffer, subSize);
-				break;
-			case REV32(ETYP):
-				ETYP.Read(buffer, subSize);
-				break;
-			case REV32(DESC):
-				DESC.Read(buffer, subSize, CompressedOnDisk, LookupStrings);
-				break;
-			case REV32(SPIT):
-				SPIT.Read(buffer, subSize);
-				break;
-			case REV32(EFID):
-				currentEffect = new SpellEffect();
-				effects.value.push_back(currentEffect);
-				currentEffect->EFID.Read(buffer, subSize);
-				break;
-				
-			case REV32(EFIT):
-				if(currentEffect != NULL) {
-					currentEffect->EFIT.Read(buffer, subSize);
-				} else {
-					printer("  SPEL: %08X - EFIT found without an effect initialized\n", formID);
-					buffer += subSize;
-				} 
-				
-				break;
-										
-			case REV32(CTDA):
-				if(currentEffect != NULL) {
-					currentEffect->CTDA.Read(buffer, subSize);
-				} else {
-					printer("  SPEL: %08X - CTDA found without an effect initialized\n", formID);
-					buffer += subSize;
-				} 
-			
-				break;
-							
-		default:
-				//printer("FileName = %s\n", FileName);
-				printer("  SPEL: %08X - Unknown subType = %04x [%c%c%c%c]\n", formID, subType, (subType >> 0) & 0xFF, (subType >> 8) & 0xFF, (subType >> 16) & 0xFF, (subType >> 24) & 0xFF);
-				CBASH_CHUNK_DEBUG
-					printer("  Size = %i\n", subSize);
-				printer("  CurPos = %08x\n\n", buffer - 6);
-				buffer = end_buffer;
-				break;
-			}
-		};
-		
-		
-		
-		return 0;
-	}
+    bool SPELRecord::VisitFormIDs(FormIDOp &op)
+    {
+        if (!IsLoaded())
+            return false;
+        //TODO - implement VisitFormIDs for struct GENOBND
 
-	int32_t SPELRecord::Unload()
-	{
-		IsChanged(false);
-		IsLoaded(false);
-		EDID.Unload();
-		OBND.Unload();
-		FULL.Unload();
-		DESC.Unload();
-		MDOB.Unload();
-		ETYP.Unload();
-		//effects.Unload();
+        if (MDOB.IsLoaded()) {
+            op.Accept(MDOB.value);
+        }
+        op.Accept(ETYP.value);
 
-		return 1;
-	}
+        return op.Stop();
+    }
 
-	int32_t SPELRecord::WriteRecord(FileWriter &writer)
-	{	
-		WRITE(EDID);
-		WRITE(OBND);
-		WRITE(FULL);
-		WRITE(MDOB);
-		WRITE(ETYP);
-		WRITE(DESC);
-		WRITE(SPIT);
-		effects.Write(writer);
-		return -1;
-	}
 
-	bool SPELRecord::operator ==(const SPELRecord &other) const
-	{
-		return (EDID.equalsi(other.EDID) &&
-			OBND == other.OBND &&
-			FULL.equalsi(other.FULL) &&
-			MDOB == other.MDOB &&
-			ETYP == other.ETYP &&
-			SPIT == other.SPIT &&
-			DESC.equalsi(other.DESC) &&
-			effects == other.effects);
-	}
+    int32_t SPELRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk)
+    {
+        uint32_t subType = 0;
+        uint32_t subSize = 0;
+        StringLookups *LookupStrings = GetParentMod()->TES4.LookupStrings;
+        
+        SpellEffect *currentEffect = NULL;
+        
+        while (buffer < end_buffer){
+            subType = *(uint32_t *)buffer;
+            buffer += 4;
+            switch (subType)
+            {
+            case REV32(XXXX):
+                buffer += 2;
+                subSize = *(uint32_t *)buffer;
+                buffer += 4;
+                subType = *(uint32_t *)buffer;
+                buffer += 6;
+                break;
+            default:
+                subSize = *(uint16_t *)buffer;
+                buffer += 2;
+                break;
+            }
+            switch (subType)
+            {
+            case REV32(EDID):
+                EDID.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(OBND):
+                OBND.Read(buffer, subSize);
+                break;
+            case REV32(FULL):
+                FULL.Read(buffer, subSize, CompressedOnDisk, LookupStrings);
+                break;
+            case REV32(MDOB):
+                MDOB.Read(buffer, subSize);
+                break;
+            case REV32(ETYP):
+                ETYP.Read(buffer, subSize);
+                break;
+            case REV32(DESC):
+                DESC.Read(buffer, subSize, CompressedOnDisk, LookupStrings);
+                break;
+            case REV32(SPIT):
+                SPIT.Read(buffer, subSize);
+                break;
+            case REV32(EFID):
+                currentEffect = new SpellEffect();
+                effects.value.push_back(currentEffect);
+                currentEffect->EFID.Read(buffer, subSize);
+                break;
+                
+            case REV32(EFIT):
+                if(currentEffect != NULL) {
+                    currentEffect->EFIT.Read(buffer, subSize);
+                } else {
+                    printer("  SPEL: %08X - EFIT found without an effect initialized\n", formID);
+                    buffer += subSize;
+                } 
+                
+                break;
 
-	bool SPELRecord::operator !=(const SPELRecord &other) const
-	{
-		return !(*this == other);
-	}
+            case REV32(CTDA):
+                if(currentEffect != NULL) {
+                    currentEffect->CTDA.Read(buffer, subSize);
+                } else {
+                    printer("  SPEL: %08X - CTDA found without an effect initialized\n", formID);
+                    buffer += subSize;
+                } 
+            
+                break;
 
-	bool SPELRecord::equals(Record *other)
-	{
-		return *this == *(SPELRecord *)other;
-	}
+            case REV32(CIS2):
+                CBASH_SUBTYPE_NOT_IMPLEMENTED
+                buffer = end_buffer;
+                break;
+                            
+            default:
+                CBASH_SUBTYPE_UNKNOWN
+                CBASH_CHUNK_DEBUG
+                buffer = end_buffer;
+                break;
+            }
+        };
+        
+        
+        
+        return 0;
+    }
+
+    int32_t SPELRecord::Unload()
+    {
+        IsChanged(false);
+        IsLoaded(false);
+        EDID.Unload();
+        OBND.Unload();
+        FULL.Unload();
+        DESC.Unload();
+        MDOB.Unload();
+        ETYP.Unload();
+        //effects.Unload();
+
+        return 1;
+    }
+
+    int32_t SPELRecord::WriteRecord(FileWriter &writer)
+    {    
+        WRITE(EDID);
+        WRITE(OBND);
+        WRITE(FULL);
+        WRITE(MDOB);
+        WRITE(ETYP);
+        WRITE(DESC);
+        WRITE(SPIT);
+        effects.Write(writer);
+        return -1;
+    }
+
+    bool SPELRecord::operator ==(const SPELRecord &other) const
+    {
+        return (EDID.equalsi(other.EDID) &&
+            OBND == other.OBND &&
+            FULL.equalsi(other.FULL) &&
+            MDOB == other.MDOB &&
+            ETYP == other.ETYP &&
+            SPIT == other.SPIT &&
+            DESC.equalsi(other.DESC) &&
+            effects == other.effects);
+    }
+
+    bool SPELRecord::operator !=(const SPELRecord &other) const
+    {
+        return !(*this == other);
+    }
+
+    bool SPELRecord::equals(Record *other)
+    {
+        return *this == *(SPELRecord *)other;
+    }
 }

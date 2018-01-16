@@ -2144,7 +2144,9 @@ public:
 					numINFO++;
 					break;
 				default:
-					printer("TES5GRUPRecords<Sk::DIALRecord>::Read: Warning - Parsing error. Unexpected record type (%c%c%c%c) in file \"%s\".\n", ((char *)&header.type)[0], ((char *)&header.type)[1], ((char *)&header.type)[2], ((char *)&header.type)[3], FileName);
+					log_warning << "TES5GRUPRecords<Sk::DIALRecord>::Read: Warning - Parsing error. Unexpected record type (" << 
+						((char *)&header.type)[0] << ((char *)&header.type)[1] << ((char *)&header.type)[2] << ((char *)&header.type)[3] <<
+						") in file \"" << FileName << "\"." << std::endl;
 #ifdef CBASH_DEBUG_CHUNK
 					peek_around(buffer_position, PEEK_SIZE);
 #endif
@@ -2197,7 +2199,9 @@ public:
 					last_record->INFO.push_back(curRecord);
 					break;
 				default:
-					printer("TES5GRUPRecords<Sk::DIALRecord>::Read: Warning - Parsing error. Unexpected record type (%c%c%c%c) in file \"%s\".\n", ((char *)&header.type)[0], ((char *)&header.type)[1], ((char *)&header.type)[2], ((char *)&header.type)[3], FileName);
+					log_warning << "TES5GRUPRecords<Sk::DIALRecord>::Read: Warning - Parsing error. Unexpected record type (" <<
+						((char *)&header.type)[0] << ((char *)&header.type)[1] << ((char *)&header.type)[2] << ((char *)&header.type)[3] <<
+						") in file \"" << FileName << "\"." << std::endl;
 #ifdef CBASH_DEBUG_CHUNK
 					peek_around(header.data, PEEK_SIZE);
 #endif

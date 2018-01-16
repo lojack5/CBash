@@ -39,179 +39,180 @@
 
 namespace Sk {
 
-	DOORRecord::DOORRecord(unsigned char *_recData)
-		: TES5Record(_recData)
-	{
-		//
-	}
+    DOORRecord::DOORRecord(unsigned char *_recData)
+        : TES5Record(_recData)
+    {
+        //
+    }
 
-	DOORRecord::DOORRecord(DOORRecord *srcRecord)
-		: TES5Record((TES5Record *)srcRecord)
-	{
-		if (srcRecord == NULL || !srcRecord->IsChanged())
-			return;
+    DOORRecord::DOORRecord(DOORRecord *srcRecord)
+        : TES5Record((TES5Record *)srcRecord)
+    {
+        if (srcRecord == NULL || !srcRecord->IsChanged())
+            return;
 
-		EDID = srcRecord->EDID;
-		VMAD = srcRecord->VMAD;
-		OBND = srcRecord->OBND;
-		FULL = srcRecord->FULL;
-		MODL = srcRecord->MODL;
-		SNAM = srcRecord->SNAM;
-		ANAM = srcRecord->ANAM;
-		BNAM = srcRecord->BNAM;
-	}
+        EDID = srcRecord->EDID;
+        VMAD = srcRecord->VMAD;
+        OBND = srcRecord->OBND;
+        FULL = srcRecord->FULL;
+        MODL = srcRecord->MODL;
+        SNAM = srcRecord->SNAM;
+        ANAM = srcRecord->ANAM;
+        BNAM = srcRecord->BNAM;
+    }
 
-	DOORRecord::~DOORRecord()
-	{
-		//
-	}
+    DOORRecord::~DOORRecord()
+    {
+        //
+    }
 
-	bool DOORRecord::VisitFormIDs(FormIDOp &op)
-	{
-		if (!IsLoaded())
-			return false;
+    bool DOORRecord::VisitFormIDs(FormIDOp &op)
+    {
+        if (!IsLoaded())
+            return false;
 
-		if (SNAM.IsLoaded())
-			op.Accept(SNAM.value);
-		if (ANAM.IsLoaded())
-			op.Accept(ANAM.value);
-		if (BNAM.IsLoaded())
-			op.Accept(BNAM.value);
+        if (SNAM.IsLoaded())
+            op.Accept(SNAM.value);
+        if (ANAM.IsLoaded())
+            op.Accept(ANAM.value);
+        if (BNAM.IsLoaded())
+            op.Accept(BNAM.value);
 
-		return op.Stop();
-	}
+        return op.Stop();
+    }
 
 
-	uint32_t DOORRecord::GetType()
-	{
-		return REV32(DOOR);
-	}
+    uint32_t DOORRecord::GetType()
+    {
+        return REV32(DOOR);
+    }
 
-	char * DOORRecord::GetStrType()
-	{
-		return "DOOR";
-	}
+    char * DOORRecord::GetStrType()
+    {
+        return "DOOR";
+    }
 
-	int32_t DOORRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk)
-	{
-		uint32_t subType = 0;
-		uint32_t subSize = 0;
+    int32_t DOORRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk)
+    {
+        uint32_t subType = 0;
+        uint32_t subSize = 0;
 
-		while (buffer < end_buffer)
-		{
-			subType = *(uint32_t *)buffer;
-			buffer += 4;
-			switch (subType)
-			{
-			case REV32(XXXX):
-				buffer += 2;
-				subSize = *(uint32_t *)buffer;
-				buffer += 4;
-				subType = *(uint32_t *)buffer;
-				buffer += 6;
-				break;
-			default:
-				subSize = *(uint16_t *)buffer;
-				buffer += 2;
-				break;
-			}
-			switch (subType)
-			{
-			case REV32(EDID):
-				EDID.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(VMAD):
-				VMAD.Read(buffer, subSize, GetType(), CompressedOnDisk);
-				break;
-			case REV32(OBND):
-				OBND.Read(buffer, subSize);
-				break;
-			case REV32(FULL):
-				FULL.Read(buffer, subSize, CompressedOnDisk, NULL);
-				break;
-			case REV32(MODL):
-				MODL.MODL.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(MODT):
-				MODL.MODT.Read(buffer, subSize, CompressedOnDisk);
-				break; 
-			case REV32(SNAM):
-				SNAM.Read(buffer, subSize);
-				break;
-			case REV32(ANAM):
-				ANAM.Read(buffer, subSize);
-				break;
-			case REV32(BNAM):
-				BNAM.Read(buffer, subSize);
-				break;
-			case REV32(FNAM):
-				FNAM.Read(buffer, subSize);
-				break;
-			default:
-				//printer("Filename = %s\n", FileName);
-				printer("  DOOR: %08X - Unknown subType = %04x\n", formID, subType);
-				CBASH_CHUNK_DEBUG
-					printer("  Size = %i\n", subSize);
-				printer("  CurPos = %08x\n", buffer - 6);
-				buffer = end_buffer;
-				break;
-			}
-		};
-		return 0;
-	}
+        while (buffer < end_buffer)
+        {
+            subType = *(uint32_t *)buffer;
+            buffer += 4;
+            switch (subType)
+            {
+            case REV32(XXXX):
+                buffer += 2;
+                subSize = *(uint32_t *)buffer;
+                buffer += 4;
+                subType = *(uint32_t *)buffer;
+                buffer += 6;
+                break;
+            default:
+                subSize = *(uint16_t *)buffer;
+                buffer += 2;
+                break;
+            }
+            switch (subType)
+            {
+            case REV32(EDID):
+                EDID.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(VMAD):
+                VMAD.Read(buffer, subSize, GetType(), CompressedOnDisk);
+                break;
+            case REV32(OBND):
+                OBND.Read(buffer, subSize);
+                break;
+            case REV32(FULL):
+                FULL.Read(buffer, subSize, CompressedOnDisk, NULL);
+                break;
+            case REV32(MODL):
+                MODL.MODL.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(MODT):
+                MODL.MODT.Read(buffer, subSize, CompressedOnDisk);
+                break; 
+            case REV32(SNAM):
+                SNAM.Read(buffer, subSize);
+                break;
+            case REV32(ANAM):
+                ANAM.Read(buffer, subSize);
+                break;
+            case REV32(BNAM):
+                BNAM.Read(buffer, subSize);
+                break;
+            case REV32(FNAM):
+                FNAM.Read(buffer, subSize);
+                break;
+            case REV32(MODS):
+                CBASH_SUBTYPE_NOT_IMPLEMENTED
+                buffer = end_buffer;
+                break;
+            default:
+                CBASH_SUBTYPE_UNKNOWN
+                CBASH_CHUNK_DEBUG
+                buffer = end_buffer;
+                break;
+            }
+        };
+        return 0;
+    }
 
-	int32_t DOORRecord::Unload()
-	{
-		IsLoaded(false);
-		IsChanged(false);
-		EDID.Unload();
-		VMAD.Unload();
-		OBND.Unload();
-		FULL.Unload();
-		SNAM.Unload();
-		ANAM.Unload();
-		BNAM.Unload();
-		return 1;
-	}
+    int32_t DOORRecord::Unload()
+    {
+        IsLoaded(false);
+        IsChanged(false);
+        EDID.Unload();
+        VMAD.Unload();
+        OBND.Unload();
+        FULL.Unload();
+        SNAM.Unload();
+        ANAM.Unload();
+        BNAM.Unload();
+        return 1;
+    }
 
-	int32_t DOORRecord::WriteRecord(FileWriter &writer)
-	{
-		WRITE(EDID);
-		WRITE(VMAD);		
-		WRITE(OBND);
-		WRITE(FULL);
-		MODL.Write(writer);
-		WRITE(SNAM);
-		WRITE(ANAM);
-		WRITE(BNAM);
-		WRITE(FNAM);
-		return -1;
-	}
+    int32_t DOORRecord::WriteRecord(FileWriter &writer)
+    {
+        WRITE(EDID);
+        WRITE(VMAD);        
+        WRITE(OBND);
+        WRITE(FULL);
+        MODL.Write(writer);
+        WRITE(SNAM);
+        WRITE(ANAM);
+        WRITE(BNAM);
+        WRITE(FNAM);
+        return -1;
+    }
 
-	bool DOORRecord::operator ==(const DOORRecord &other) const
-	{
-		return (EDID.equalsi(other.EDID) &&
-			OBND == other.OBND &&
-			SNAM == other.SNAM &&
-			ANAM == other.ANAM &&
-			BNAM == other.BNAM);
-	}
+    bool DOORRecord::operator ==(const DOORRecord &other) const
+    {
+        return (EDID.equalsi(other.EDID) &&
+            OBND == other.OBND &&
+            SNAM == other.SNAM &&
+            ANAM == other.ANAM &&
+            BNAM == other.BNAM);
+    }
 
-	bool DOORRecord::operator !=(const DOORRecord &other) const
-	{
-		return !(*this == other);
-	}
+    bool DOORRecord::operator !=(const DOORRecord &other) const
+    {
+        return !(*this == other);
+    }
 
-	bool DOORRecord::equals(Record *other)
-	{
-		try
-		{
-			return *this == *dynamic_cast<const DOORRecord *>(other);
-		}
-		catch (...)
-		{
-			return false;
-		}
-	}
+    bool DOORRecord::equals(Record *other)
+    {
+        try
+        {
+            return *this == *dynamic_cast<const DOORRecord *>(other);
+        }
+        catch (...)
+        {
+            return false;
+        }
+    }
 
 } // namespace Sk

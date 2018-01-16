@@ -62,14 +62,14 @@ DIALRecord::DIALRecord(DIALRecord *srcRecord):
         return;
 
     EDID = srcRecord->EDID;
-	FULL = srcRecord->FULL;
-	PNAM = srcRecord->PNAM;
-	BNAM = srcRecord->BNAM;
-	QNAM = srcRecord->QNAM;
-	DATA = srcRecord->DATA;
-	SNAM = srcRecord->SNAM;
-	TIFC = srcRecord->TIFC;
-	INFO = srcRecord->INFO;
+    FULL = srcRecord->FULL;
+    PNAM = srcRecord->PNAM;
+    BNAM = srcRecord->BNAM;
+    QNAM = srcRecord->QNAM;
+    DATA = srcRecord->DATA;
+    SNAM = srcRecord->SNAM;
+    TIFC = srcRecord->TIFC;
+    INFO = srcRecord->INFO;
 
     return;
     }
@@ -78,7 +78,7 @@ DIALRecord::~DIALRecord()
     {
     //
     }
-	
+    
 uint32_t DIALRecord::GetType()
     {
     return REV32(DIAL);
@@ -91,14 +91,14 @@ char * DIALRecord::GetStrType()
 
 bool DIALRecord::VisitFormIDs(FormIDOp &op)
 {
-	if (!IsLoaded())
-		return false;
+    if (!IsLoaded())
+        return false;
 
-	op.Accept(BNAM.value);
-	//REVERT ASAP
-	op.Accept(QNAM.value);
+    op.Accept(BNAM.value);
+    //REVERT ASAP
+    op.Accept(QNAM.value);
 
-	return op.Stop();
+    return op.Stop();
 }
 
 
@@ -128,33 +128,30 @@ int32_t DIALRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
             case REV32(EDID):
                 EDID.Read(buffer, subSize, CompressedOnDisk);
                 break;
-			case REV32(FULL):
-				FULL.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(PNAM):
-				PNAM.Read(buffer, subSize);
-				break;
-			case REV32(BNAM):
-				BNAM.Read(buffer, subSize);
-				break;
-			case REV32(QNAM):
-				QNAM.Read(buffer, subSize);
-				break;
-			case REV32(DATA):
-				DATA.Read(buffer, subSize);
-				break;
-			case REV32(SNAM):
-				SNAM.Read(buffer, subSize);
-				break;
-			case REV32(TIFC):
-				TIFC.Read(buffer, subSize);
-				break;
+            case REV32(FULL):
+                FULL.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(PNAM):
+                PNAM.Read(buffer, subSize);
+                break;
+            case REV32(BNAM):
+                BNAM.Read(buffer, subSize);
+                break;
+            case REV32(QNAM):
+                QNAM.Read(buffer, subSize);
+                break;
+            case REV32(DATA):
+                DATA.Read(buffer, subSize);
+                break;
+            case REV32(SNAM):
+                SNAM.Read(buffer, subSize);
+                break;
+            case REV32(TIFC):
+                TIFC.Read(buffer, subSize);
+                break;
             default:
-                //printer("FileName = %s\n", FileName);
-                printer("  DIAL: %08X - Unknown subType = %04x\n", formID, subType);
+                CBASH_SUBTYPE_UNKNOWN
                 CBASH_CHUNK_DEBUG
-                printer("  Size = %i\n", subSize);
-                printer("  CurPos = %08x\n\n", buffer - 6);
                 buffer = end_buffer;
                 break;
             }
@@ -168,42 +165,42 @@ int32_t DIALRecord::Unload()
     IsLoaded(false);
 
 
-	EDID.Unload();
-	FULL.Unload();
-	PNAM.Unload();
-	BNAM.Unload();
-	QNAM.Unload();
-	DATA.Unload();
-	SNAM.Unload();
-	TIFC.Unload();
+    EDID.Unload();
+    FULL.Unload();
+    PNAM.Unload();
+    BNAM.Unload();
+    QNAM.Unload();
+    DATA.Unload();
+    SNAM.Unload();
+    TIFC.Unload();
 
-	
+    
     return 1;
     }
 
 int32_t DIALRecord::WriteRecord(FileWriter &writer)
     {
-	WRITE(EDID);
-	WRITE(FULL);
-	WRITE(PNAM);
-	WRITE(BNAM);
-	WRITE(QNAM);
-	WRITE(DATA);
-	WRITE(SNAM);
-	WRITE(TIFC);
+    WRITE(EDID);
+    WRITE(FULL);
+    WRITE(PNAM);
+    WRITE(BNAM);
+    WRITE(QNAM);
+    WRITE(DATA);
+    WRITE(SNAM);
+    WRITE(TIFC);
     return -1;
     }
 
 bool DIALRecord::operator ==(const DIALRecord &other) const
     {
-	return (EDID.equalsi(other.EDID) &&
-		FULL.equalsi(other.FULL) &&
-		PNAM == other.PNAM &&
-		BNAM == other.BNAM &&
-		QNAM == other.QNAM &&
-		DATA == other.DATA &&
-		SNAM == other.SNAM &&
-		TIFC == other.TIFC
+    return (EDID.equalsi(other.EDID) &&
+        FULL.equalsi(other.FULL) &&
+        PNAM == other.PNAM &&
+        BNAM == other.BNAM &&
+        QNAM == other.QNAM &&
+        DATA == other.DATA &&
+        SNAM == other.SNAM &&
+        TIFC == other.TIFC
             );
     }
 

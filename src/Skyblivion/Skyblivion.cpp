@@ -202,7 +202,12 @@ namespace Skyblivion {
 
 		theScript->name.Copy(const_cast<char*>(scriptName.c_str()));
 
-		bindProperties(theScript, skScript);
+		try {
+			bindProperties(theScript, skScript);
+		}
+		catch (std::exception ex) {
+			log_warning << ex.what() << "\n";
+		}
 
 		return theScript;
 
@@ -390,7 +395,7 @@ namespace Skyblivion {
 								if (obTarget->CTDA.value[u + 1]->ifunc != 58) {
 									char buffix[16];
 									sprintf(buffix, "%x", obTarget->CTDA.value[u + 1]->ifunc);
-									std::cout << "GetStage ORed with non GetStage on quest " << std::string(skq->EDID.value) << " ifunc is 0x" << std::string(buffix) << std::endl;
+									log_warning << "GetStage ORed with non GetStage on quest " << std::string(skq->EDID.value) << " ifunc is 0x" << std::string(buffix) << std::endl;
 								}
 							}
 						}
@@ -735,7 +740,7 @@ namespace Skyblivion {
 				bindProperties(QFScript, skScript);
 			}
 			catch (std::exception ex) {
-
+				log_warning << ex.what() << "\n";
 			}
 
             questsVector->push_back(skq);
@@ -864,8 +869,7 @@ namespace Skyblivion {
 
             }
             catch (std::exception &e) {
-                printer(e.what());
-                printer("\r\n");
+				log_error << e.what() << "\n";
                 continue;
             }
 
@@ -1294,7 +1298,7 @@ namespace Skyblivion {
 								}
 							}
 							else {
-								printf("Cannot map the TCLT../n");
+								log_warning << "Cannot map the TCLT..\n";
 							}
 						}
 					}
@@ -1402,7 +1406,7 @@ namespace Skyblivion {
                         newInfo->VMAD.value->fragment = infoFragment;
                     }
                     catch (std::exception except) {
-                        
+						log_warning << except.what() << "\n";
                     }
 
 /* TODO - Check if needed, probably not
@@ -1554,15 +1558,17 @@ namespace Skyblivion {
 						if (record->GetType() != REV32(REFR) && record->GetType() != REV32(ACHR) && record->GetType() != REV32(ACRE) && record->GetType() != REV32(QUST)) //If we try to bind a base form ( form which is not running in runtime )..
 						{
 							if (propertyType == "ObjectReference" || propertyType == "Actor" || propertyType.substr(0, 4) == "TES4") {
-								std::cout << "Found connection to base form for a custom script or object reference / actor, name: " << std::string(record->GetEditorIDKey()) << ", property type requested: " << propertyType << std::endl;
+								log_warning << "Found connection to base form for a custom script or object reference / actor, name: " <<
+									std::string(record->GetEditorIDKey()) << " property type requested: " << propertyType << "\n";
 								//Naive implementation - just look for XRef EDID.
 								std::string refName = realPropertyEdid + "ref";
 								if (this->edidMap->find(refName) != this->edidMap->end()) {
-									std::cout << "Found ref, binding instead" << std::endl;
+									log_info << "Found ref, binding instead\n";
 									boundFormid = (*this->edidMap)[refName];
 								}
 								else {
-									std::cout << "Ref not found, probably will make script not work ingame." << std::endl;
+									log_error << "No suitable ref found for " << std::string(record->GetEditorIDKey()) <<
+										", this will probably prevent script working in game\n";
 								}
 							}
 						}
@@ -1599,7 +1605,12 @@ namespace Skyblivion {
 					script->properties.push_back(property);
 				}
 				else {
-					std::cout << "Cannot find entry " + realPropertyEdid << std::endl;
+					if (realPropertyEdid.substr(0, 14) == "tes4tes4scene_")
+						log_warning << "Scenes are not imported yet - " << realPropertyEdid << "\n";
+					else if (realPropertyEdid.substr(0, 18) == "tes4tes4messagebox")
+						log_warning << "Messageboxes are not imported yet - " << realPropertyEdid << "\n";
+					else
+						log_warning << "Cannot find entry " << realPropertyEdid << "\n";
 				}
 
             }
@@ -2445,7 +2456,9 @@ namespace Skyblivion {
 
 			//Actually this happens in vanilla oblivion too..
 			if (srec == NULL) {
-				printer("  GetVMScriptVariable %04x No script found\n", oCTDA->param1);
+				char buffer[50];
+				sprintf(buffer, "GetVMScriptVariable %04x No script found\n", oCTDA->param1);
+				log_warning << buffer;
 				return result;
 			}
 
