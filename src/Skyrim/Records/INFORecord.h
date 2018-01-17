@@ -146,7 +146,7 @@ namespace Sk {
 		OptSimpleSubRecord<FORMID> DNAM; //Shared dial
 
 		std::vector<INFORecordResponse *> responses; //Array of formids to the following topics.
-		OrderedSparseArray<SKCondition*> CTDA; //Conditions
+		UnorderedSparseArray<SKCondition*> CTDA; //Conditions
 		
 		//SCHR
 		
