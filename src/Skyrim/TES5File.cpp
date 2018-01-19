@@ -439,8 +439,8 @@ int32_t TES5File::Load(RecordOp &read_parser, RecordOp &indexer, std::vector<For
             break;
         case eIgFLOR:
         case REV32(FLOR):
-            buffer_position = group_buffer_end;
-            //FLOR.Read(buffer_start, buffer_position, group_buffer_end, indexer, parser, DeletedRecords, processor, FileName);
+            //buffer_position = group_buffer_end;
+            FLOR.Read(buffer_start, buffer_position, group_buffer_end, indexer, parser, DeletedRecords, processor, FileName);
             break;
         case eIgFLST:
         case REV32(FLST):
@@ -459,8 +459,8 @@ int32_t TES5File::Load(RecordOp &read_parser, RecordOp &indexer, std::vector<For
             break;
       //case eIgFURN:           // Same as REV32(FURN)
         case REV32(FURN):
-            buffer_position = group_buffer_end;
-            //FURN.Read(buffer_start, buffer_position, group_buffer_end, indexer, parser, DeletedRecords, processor, FileName);
+            //buffer_position = group_buffer_end;
+            FURN.Read(buffer_start, buffer_position, group_buffer_end, indexer, parser, DeletedRecords, processor, FileName);
             break;
         case eIgGLOB:
         case REV32(GLOB):
@@ -552,8 +552,8 @@ int32_t TES5File::Load(RecordOp &read_parser, RecordOp &indexer, std::vector<For
             break;
         case eIgLIGH:
         case REV32(LIGH):
-            buffer_position = group_buffer_end;
-            //LIGH.Read(buffer_start, buffer_position, group_buffer_end, indexer, parser, DeletedRecords, processor, FileName);
+            //buffer_position = group_buffer_end;
+            LIGH.Read(buffer_start, buffer_position, group_buffer_end, indexer, parser, DeletedRecords, processor, FileName);
             break;
       //case eIgLSCR:           // Same as REV32(LSCR)
         case REV32(LSCR):
@@ -937,18 +937,18 @@ size_t TES5File::GetNumRecords(const uint32_t &RecordType)
 	*/
     case REV32(FACT):
         return FACT.pool.used_object_capacity();
-    /*
 	case REV32(FLOR):
         return FLOR.pool.used_object_capacity();
+	/*
     case REV32(FLST):
         return FLST.pool.used_object_capacity();
     case REV32(FSTP):
         return FSTP.pool.used_object_capacity();
     case REV32(FSTS):
         return FSTS.pool.used_object_capacity();
+	*/
     case REV32(FURN):
         return FURN.pool.used_object_capacity();
-	*/
     case REV32(GLOB):
         return GLOB.pool.used_object_capacity();
 	/*
@@ -992,8 +992,10 @@ size_t TES5File::GetNumRecords(const uint32_t &RecordType)
         return LCTN.pool.used_object_capacity();
     case REV32(LGTM):
         return LGTM.pool.used_object_capacity();
+	*/
     case REV32(LIGH):
         return LIGH.pool.used_object_capacity();
+	/*
     case REV32(LSCR):
         return LSCR.pool.used_object_capacity();
     */
@@ -1298,10 +1300,8 @@ Record * TES5File::CreateRecord(const uint32_t &RecordType, char * const &Record
         return DOOR.pool.construct(SourceRecord, this, true);
 	case REV32(INGR):
         return INGR.pool.construct(SourceRecord, this, true);
-	/*
-		case REV32(LIGH):
+	case REV32(LIGH):
         return LIGH.pool.construct(SourceRecord, this, true);
-    */
 	case REV32(MISC):
         return MISC.pool.construct(SourceRecord, this, true);
 	/*
@@ -1317,9 +1317,11 @@ Record * TES5File::CreateRecord(const uint32_t &RecordType, char * const &Record
         return GRAS.pool.construct(SourceRecord, this, true);
     case REV32(TREE):
         return TREE.pool.construct(SourceRecord, this, true);
+		*/
+	case REV32(FLOR):
+		return FLOR.pool.construct(SourceRecord, this, true);
     case REV32(FURN):
         return FURN.pool.construct(SourceRecord, this, true);
-		*/
 	case REV32(WEAP):
         return WEAP.pool.construct(SourceRecord, this, true);
 	case REV32(AMMO):
@@ -1864,11 +1866,11 @@ int32_t TES5File::DeleteRecord(Record *&curRecord, RecordOp &deindexer)
         deindexer.Accept(curRecord);
         FACT.pool.destroy(curRecord);
         return 1;
-	/*
 	case REV32(FLOR):
         deindexer.Accept(curRecord);
         FLOR.pool.destroy(curRecord);
         return 1;
+	/*
     case REV32(FLST):
         deindexer.Accept(curRecord);
         FLST.pool.destroy(curRecord);
@@ -1881,11 +1883,11 @@ int32_t TES5File::DeleteRecord(Record *&curRecord, RecordOp &deindexer)
         deindexer.Accept(curRecord);
         FSTS.pool.destroy(curRecord);
         return 1;
+	*/
     case REV32(FURN):
         deindexer.Accept(curRecord);
         FURN.pool.destroy(curRecord);
         return 1;
-	*/
     case REV32(GLOB):
         deindexer.Accept(curRecord);
         GLOB.pool.destroy(curRecord);
@@ -1993,10 +1995,12 @@ int32_t TES5File::DeleteRecord(Record *&curRecord, RecordOp &deindexer)
         deindexer.Accept(curRecord);
         LGTM.pool.destroy(curRecord);
         return 1;
+	*/
     case REV32(LIGH):
         deindexer.Accept(curRecord);
         LIGH.pool.destroy(curRecord);
         return 1;
+	/*
     case REV32(LSCR):
         deindexer.Accept(curRecord);
         LSCR.pool.destroy(curRecord);
@@ -2429,7 +2433,7 @@ int32_t TES5File::Save(char * const &SaveName, std::vector<FormIDResolver *> &Ex
     formCount += CONT.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
     formCount += DOOR.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
     formCount += INGR.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
-    // formCount += LIGH.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
+    formCount += LIGH.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
     formCount += MISC.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
     formCount += APPA.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
     // formCount += STAT.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
@@ -2439,8 +2443,8 @@ int32_t TES5File::Save(char * const &SaveName, std::vector<FormIDResolver *> &Ex
     // formCount += GRAS.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
     // formCount += TREE.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
     // CLDC - Skyrim.esm has an empty GRUP for these
-    // formCount += FLOR.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
-    // formCount += FURN.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
+    formCount += FLOR.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
+    formCount += FURN.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
     formCount += WEAP.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
     formCount += AMMO.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
     formCount += NPC_.Write(writer, Expanders, expander, collapser, bMastersChanged, CloseMod);
@@ -2594,11 +2598,11 @@ void TES5File::VisitAllRecords(RecordOp &op)
     // EXPL.pool.VisitRecords(op);
     // EYES.pool.VisitRecords(op);
     FACT.pool.VisitRecords(op);
-    // FLOT.pool.VisitRecords(op);
+    FLOR.pool.VisitRecords(op);
     // FLST.pool.VisitRecords(op);
     // FSTP.pool.VisitRecords(op);
     // FSTS.pool.VisitRecords(op);
-    // FURN.pool.VisitRecords(op);
+    FURN.pool.VisitRecords(op);
     GLOB.pool.VisitRecords(op);
     // GMST.pool.VisitRecords(op);
     // GRAS.pool.VisitRecords(op);
@@ -2617,7 +2621,7 @@ void TES5File::VisitAllRecords(RecordOp &op)
     // LCRT.pool.VisitRecords(op);
     // LCTN.pool.VisitRecords(op);
     // LGTM.pool.VisitRecords(op);
-    // LIGH.pool.VisitRecords(op);
+    LIGH.pool.VisitRecords(op);
     // LSCR.pool.VisitRecords(op);
     LTEX.pool.VisitRecords(op);
     LVLI.pool.VisitRecords(op);
@@ -2823,8 +2827,8 @@ void TES5File::VisitRecords(const uint32_t &RecordType, RecordOp &op)
     case REV32(FACT):
         FACT.pool.VisitRecords(op);
         break;
-    case REV32(FLOT):
-        // FLOT.pool.VisitRecords(op);
+    case REV32(FLOR):
+        FLOR.pool.VisitRecords(op);
         break;
     case REV32(FLST):
         // FLST.pool.VisitRecords(op);
@@ -2836,7 +2840,7 @@ void TES5File::VisitRecords(const uint32_t &RecordType, RecordOp &op)
         // FSTS.pool.VisitRecords(op);
         break;
     case REV32(FURN):
-        // FURN.pool.VisitRecords(op);
+        FURN.pool.VisitRecords(op);
         break;
     case REV32(GLOB):
         GLOB.pool.VisitRecords(op);
@@ -2893,7 +2897,7 @@ void TES5File::VisitRecords(const uint32_t &RecordType, RecordOp &op)
         // LGTM.pool.VisitRecords(op);
         break;
     case REV32(LIGH):
-        // LIGH.pool.VisitRecords(op);
+        LIGH.pool.VisitRecords(op);
         break;
     case REV32(LSCR):
         // LSCR.pool.VisitRecords(op);

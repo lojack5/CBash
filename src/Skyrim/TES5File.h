@@ -81,11 +81,11 @@
 // #include "Records/EXPLRecord.h"
 // #include "Records/EYESRecord.h"
 #include "Records/FACTRecord.h"
-// #include "Records/FLORRecord.h"
+#include "Records/FLORRecord.h"
 // #include "Records/FLSTRecord.h"
 // #include "Records/FSTPRecord.h"
 // #include "Records/FSTSRecord.h"
-// #include "Records/FURNRecord.h"
+#include "Records/FURNRecord.h"
 #include "Records/GLOBRecord.h"
 // #include "Records/GMSTRecord.h"
 // #include "Records/GRASRecord.h"
@@ -104,7 +104,7 @@
 // #include "Records/LCRTRecord.h"
 // #include "Records/LCTNRecord.h"
 // #include "Records/LGTMRecord.h"
-// #include "Records/LIGHRecord.h"
+#include "Records/LIGHRecord.h"
 // #include "Records/LSCRRecord.h"
 #include "Records/LTEXRecord.h"
 #include "Records/LVLIRecord.h"
@@ -210,11 +210,11 @@ class TES5File : public ModFile
         // GRUP(EXPL);
         // GRUP(EYES);
         GRUP(FACT);
-        // GRUP(FLOR);
+        GRUP(FLOR);
         // GRUP(FLST);
         // GRUP(FSTP);
         // GRUP(FSTS);
-        // GRUP(FURN);
+        GRUP(FURN);
         GRUP(GLOB);
         // GRUP_EDID(GMST);
         // GRUP(GRAS);
@@ -233,7 +233,7 @@ class TES5File : public ModFile
         // GRUP(LCRT);
         // GRUP(LCTN);
         // GRUP(LGTM);
-        // GRUP(LIGH);
+        GRUP(LIGH);
         // GRUP(LSCR);
         GRUP(LTEX);
         GRUP(LVLI);

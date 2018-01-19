@@ -256,8 +256,8 @@ namespace Sk
         WRITE(VMAD);
         WRITE(OBND);
         WRITE(FULL);
+		WRITE(KWDA);
         MODL.Write(writer);
-        WRITE(KWDA);
         WRITE(ICON);
         WRITE(YNAM);
         WRITE(ZNAM);
