@@ -193,6 +193,9 @@ namespace Skyblivion {
 		Collection &oblivionCollection;
 		Collection &skyrimCollection;
 		std::vector<Record*, std::allocator<Record*>> scripts;
+		std::map<Ob::INFORecord*, Sk::INFORecord*> infosToBind;
+		std::map<Ob::QUSTRecord*, Sk::QUSTRecord*> qustsToBind;
+		std::map<std::string, Script*> qfsToBind;
 
 		Record *findRecordByFormidGeneric(FORMID_OR_UINT32 formid);
 		Record *findRecordByFormid(FORMID_OR_UINT32 formid, uint32_t type);
@@ -214,6 +217,7 @@ namespace Skyblivion {
         std::vector <Sk::DIALRecord*> * convertDIALFromOblivion();
         std::vector <Sk::QUSTRecord*> * convertQUSTFromOblivion();
 		void bindProperties(Script* script, SkyblivionScript &skScript);
+		void bindScriptProperties(std::vector<Sk::DIALRecord*>* dialogueVector, std::vector<Sk::QUSTRecord *>* questVector);
 
 		std::map<std::string, std::map<uint32_t, uint32_t>*>* getTargetsMappingTable();
 
