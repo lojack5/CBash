@@ -344,8 +344,8 @@ int32_t TES5File::Load(RecordOp &read_parser, RecordOp &indexer, std::vector<For
             break;
         case eIgCLMT:
         case REV32(CLMT):
-            buffer_position = group_buffer_end;
-            //CLMT.Read(buffer_start, buffer_position, group_buffer_end, indexer, parser, DeletedRecords, processor, FileName);
+            //buffer_position = group_buffer_end;
+            CLMT.Read(buffer_start, buffer_position, group_buffer_end, indexer, parser, DeletedRecords, processor, FileName);
             break;
         case eIgCOBJ:
         case REV32(COBJ):
@@ -592,8 +592,8 @@ int32_t TES5File::Load(RecordOp &read_parser, RecordOp &indexer, std::vector<For
             break;
         case eIgMGEF:
         case REV32(MGEF):
-            buffer_position = group_buffer_end;
-            //MGEF.Read(buffer_start, buffer_position, group_buffer_end, indexer, parser, DeletedRecords, processor, FileName);
+            //buffer_position = group_buffer_end;
+            MGEF.Read(buffer_start, buffer_position, group_buffer_end, indexer, parser, DeletedRecords, processor, FileName);
             break;
         case eIgMISC:
         case REV32(MISC):
@@ -704,8 +704,8 @@ int32_t TES5File::Load(RecordOp &read_parser, RecordOp &indexer, std::vector<For
             break;
         case eIgSCRL:
         case REV32(SCRL):
-            buffer_position = group_buffer_end;
-            //SCRL.Read(buffer_start, buffer_position, group_buffer_end, indexer, parser, DeletedRecords, processor, FileName);
+            //buffer_position = group_buffer_end;
+            SCRL.Read(buffer_start, buffer_position, group_buffer_end, indexer, parser, DeletedRecords, processor, FileName);
             break;
         case eIgSHOU:
         case REV32(SHOU):
@@ -713,8 +713,8 @@ int32_t TES5File::Load(RecordOp &read_parser, RecordOp &indexer, std::vector<For
             break;
         case eIgSLGM:
         case REV32(SLGM):
-            buffer_position = group_buffer_end;
-            //SLGM.Read(buffer_start, buffer_position, group_buffer_end, indexer, parser, DeletedRecords, processor, FileName);
+            //buffer_position = group_buffer_end;
+            SLGM.Read(buffer_start, buffer_position, group_buffer_end, indexer, parser, DeletedRecords, processor, FileName);
             break;
         case eIgSMBN:
         case REV32(SMBN):
@@ -803,8 +803,8 @@ int32_t TES5File::Load(RecordOp &read_parser, RecordOp &indexer, std::vector<For
             break;
       //case eIgWTHR:           // Same as REV32(WTHR)
         case REV32(WTHR):
-            buffer_position = group_buffer_end;
-            //WTHR.Read(buffer_start, buffer_position, group_buffer_end, indexer, parser, DeletedRecords, processor, FileName);
+            //buffer_position = group_buffer_end;
+            WTHR.Read(buffer_start, buffer_position, group_buffer_end, indexer, parser, DeletedRecords, processor, FileName);
             break;
         default:
             if(GRUPLabel == 0 && GRUPSize == 0)
