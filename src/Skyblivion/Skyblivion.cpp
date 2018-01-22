@@ -1534,8 +1534,12 @@ namespace Skyblivion {
     }
 
     void SkyblivionConverter::convertPACKFromOblivion(Ob::PACKRecord& srcRecord, Sk::PACKRecord& dstRecord) {
-		
-        dstRecord.EDID = srcRecord.EDID;
+		if (srcRecord.EDID.IsLoaded()) {
+			std::string newEdid = srcRecord.EDID.value;
+			newEdid = "TES4" + newEdid;
+			dstRecord.EDID.value = new char[newEdid.length() + 1];
+			std::strcpy(dstRecord.EDID.value, newEdid.c_str());
+		}
         dstRecord.formID = srcRecord.formID + 0x01000000;
         dstRecord.formVersion = 0x28;
 
