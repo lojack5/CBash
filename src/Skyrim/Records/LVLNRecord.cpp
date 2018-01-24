@@ -185,12 +185,13 @@ int32_t LVLNRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                 case REV32(MODS):
                     MODL.Textures.Read(buffer, subSize);
                     break;
+                case REV32(COED):
+                    CBASH_SUBTYPE_NOT_IMPLEMENTED
+                    buffer = end_buffer;
+                    break;
                 default:
-                    //printer("FileName = %s\n", FileName);
-                    printer("  LVLN: %08X - Unknown subType = %04x\n", formID, subType);
+                    CBASH_SUBTYPE_UNKNOWN
                     CBASH_CHUNK_DEBUG
-                    printer("  Size = %i\n", subSize);
-                    printer("  CurPos = %08x\n\n", buffer - 6);
                     buffer = end_buffer;
                     break;
                 }
@@ -219,8 +220,8 @@ int32_t LVLNRecord::WriteRecord(FileWriter &writer)
         WRITE(LVLF);
         WRITE(LVLG);
         Entries.Write(writer);
-		MODL.Write(writer);
-		return -1;
+        MODL.Write(writer);
+        return -1;
     }
 
 bool LVLNRecord::operator ==(const LVLNRecord &other) const

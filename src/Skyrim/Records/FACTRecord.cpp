@@ -65,40 +65,40 @@ FACTRecord::FACTRecord(unsigned char *_recData):
     }
 
 FACTRecord::FACTRecord(FACTRecord *srcRecord):
-	TES5Record()
+    TES5Record()
     {
-		if(srcRecord == NULL)
-			return;
+        if(srcRecord == NULL)
+            return;
 
-		flags = srcRecord->flags;
-		formID = srcRecord->formID;
-		flagsUnk = srcRecord->flagsUnk;
-		formVersion = srcRecord->formVersion;
-		versionControl2[0] = srcRecord->versionControl2[0];
-		versionControl2[1] = srcRecord->versionControl2[1];
+        flags = srcRecord->flags;
+        formID = srcRecord->formID;
+        flagsUnk = srcRecord->flagsUnk;
+        formVersion = srcRecord->formVersion;
+        versionControl2[0] = srcRecord->versionControl2[0];
+        versionControl2[1] = srcRecord->versionControl2[1];
 
-		recData = srcRecord->recData;
-		if(!srcRecord->IsChanged())
-			return;
+        recData = srcRecord->recData;
+        if(!srcRecord->IsChanged())
+            return;
 
-		EDID = srcRecord->EDID;
-		FULL = srcRecord->FULL;
-		XNAM = srcRecord->XNAM;
-		DATA = srcRecord->DATA;
-		JAIL = srcRecord->JAIL;
-		WAIT = srcRecord->WAIT;
-		STOL = srcRecord->STOL;
-		PLCN = srcRecord->PLCN;
-		CRGR = srcRecord->CRGR;
-		JOUT = srcRecord->JOUT;
-		CRVA = srcRecord->CRVA;			
-		RNAM = srcRecord->RNAM;
-		VEND = srcRecord->VEND;
-		VENC = srcRecord->VENC;
-		VENV = srcRecord->VENV;
-		PLVD = srcRecord->PLVD;
-		CTDA = srcRecord->CTDA;
-		return;
+        EDID = srcRecord->EDID;
+        FULL = srcRecord->FULL;
+        XNAM = srcRecord->XNAM;
+        DATA = srcRecord->DATA;
+        JAIL = srcRecord->JAIL;
+        WAIT = srcRecord->WAIT;
+        STOL = srcRecord->STOL;
+        PLCN = srcRecord->PLCN;
+        CRGR = srcRecord->CRGR;
+        JOUT = srcRecord->JOUT;
+        CRVA = srcRecord->CRVA;            
+        RNAM = srcRecord->RNAM;
+        VEND = srcRecord->VEND;
+        VENC = srcRecord->VENC;
+        VENV = srcRecord->VENV;
+        PLVD = srcRecord->PLVD;
+        CTDA = srcRecord->CTDA;
+        return;
     }
 
 FACTRecord::~FACTRecord()
@@ -113,20 +113,20 @@ bool FACTRecord::VisitFormIDs(FormIDOp &op)
 
     for(uint32_t ListIndex = 0; ListIndex < XNAM.value.size(); ListIndex++)
         op.Accept(XNAM.value[ListIndex]->faction);
-	
-	if(JAIL.IsLoaded()) op.Accept(JAIL.value);
-	if(WAIT.IsLoaded()) op.Accept(WAIT.value);
-	if(STOL.IsLoaded()) op.Accept(STOL.value);
-	if(PLCN.IsLoaded()) op.Accept(PLCN.value);
-	if(CRGR.IsLoaded()) op.Accept(CRGR.value);
-	if(JOUT.IsLoaded()) op.Accept(JOUT.value);
-	if(VEND.IsLoaded()) op.Accept(VEND.value);
-	if(VENC.IsLoaded()) op.Accept(VENC.value);
-	if(CTDA.IsLoaded()) {
-		for(uint32_t Ind = 0; Ind < CTDA.value.size(); Ind++)
-			CTDA.value[Ind]->VisitFormIDs(op);	
-	}
-	
+    
+    if(JAIL.IsLoaded()) op.Accept(JAIL.value);
+    if(WAIT.IsLoaded()) op.Accept(WAIT.value);
+    if(STOL.IsLoaded()) op.Accept(STOL.value);
+    if(PLCN.IsLoaded()) op.Accept(PLCN.value);
+    if(CRGR.IsLoaded()) op.Accept(CRGR.value);
+    if(JOUT.IsLoaded()) op.Accept(JOUT.value);
+    if(VEND.IsLoaded()) op.Accept(VEND.value);
+    if(VENC.IsLoaded()) op.Accept(VENC.value);
+    if(CTDA.IsLoaded()) {
+        for(uint32_t Ind = 0; Ind < CTDA.value.size(); Ind++)
+            CTDA.value[Ind]->VisitFormIDs(op);    
+    }
+    
     return op.Stop();
     }
 
@@ -235,46 +235,46 @@ int32_t FACTRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
             case REV32(DATA):
                 DATA.Read(buffer, subSize);
                 break;
-			case REV32(JAIL):
-				JAIL.Read(buffer, subSize);
-				break;
-			case REV32(WAIT):
-				WAIT.Read(buffer, subSize);
-				break;
-			case REV32(STOL):
-				STOL.Read(buffer, subSize);
-				break;
-			case REV32(PLCN):
-				PLCN.Read(buffer, subSize);
-				break;
-			case REV32(CRGR):
-				CRGR.Read(buffer, subSize);
-				break;
-			case REV32(JOUT):
-				JOUT.Read(buffer, subSize);
-				break;
-			case REV32(CRVA):
-				CRVA.Read(buffer, subSize);
-				break;
+            case REV32(JAIL):
+                JAIL.Read(buffer, subSize);
+                break;
+            case REV32(WAIT):
+                WAIT.Read(buffer, subSize);
+                break;
+            case REV32(STOL):
+                STOL.Read(buffer, subSize);
+                break;
+            case REV32(PLCN):
+                PLCN.Read(buffer, subSize);
+                break;
+            case REV32(CRGR):
+                CRGR.Read(buffer, subSize);
+                break;
+            case REV32(JOUT):
+                JOUT.Read(buffer, subSize);
+                break;
+            case REV32(CRVA):
+                CRVA.Read(buffer, subSize);
+                break;
             case REV32(RNAM):
                 RNAM.value.push_back(new FACTRNAM);
                 RNAM.value.back()->RNAM.Read(buffer, subSize);
                 break;
-			case REV32(VEND):
-				VEND.Read(buffer, subSize);
-				break;
-			case REV32(VENC):
-				VENC.Read(buffer, subSize);
-				break;
-			case REV32(VENV):
-				VENV.Read(buffer, subSize);
-				break;
-			case REV32(PLVD):
-				PLVD.Read(buffer, subSize);
-				break;
-			case REV32(CTDA):
-				CTDA.Read(buffer, subSize);
-				break;
+            case REV32(VEND):
+                VEND.Read(buffer, subSize);
+                break;
+            case REV32(VENC):
+                VENC.Read(buffer, subSize);
+                break;
+            case REV32(VENV):
+                VENV.Read(buffer, subSize);
+                break;
+            case REV32(PLVD):
+                PLVD.Read(buffer, subSize);
+                break;
+            case REV32(CTDA):
+                CTDA.Read(buffer, subSize);
+                break;
             case REV32(MNAM):
                 if(RNAM.value.size() == 0)
                     RNAM.value.push_back(new FACTRNAM);
@@ -285,12 +285,13 @@ int32_t FACTRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                     RNAM.value.push_back(new FACTRNAM);
                 RNAM.value.back()->FNAM.Read(buffer, subSize, CompressedOnDisk);
                 break;
+            case REV32(CITC):
+                CBASH_SUBTYPE_NOT_IMPLEMENTED
+                buffer = end_buffer;
+                break;
             default:
-                //printer("FileName = %s\n", FileName);
-                printer("  FACT: %08X - Unknown subType = %04x\n", formID, subType);
+                CBASH_SUBTYPE_UNKNOWN
                 CBASH_CHUNK_DEBUG
-                printer("  Size = %i\n", subSize);
-                printer("  CurPos = %08x\n\n", buffer - 6);
                 buffer = end_buffer;
                 break;
             }
@@ -300,73 +301,73 @@ int32_t FACTRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
 
 int32_t FACTRecord::Unload()
     {
-		IsChanged(false);
-		IsLoaded(false);
-		EDID.Unload();
-		FULL.Unload();
-		XNAM.Unload();
-		DATA.Unload();
-		JAIL.Unload();
-		WAIT.Unload();
-		STOL.Unload();
-		PLCN.Unload();
-		CRGR.Unload();
-		JOUT.Unload();
-		JAIL.Unload();
-		CRVA.Unload();
-		RNAM.Unload();
-		VEND.Unload();
-		VENC.Unload();
-		VENV.Unload();
-		PLVD.Unload();
-		CTDA.Unload();
-		return 1;
+        IsChanged(false);
+        IsLoaded(false);
+        EDID.Unload();
+        FULL.Unload();
+        XNAM.Unload();
+        DATA.Unload();
+        JAIL.Unload();
+        WAIT.Unload();
+        STOL.Unload();
+        PLCN.Unload();
+        CRGR.Unload();
+        JOUT.Unload();
+        JAIL.Unload();
+        CRVA.Unload();
+        RNAM.Unload();
+        VEND.Unload();
+        VENC.Unload();
+        VENV.Unload();
+        PLVD.Unload();
+        CTDA.Unload();
+        return 1;
     }
 
 int32_t FACTRecord::WriteRecord(FileWriter &writer)
 {
-	WRITE(EDID);
-	WRITE(FULL);
-	WRITE(XNAM);
-	WRITE(DATA);
-	WRITE(JAIL);
-	WRITE(WAIT);
-	WRITE(STOL);
-	WRITE(PLCN);
-	WRITE(CRGR);
-	WRITE(JOUT);
-	WRITE(JAIL);
-	WRITE(CRVA);
-	WRITE(RNAM);
-	WRITE(VEND);
-	WRITE(VENC);
-	WRITE(VENV);
-	WRITE(PLVD);
-	WRITE(CTDA);
-	return -1;
+    WRITE(EDID);
+    WRITE(FULL);
+    WRITE(XNAM);
+    WRITE(DATA);
+    WRITE(JAIL);
+    WRITE(WAIT);
+    WRITE(STOL);
+    WRITE(PLCN);
+    WRITE(CRGR);
+    WRITE(JOUT);
+    WRITE(JAIL);
+    WRITE(CRVA);
+    WRITE(RNAM);
+    WRITE(VEND);
+    WRITE(VENC);
+    WRITE(VENV);
+    WRITE(PLVD);
+    WRITE(CTDA);
+    return -1;
 }
 
-	bool FACTRecord::operator ==(const FACTRecord &other) const
-	{
-		return (EDID.equalsi(other.EDID) &&
-			FULL.equalsi(other.FULL) &&
-			XNAM == other.XNAM &&
-			DATA == other.DATA &&
-			JAIL == other.JAIL &&
-			WAIT == other.WAIT &&
-			STOL == other.STOL &&
-			PLCN == other.PLCN &&
-			CRGR == other.CRGR &&
-			JOUT == other.JOUT &&
-			JAIL == other.JAIL &&
-			CRVA == other.CRVA &&
-			RNAM == other.RNAM &&
-			VEND == other.VEND &&
-			VENC == other.VENC &&
-			VENV == other.VENV &&
-			PLVD == other.PLVD &&
-			CTDA == other.CTDA);
-	}
+    bool FACTRecord::operator ==(const FACTRecord &other) const
+    {
+        return (EDID.equalsi(other.EDID) &&
+            FULL.equalsi(other.FULL) &&
+            XNAM == other.XNAM &&
+            DATA == other.DATA &&
+            JAIL == other.JAIL &&
+            WAIT == other.WAIT &&
+            STOL == other.STOL &&
+            PLCN == other.PLCN &&
+            CRGR == other.CRGR &&
+            JOUT == other.JOUT &&
+            JAIL == other.JAIL &&
+            CRVA == other.CRVA &&
+            RNAM == other.RNAM &&
+            VEND == other.VEND &&
+            VENC == other.VENC &&
+            VENV == other.VENV &&
+            PLVD == other.PLVD &&
+            CTDA == other.CTDA);
+    }
 
 bool FACTRecord::operator !=(const FACTRecord &other) const
     {

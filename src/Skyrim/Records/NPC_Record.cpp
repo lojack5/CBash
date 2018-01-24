@@ -125,14 +125,14 @@ namespace Sk {
             op.Accept(INAM.value);
         }
         if (VTCK.IsLoaded() ) { 
-			op.Accept(VTCK.value ); 
-		}
+            op.Accept(VTCK.value ); 
+        }
         if (TPLT.IsLoaded() ) { 
-			op.Accept(TPLT.value ); 
-		}
+            op.Accept(TPLT.value ); 
+        }
         if (RNAM.IsLoaded() ) { 
-			op.Accept(RNAM.value ); 
-		}
+            op.Accept(RNAM.value ); 
+        }
 
         for (uint32_t x = 0; x < SPLO.value.size(); ++x)
             op.Accept(SPLO.value[x]);
@@ -142,41 +142,41 @@ namespace Sk {
         }
 
         if (WNAM.IsLoaded() ) { 
-			op.Accept(WNAM.value ); 
-		}
+            op.Accept(WNAM.value ); 
+        }
         if (ANAM.IsLoaded() ) { 
-			op.Accept(ANAM.value ); 
-		} 
+            op.Accept(ANAM.value ); 
+        } 
         if (ATKR.IsLoaded() ) { 
-			op.Accept(ATKR.value ); 
-		}
+            op.Accept(ATKR.value ); 
+        }
 
         if (attacks.IsLoaded())
         {
-			for (uint32_t it = 0; it < attacks.value.size(); ++it)
+            for (uint32_t it = 0; it < attacks.value.size(); ++it)
             {
-				GENATTACK *attk = attacks.value[it];
+                GENATTACK *attk = attacks.value[it];
                 op.Accept(attk->ATKD.value.attackSpell);
                 op.Accept(attk->ATKD.value.attackType);
             }
         }
 
         if (SPOR.IsLoaded() ) { 
-			op.Accept(SPOR.value ); 
-		}
-		if (OCOR.IsLoaded() ) { 
-			op.Accept(OCOR.value ); 
-		}
-		if (GWOR.IsLoaded() ) { 
-			op.Accept(GWOR.value ); 
-		}
-		if (ECOR.IsLoaded() ) { 
-			op.Accept(ECOR.value ); 
-		}
+            op.Accept(SPOR.value ); 
+        }
+        if (OCOR.IsLoaded() ) { 
+            op.Accept(OCOR.value ); 
+        }
+        if (GWOR.IsLoaded() ) { 
+            op.Accept(GWOR.value ); 
+        }
+        if (ECOR.IsLoaded() ) { 
+            op.Accept(ECOR.value ); 
+        }
 
         if (PRKR.IsLoaded())
         {
-			for (uint32_t it = 0; it < PRKR.value.size(); ++it)
+            for (uint32_t it = 0; it < PRKR.value.size(); ++it)
             {
                 op.Accept(PRKR.value[it]->perk);
             }
@@ -184,82 +184,82 @@ namespace Sk {
 
         if (CNTO.IsLoaded())
         {
-			for (uint32_t it = 0; it < CNTO.value.size(); ++it)
-			{
+            for (uint32_t it = 0; it < CNTO.value.size(); ++it)
+            {
                 op.Accept(CNTO.value[it]->item);
             }
         }
 
         if (PKID.IsLoaded())
         {
-			for (uint32_t it = 0; it < PKID.value.size(); ++it)
-			{
+            for (uint32_t it = 0; it < PKID.value.size(); ++it)
+            {
                 op.Accept(PKID.value[it]);
             }
         }
 
         if (KWDA.IsLoaded())
         {
-			for (uint32_t it = 0; it < KWDA.value.size(); ++it)
-			{
+            for (uint32_t it = 0; it < KWDA.value.size(); ++it)
+            {
                 op.Accept(KWDA.value[it]);
             }
         }
 
         if (CNAM.IsLoaded() ) { 
-			op.Accept(CNAM.value ); 
-		}
+            op.Accept(CNAM.value ); 
+        }
 
         if (PNAM.IsLoaded())
         {
-			for (uint32_t it = 0; it < PNAM.value.size(); ++it)
+            for (uint32_t it = 0; it < PNAM.value.size(); ++it)
             {
                 op.Accept(PNAM.value[it]);
             }
         }
 
         if (HCLF.IsLoaded() ) { 
-			op.Accept(HCLF.value ); 
-		}
-				
-		if (ZNAM.IsLoaded() ) { 
-			op.Accept(ZNAM.value ); 
-		}
-		
-		if (GNAM.IsLoaded() ) { 
-			op.Accept(GNAM.value ); 
-		}
+            op.Accept(HCLF.value ); 
+        }
+                
+        if (ZNAM.IsLoaded() ) { 
+            op.Accept(ZNAM.value ); 
+        }
+        
+        if (GNAM.IsLoaded() ) { 
+            op.Accept(GNAM.value ); 
+        }
 
         if (CSDT.IsLoaded())
         {
-			for (uint32_t it = 0; it < CSDT.value.size(); ++it)
+            for (uint32_t it = 0; it < CSDT.value.size(); ++it)
             {
-				SOUNDPACK* csdt = CSDT.value[it];
-				for (uint32_t ik = 0; ik < csdt->sounds.value.size(); ++ik)
-                {					
+                SOUNDPACK* csdt = CSDT.value[it];
+                for (uint32_t ik = 0; ik < csdt->sounds.value.size(); ++ik)
+                {
                     op.Accept(csdt->sounds.value[ik]->CSDI.value);
-                }                
+                }
             }
         }
 
         if (CSCR.IsLoaded() ) { 
-			op.Accept(CSCR.value ); 
-		}
+            op.Accept(CSCR.value ); 
+        }
         if (DOFT.IsLoaded() ) { 
-			op.Accept(DOFT.value ); 
-		}
+            op.Accept(DOFT.value ); 
+        }
         if (SOFT.IsLoaded() ) { 
-			op.Accept(SOFT.value ); 
-		}
+            op.Accept(SOFT.value ); 
+        }
         if (DPLT.IsLoaded() ) { 
-			op.Accept(DPLT.value ); 
-		}
+            op.Accept(DPLT.value ); 
+        }
         if (CRIF.IsLoaded() ) { 
-			op.Accept(CRIF.value ); 
-		}
+            op.Accept(CRIF.value ); 
+        }
         if (FTST.IsLoaded() ) { 
-			op.Accept(FTST.value ); 
-		}
+            op.Accept(FTST.value ); 
+        }
 
         return op.Stop();
     }
@@ -801,9 +801,9 @@ namespace Sk {
             case REV32(NAM9):
                 NAM9.Read(buffer, subSize);
                 break;
-			case REV32(NAMA):
-				NAMA.Read(buffer, subSize);
-				break;
+            case REV32(NAMA):
+                NAMA.Read(buffer, subSize);
+                break;
             case REV32(TINI):
                 TintLayers.value.push_back(new TINTLAYER);
                 TintLayers.value.back()->TINI.Read(buffer, subSize);
@@ -824,11 +824,8 @@ namespace Sk {
                 TintLayers.value.back()->TIAS.Read(buffer, subSize);
                 break;
             default:
-                //printer("FileName = %s\n", FileName);
-                printer("  NPC_: %08X - Unknown subType = %04x\n", formID, subType);
+                CBASH_SUBTYPE_UNKNOWN
                 CBASH_CHUNK_DEBUG
-                    printer("  Size = %i\n", subSize);
-                printer("  CurPos = %08x\n\n", buffer - 6);
                 buffer = end_buffer;
                 break;
             }
@@ -961,242 +958,242 @@ namespace Sk {
         return *this == *(NPC_Record *)other;
     }
 
-	NPC_Record::SKDNAM::SKDNAM():
-		OneHanded(0),
-		TwoHanded(0),
-		Marksman(0),
-		Block(0),
-		Smithing(0),
-		HeavyArmor(0),
-		LightArmor(0),
-		Pickpocket(0),
-		Lockpicking(0),
-		Sneak(0),
-		Alchemy(0),
-		Speechcraft(0),
-		Alteration(0),
-		Conjuration(0),
-		Destruction(0),
-		Illusion(0),
-		Restoration(0),
-		Enchanting(0),
-		OneHandedOff(0),
-		TwoHandedOff(0),
-		MarksmanOff(0),
-		BlockOff(0),
-		SmithingOff(0),
-		HeavyArmorOff(0),
-		LightArmorOff(0),
-		PickpocketOff(0),
-		LockpickingOff(0),
-		SneakOff(0),
-		AlchemyOff(0),
-		SpeechcraftOff(0),
-		AlterationOff(0),
-		ConjurationOff(0),
-		DestructionOff(0),
-		IllusionOff(0),
-		RestorationOff(0),
-		EnchantingOff(0),
-		health(0),
-		magicka(0),
-		stamina(0),
-		unused1(0),
-		farAwayModelDistance(0),
-		gearedUpWeapons(0)
-	{
-		memset(&unused2, 0, sizeof(unused2));
-	}
+    NPC_Record::SKDNAM::SKDNAM():
+        OneHanded(0),
+        TwoHanded(0),
+        Marksman(0),
+        Block(0),
+        Smithing(0),
+        HeavyArmor(0),
+        LightArmor(0),
+        Pickpocket(0),
+        Lockpicking(0),
+        Sneak(0),
+        Alchemy(0),
+        Speechcraft(0),
+        Alteration(0),
+        Conjuration(0),
+        Destruction(0),
+        Illusion(0),
+        Restoration(0),
+        Enchanting(0),
+        OneHandedOff(0),
+        TwoHandedOff(0),
+        MarksmanOff(0),
+        BlockOff(0),
+        SmithingOff(0),
+        HeavyArmorOff(0),
+        LightArmorOff(0),
+        PickpocketOff(0),
+        LockpickingOff(0),
+        SneakOff(0),
+        AlchemyOff(0),
+        SpeechcraftOff(0),
+        AlterationOff(0),
+        ConjurationOff(0),
+        DestructionOff(0),
+        IllusionOff(0),
+        RestorationOff(0),
+        EnchantingOff(0),
+        health(0),
+        magicka(0),
+        stamina(0),
+        unused1(0),
+        farAwayModelDistance(0),
+        gearedUpWeapons(0)
+    {
+        memset(&unused2, 0, sizeof(unused2));
+    }
 
-	NPC_Record::SKDNAM::~SKDNAM() {
+    NPC_Record::SKDNAM::~SKDNAM() {
 
-	}
-	bool NPC_Record::SKDNAM::operator == (const NPC_Record::SKDNAM &other) const
-	{
-		return (OneHanded == other.OneHanded &&
-			TwoHanded == other.TwoHanded &&
-			Marksman == other.Marksman &&
-			Block == other.Block &&
-			Smithing == other.Smithing &&
-			HeavyArmor == other.HeavyArmor &&
-			LightArmor == other.LightArmor &&
-			Pickpocket == other.Pickpocket &&
-			Lockpicking == other.Lockpicking &&
-			Sneak == other.Sneak &&
-			Alchemy == other.Alchemy &&
-			Speechcraft == other.Speechcraft &&
-			Alteration == other.Alteration &&
-			Conjuration == other.Conjuration &&
-			Destruction == other.Destruction &&
-			Illusion == other.Illusion &&
-			Restoration == other.Restoration &&
-			Enchanting == other.Enchanting &&
-			OneHandedOff == other.OneHandedOff &&
-			TwoHandedOff == other.TwoHandedOff &&
-			MarksmanOff == other.MarksmanOff &&
-			BlockOff == other.BlockOff &&
-			SmithingOff == other.SmithingOff &&
-			HeavyArmorOff == other.HeavyArmorOff &&
-			LightArmorOff == other.LightArmorOff &&
-			PickpocketOff == other.PickpocketOff &&
-			LockpickingOff == other.LockpickingOff &&
-			SneakOff == other.SneakOff &&
-			AlchemyOff == other.AlchemyOff &&
-			SpeechcraftOff == other.SpeechcraftOff &&
-			AlterationOff == other.AlterationOff &&
-			ConjurationOff == other.ConjurationOff &&
-			DestructionOff == other.DestructionOff &&
-			IllusionOff == other.IllusionOff &&
-			RestorationOff == other.RestorationOff &&
-			EnchantingOff == other.EnchantingOff &&
-			health == other.health &&
-			magicka == other.magicka &&
-			stamina == other.stamina &&
-			farAwayModelDistance == other.farAwayModelDistance &&
-			gearedUpWeapons == other.gearedUpWeapons);
-	}
+    }
+    bool NPC_Record::SKDNAM::operator == (const NPC_Record::SKDNAM &other) const
+    {
+        return (OneHanded == other.OneHanded &&
+            TwoHanded == other.TwoHanded &&
+            Marksman == other.Marksman &&
+            Block == other.Block &&
+            Smithing == other.Smithing &&
+            HeavyArmor == other.HeavyArmor &&
+            LightArmor == other.LightArmor &&
+            Pickpocket == other.Pickpocket &&
+            Lockpicking == other.Lockpicking &&
+            Sneak == other.Sneak &&
+            Alchemy == other.Alchemy &&
+            Speechcraft == other.Speechcraft &&
+            Alteration == other.Alteration &&
+            Conjuration == other.Conjuration &&
+            Destruction == other.Destruction &&
+            Illusion == other.Illusion &&
+            Restoration == other.Restoration &&
+            Enchanting == other.Enchanting &&
+            OneHandedOff == other.OneHandedOff &&
+            TwoHandedOff == other.TwoHandedOff &&
+            MarksmanOff == other.MarksmanOff &&
+            BlockOff == other.BlockOff &&
+            SmithingOff == other.SmithingOff &&
+            HeavyArmorOff == other.HeavyArmorOff &&
+            LightArmorOff == other.LightArmorOff &&
+            PickpocketOff == other.PickpocketOff &&
+            LockpickingOff == other.LockpickingOff &&
+            SneakOff == other.SneakOff &&
+            AlchemyOff == other.AlchemyOff &&
+            SpeechcraftOff == other.SpeechcraftOff &&
+            AlterationOff == other.AlterationOff &&
+            ConjurationOff == other.ConjurationOff &&
+            DestructionOff == other.DestructionOff &&
+            IllusionOff == other.IllusionOff &&
+            RestorationOff == other.RestorationOff &&
+            EnchantingOff == other.EnchantingOff &&
+            health == other.health &&
+            magicka == other.magicka &&
+            stamina == other.stamina &&
+            farAwayModelDistance == other.farAwayModelDistance &&
+            gearedUpWeapons == other.gearedUpWeapons);
+    }
 
-	bool NPC_Record::SKDNAM::operator != (const NPC_Record::SKDNAM &other) const
-	{
-		return !(*this == other);
-	}
-
-
-	bool NPC_Record::SOUNDPACK::operator == (const NPC_Record::SOUNDPACK &other) const
-	{
-		return (soundLocation == other.soundLocation && sounds == other.sounds);
-	}
-
-	bool NPC_Record::SOUNDPACK::operator != (const NPC_Record::SOUNDPACK &other) const
-	{
-		return !(*this == other);
-	}
+    bool NPC_Record::SKDNAM::operator != (const NPC_Record::SKDNAM &other) const
+    {
+        return !(*this == other);
+    }
 
 
-	bool NPC_Record::SOUNDPAIR::operator == (const NPC_Record::SOUNDPAIR &other) const
-	{
-		return (CSDI == other.CSDI && CSDC == other.CSDC);
-	}
+    bool NPC_Record::SOUNDPACK::operator == (const NPC_Record::SOUNDPACK &other) const
+    {
+        return (soundLocation == other.soundLocation && sounds == other.sounds);
+    }
 
-	bool NPC_Record::SOUNDPAIR::operator != (const NPC_Record::SOUNDPAIR &other) const
-	{
-		return !(*this == other);
-	}
+    bool NPC_Record::SOUNDPACK::operator != (const NPC_Record::SOUNDPACK &other) const
+    {
+        return !(*this == other);
+    }
 
-	bool NPC_Record::QNAMTRIPLE::operator == (const NPC_Record::QNAMTRIPLE &other) const
-	{
-		return (red == other.red && green == other.green && blue == other.blue);
-	}
 
-	bool NPC_Record::QNAMTRIPLE::operator != (const NPC_Record::QNAMTRIPLE &other) const
-	{
-		return !(*this == other);
-	}
+    bool NPC_Record::SOUNDPAIR::operator == (const NPC_Record::SOUNDPAIR &other) const
+    {
+        return (CSDI == other.CSDI && CSDC == other.CSDC);
+    }
 
-	bool NPC_Record::FACEMORPH::operator == (const NPC_Record::FACEMORPH &other) const
-	{
-		return (NoseLongShort == other.NoseLongShort &&
-			NoseUpDown == other.NoseUpDown &&
-			JawUpDown == other.JawUpDown &&
-			JawNarrowWide == other.JawNarrowWide &&
-			JawFarwardBack == other.JawFarwardBack &&
-			CheeksUpDown == other.CheeksUpDown &&
-			CheeksFarwardBack == other.CheeksFarwardBack &&
-			EyesUpDown == other.EyesUpDown &&
-			EyesInOut == other.EyesInOut &&
-			BrowsUpDown == other.BrowsUpDown &&
-			BrowsInOut == other.BrowsInOut &&
-			BrowsFarwardBack == other.BrowsFarwardBack &&
-			LipsUpDown == other.LipsUpDown &&
-			LipsInOut == other.LipsInOut &&
-			ChinNarrowWide == other.ChinNarrowWide &&
-			ChinUpDown == other.ChinUpDown &&
-			ChinUnderbiteOverbite == other.ChinUnderbiteOverbite &&
-			EyesFarwardBack == other.EyesFarwardBack);
-	}
+    bool NPC_Record::SOUNDPAIR::operator != (const NPC_Record::SOUNDPAIR &other) const
+    {
+        return !(*this == other);
+    }
 
-	bool NPC_Record::FACEMORPH::operator != (const NPC_Record::FACEMORPH &other) const
-	{
-		return !(*this == other);
-	}
+    bool NPC_Record::QNAMTRIPLE::operator == (const NPC_Record::QNAMTRIPLE &other) const
+    {
+        return (red == other.red && green == other.green && blue == other.blue);
+    }
 
-	bool NPC_Record::FACEPARTS::operator == (const NPC_Record::FACEPARTS &other) const
-	{
-		return (nose == other.nose && mouth == other.mouth && eyes == other.eyes);
-	}
+    bool NPC_Record::QNAMTRIPLE::operator != (const NPC_Record::QNAMTRIPLE &other) const
+    {
+        return !(*this == other);
+    }
 
-	bool NPC_Record::FACEPARTS::operator != (const NPC_Record::FACEPARTS &other) const
-	{
-		return !(*this == other);
-	}
+    bool NPC_Record::FACEMORPH::operator == (const NPC_Record::FACEMORPH &other) const
+    {
+        return (NoseLongShort == other.NoseLongShort &&
+            NoseUpDown == other.NoseUpDown &&
+            JawUpDown == other.JawUpDown &&
+            JawNarrowWide == other.JawNarrowWide &&
+            JawFarwardBack == other.JawFarwardBack &&
+            CheeksUpDown == other.CheeksUpDown &&
+            CheeksFarwardBack == other.CheeksFarwardBack &&
+            EyesUpDown == other.EyesUpDown &&
+            EyesInOut == other.EyesInOut &&
+            BrowsUpDown == other.BrowsUpDown &&
+            BrowsInOut == other.BrowsInOut &&
+            BrowsFarwardBack == other.BrowsFarwardBack &&
+            LipsUpDown == other.LipsUpDown &&
+            LipsInOut == other.LipsInOut &&
+            ChinNarrowWide == other.ChinNarrowWide &&
+            ChinUpDown == other.ChinUpDown &&
+            ChinUnderbiteOverbite == other.ChinUnderbiteOverbite &&
+            EyesFarwardBack == other.EyesFarwardBack);
+    }
 
-	bool NPC_Record::TINTLAYER::operator == (const NPC_Record::TINTLAYER &other) const
-	{
-		return (TINI == other.TINI && TINC == other.TINC && TINV == other.TINV && TIAS == other.TIAS);
-	}
+    bool NPC_Record::FACEMORPH::operator != (const NPC_Record::FACEMORPH &other) const
+    {
+        return !(*this == other);
+    }
 
-	bool NPC_Record::TINTLAYER::operator != (const NPC_Record::TINTLAYER &other) const
-	{
-		return !(*this == other);
-	}
+    bool NPC_Record::FACEPARTS::operator == (const NPC_Record::FACEPARTS &other) const
+    {
+        return (nose == other.nose && mouth == other.mouth && eyes == other.eyes);
+    }
 
-	void NPC_Record::TINTLAYER::Write(FileWriter &writer)
-	{
-		WRITE(TINI);
-		WRITE(TINC);
-		WRITE(TINV);
-		WRITE(TIAS);
-	}
+    bool NPC_Record::FACEPARTS::operator != (const NPC_Record::FACEPARTS &other) const
+    {
+        return !(*this == other);
+    }
 
-	NPC_Record::TINTLAYER::TINTCOLORS::TINTCOLORS() :
-		red(0),
-		green(0),
-		blue(0)
-	{
-		//..
-	}
+    bool NPC_Record::TINTLAYER::operator == (const NPC_Record::TINTLAYER &other) const
+    {
+        return (TINI == other.TINI && TINC == other.TINC && TINV == other.TINV && TIAS == other.TIAS);
+    }
 
-	NPC_Record::TINTLAYER::TINTCOLORS::~TINTCOLORS() {
+    bool NPC_Record::TINTLAYER::operator != (const NPC_Record::TINTLAYER &other) const
+    {
+        return !(*this == other);
+    }
 
-	}
+    void NPC_Record::TINTLAYER::Write(FileWriter &writer)
+    {
+        WRITE(TINI);
+        WRITE(TINC);
+        WRITE(TINV);
+        WRITE(TIAS);
+    }
 
-	bool NPC_Record::TINTLAYER::TINTCOLORS::operator == (const NPC_Record::TINTLAYER::TINTCOLORS &other) const
-	{
-		return (red == other.red && green == other.green && blue == other.blue && alpha == other.alpha);
-	}
+    NPC_Record::TINTLAYER::TINTCOLORS::TINTCOLORS() :
+        red(0),
+        green(0),
+        blue(0)
+    {
+        //..
+    }
 
-	bool NPC_Record::TINTLAYER::TINTCOLORS::operator != (const NPC_Record::TINTLAYER::TINTCOLORS &other) const
-	{
-		return !(*this == other);
-	}
+    NPC_Record::TINTLAYER::TINTCOLORS::~TINTCOLORS() {
 
-	NPC_Record::SKAIDT::SKAIDT() :
-		aggression(0) {
+    }
 
-	}
+    bool NPC_Record::TINTLAYER::TINTCOLORS::operator == (const NPC_Record::TINTLAYER::TINTCOLORS &other) const
+    {
+        return (red == other.red && green == other.green && blue == other.blue && alpha == other.alpha);
+    }
 
-	NPC_Record::SKAIDT::~SKAIDT() {
+    bool NPC_Record::TINTLAYER::TINTCOLORS::operator != (const NPC_Record::TINTLAYER::TINTCOLORS &other) const
+    {
+        return !(*this == other);
+    }
 
-	}
+    NPC_Record::SKAIDT::SKAIDT() :
+        aggression(0) {
 
-	bool NPC_Record::SKAIDT::operator == (const NPC_Record::SKAIDT &other) const
-	{
-		return (aggression == other.aggression &&
-			confidence == other.confidence &&
-			energyLevel == other.energyLevel &&
-			responsibility == other.responsibility &&
-			mood == other.mood &&
-			assistance == other.assistance &&
-			agroRadiusBehavior == other.agroRadiusBehavior &&
-			warn == other.warn &&
-			warnAttack == other.warnAttack &&
-			attack == other.attack
-			);
-	}
+    }
 
-	bool NPC_Record::SKAIDT::operator != (const NPC_Record::SKAIDT &other) const
-	{
-		return !(*this == other);
-	}
+    NPC_Record::SKAIDT::~SKAIDT() {
+
+    }
+
+    bool NPC_Record::SKAIDT::operator == (const NPC_Record::SKAIDT &other) const
+    {
+        return (aggression == other.aggression &&
+            confidence == other.confidence &&
+            energyLevel == other.energyLevel &&
+            responsibility == other.responsibility &&
+            mood == other.mood &&
+            assistance == other.assistance &&
+            agroRadiusBehavior == other.agroRadiusBehavior &&
+            warn == other.warn &&
+            warnAttack == other.warnAttack &&
+            attack == other.attack
+            );
+    }
+
+    bool NPC_Record::SKAIDT::operator != (const NPC_Record::SKAIDT &other) const
+    {
+        return !(*this == other);
+    }
 
 } // namespace Sk

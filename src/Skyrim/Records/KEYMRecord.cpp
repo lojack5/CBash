@@ -39,206 +39,203 @@
 
 namespace Sk
 {
-	KEYMRecord::KEYMRecord(unsigned char *_recData) :
-		TES5Record(_recData)
-	{
-		//
-	}
+    KEYMRecord::KEYMRecord(unsigned char *_recData) :
+        TES5Record(_recData)
+    {
+        //
+    }
 
-	KEYMRecord::KEYMRecord(KEYMRecord *srcRecord) :
-		TES5Record()
-	{
-		if (srcRecord == NULL)
-			return;
+    KEYMRecord::KEYMRecord(KEYMRecord *srcRecord) :
+        TES5Record()
+    {
+        if (srcRecord == NULL)
+            return;
 
-		flags = srcRecord->flags;
-		formID = srcRecord->formID;
-		flagsUnk = srcRecord->flagsUnk;
-		formVersion = srcRecord->formVersion;
-		versionControl2[0] = srcRecord->versionControl2[0];
-		versionControl2[1] = srcRecord->versionControl2[1];
+        flags = srcRecord->flags;
+        formID = srcRecord->formID;
+        flagsUnk = srcRecord->flagsUnk;
+        formVersion = srcRecord->formVersion;
+        versionControl2[0] = srcRecord->versionControl2[0];
+        versionControl2[1] = srcRecord->versionControl2[1];
 
-		recData = srcRecord->recData;
-		if (!srcRecord->IsChanged())
-			return;
-		EDID = srcRecord->EDID;
-		VMAD = srcRecord->VMAD;
-		OBND = srcRecord->OBND;
-		FULL = srcRecord->FULL;
-		MODL = srcRecord->MODL;
-		YNAM = srcRecord->YNAM;
-		ZNAM = srcRecord->ZNAM;
-		KWDA = srcRecord->KWDA;
-		DATA = srcRecord->DATA;
-
-
-		return;
-	}
-
-	KEYMRecord::~KEYMRecord()
-	{
-		//
-	}
-
-	uint32_t KEYMRecord::GetType()
-	{
-		return REV32(KEYM);
-	}
-
-	char * KEYMRecord::GetStrType()
-	{
-		return "KEYM";
-	}
+        recData = srcRecord->recData;
+        if (!srcRecord->IsChanged())
+            return;
+        EDID = srcRecord->EDID;
+        VMAD = srcRecord->VMAD;
+        OBND = srcRecord->OBND;
+        FULL = srcRecord->FULL;
+        MODL = srcRecord->MODL;
+        YNAM = srcRecord->YNAM;
+        ZNAM = srcRecord->ZNAM;
+        KWDA = srcRecord->KWDA;
+        DATA = srcRecord->DATA;
 
 
-	bool KEYMRecord::VisitFormIDs(FormIDOp &op)
-	{
-		if (!IsLoaded())
-			return false;
-		//TODO - implement VisitFormIDs for struct GENOBND
+        return;
+    }
 
-		if (YNAM.IsLoaded()) {
-			op.Accept(YNAM.value);
-		}
-		if (ZNAM.IsLoaded()) {
-			op.Accept(ZNAM.value);
-		}
-		if (KWDA.IsLoaded()) {
-			for (uint32_t i = 0; i < KWDA.value.size(); ++i) {
+    KEYMRecord::~KEYMRecord()
+    {
+        //
+    }
 
-				op.Accept(KWDA.value[i]);
+    uint32_t KEYMRecord::GetType()
+    {
+        return REV32(KEYM);
+    }
 
-			};
-		}
-		if (DATA.IsLoaded()) {
-			//TODO - implement VisitFormIDs for struct struct KEYMDATA
-		}
-
-		return op.Stop();
-	}
+    char * KEYMRecord::GetStrType()
+    {
+        return "KEYM";
+    }
 
 
-	int32_t KEYMRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk)
-	{
-		uint32_t subType = 0;
-		uint32_t subSize = 0;
-		StringLookups *LookupStrings = GetParentMod()->TES4.LookupStrings;
-		while (buffer < end_buffer) {
-			subType = *(uint32_t *)buffer;
-			buffer += 4;
-			switch (subType)
-			{
-			case REV32(XXXX):
-				buffer += 2;
-				subSize = *(uint32_t *)buffer;
-				buffer += 4;
-				subType = *(uint32_t *)buffer;
-				buffer += 6;
-				break;
-			default:
-				subSize = *(uint16_t *)buffer;
-				buffer += 2;
-				break;
-			}
-			switch (subType)
-			{
-			case REV32(EDID):
-				EDID.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(VMAD):
-				VMAD.Read(buffer, subSize, GetType(), CompressedOnDisk);
-				break;
-			case REV32(OBND):
-				OBND.Read(buffer, subSize);
-				break;
-			case REV32(FULL):
-				FULL.Read(buffer, subSize, CompressedOnDisk, LookupStrings);
-				break;
-			case REV32(MODL):
-				MODL.MODL.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(MODT):
-				MODL.MODT.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(YNAM):
-				YNAM.Read(buffer, subSize);
-				break;
-			case REV32(ZNAM):
-				ZNAM.Read(buffer, subSize);
-				break;
-			case REV32(KWDA):
-				KWDA.Read(buffer, subSize);
-				break;
-			case REV32(KSIZ):
-				buffer += subSize;
-				break;
-			case REV32(DATA):
-				DATA.Read(buffer, subSize);
-				break;
+    bool KEYMRecord::VisitFormIDs(FormIDOp &op)
+    {
+        if (!IsLoaded())
+            return false;
+        //TODO - implement VisitFormIDs for struct GENOBND
 
-			default:
-				//printer("FileName = %s\n", FileName);
-				printer("  KEYM: %08X - Unknown subType = %04x [%c%c%c%c]\n", formID, subType, (subType >> 0) & 0xFF, (subType >> 8) & 0xFF, (subType >> 16) & 0xFF, (subType >> 24) & 0xFF);
-				CBASH_CHUNK_DEBUG
-					printer("  Size = %i\n", subSize);
-				printer("  CurPos = %08x\n\n", buffer - 6);
-				buffer = end_buffer;
-				break;
-			}
-		};
-		return 0;
-	}
+        if (YNAM.IsLoaded()) {
+            op.Accept(YNAM.value);
+        }
+        if (ZNAM.IsLoaded()) {
+            op.Accept(ZNAM.value);
+        }
+        if (KWDA.IsLoaded()) {
+            for (uint32_t i = 0; i < KWDA.value.size(); ++i) {
 
-	int32_t KEYMRecord::Unload()
-	{
-		IsChanged(false);
-		IsLoaded(false);
-		EDID.Unload();
-		VMAD.Unload();
-		OBND.Unload();
-		FULL.Unload();
-		YNAM.Unload();
-		ZNAM.Unload();
-		KWDA.Unload();
-		DATA.Unload();
+                op.Accept(KWDA.value[i]);
 
-		return 1;
-	}
+            };
+        }
+        if (DATA.IsLoaded()) {
+            //TODO - implement VisitFormIDs for struct struct KEYMDATA
+        }
 
-	int32_t KEYMRecord::WriteRecord(FileWriter &writer)
-	{
-		WRITE(EDID);
-		WRITE(VMAD);
-		WRITE(OBND);
-		MODL.Write(writer);
-		WRITE(FULL);
-		WRITE(YNAM);
-		WRITE(ZNAM);
-		WRITE(KWDA);
-		WRITE(DATA);
-		return -1;
-	}
+        return op.Stop();
+    }
 
-	bool KEYMRecord::operator ==(const KEYMRecord &other) const
-	{
-		return (EDID.equalsi(other.EDID) &&
-			VMAD == other.VMAD &&
-			OBND == other.OBND &&
-			MODL == other.MODL &&
-			FULL.equalsi(other.FULL) &&
-			YNAM == other.YNAM &&
-			ZNAM == other.ZNAM &&
-			KWDA == other.KWDA &&
-			DATA == other.DATA);
-	}
 
-	bool KEYMRecord::operator !=(const KEYMRecord &other) const
-	{
-		return !(*this == other);
-	}
+    int32_t KEYMRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk)
+    {
+        uint32_t subType = 0;
+        uint32_t subSize = 0;
+        StringLookups *LookupStrings = GetParentMod()->TES4.LookupStrings;
+        while (buffer < end_buffer) {
+            subType = *(uint32_t *)buffer;
+            buffer += 4;
+            switch (subType)
+            {
+            case REV32(XXXX):
+                buffer += 2;
+                subSize = *(uint32_t *)buffer;
+                buffer += 4;
+                subType = *(uint32_t *)buffer;
+                buffer += 6;
+                break;
+            default:
+                subSize = *(uint16_t *)buffer;
+                buffer += 2;
+                break;
+            }
+            switch (subType)
+            {
+            case REV32(EDID):
+                EDID.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(VMAD):
+                VMAD.Read(buffer, subSize, GetType(), CompressedOnDisk);
+                break;
+            case REV32(OBND):
+                OBND.Read(buffer, subSize);
+                break;
+            case REV32(FULL):
+                FULL.Read(buffer, subSize, CompressedOnDisk, LookupStrings);
+                break;
+            case REV32(MODL):
+                MODL.MODL.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(MODT):
+                MODL.MODT.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(YNAM):
+                YNAM.Read(buffer, subSize);
+                break;
+            case REV32(ZNAM):
+                ZNAM.Read(buffer, subSize);
+                break;
+            case REV32(KWDA):
+                KWDA.Read(buffer, subSize);
+                break;
+            case REV32(KSIZ):
+                buffer += subSize;
+                break;
+            case REV32(DATA):
+                DATA.Read(buffer, subSize);
+                break;
 
-	bool KEYMRecord::equals(Record *other)
-	{
-		return *this == *(KEYMRecord *)other;
-	}
+            default:
+                CBASH_SUBTYPE_UNKNOWN
+                CBASH_CHUNK_DEBUG
+                buffer = end_buffer;
+                break;
+            }
+        };
+        return 0;
+    }
+
+    int32_t KEYMRecord::Unload()
+    {
+        IsChanged(false);
+        IsLoaded(false);
+        EDID.Unload();
+        VMAD.Unload();
+        OBND.Unload();
+        FULL.Unload();
+        YNAM.Unload();
+        ZNAM.Unload();
+        KWDA.Unload();
+        DATA.Unload();
+
+        return 1;
+    }
+
+    int32_t KEYMRecord::WriteRecord(FileWriter &writer)
+    {
+        WRITE(EDID);
+        WRITE(VMAD);
+        WRITE(OBND);
+        MODL.Write(writer);
+        WRITE(FULL);
+        WRITE(YNAM);
+        WRITE(ZNAM);
+        WRITE(KWDA);
+        WRITE(DATA);
+        return -1;
+    }
+
+    bool KEYMRecord::operator ==(const KEYMRecord &other) const
+    {
+        return (EDID.equalsi(other.EDID) &&
+            VMAD == other.VMAD &&
+            OBND == other.OBND &&
+            MODL == other.MODL &&
+            FULL.equalsi(other.FULL) &&
+            YNAM == other.YNAM &&
+            ZNAM == other.ZNAM &&
+            KWDA == other.KWDA &&
+            DATA == other.DATA);
+    }
+
+    bool KEYMRecord::operator !=(const KEYMRecord &other) const
+    {
+        return !(*this == other);
+    }
+
+    bool KEYMRecord::equals(Record *other)
+    {
+        return *this == *(KEYMRecord *)other;
+    }
 }

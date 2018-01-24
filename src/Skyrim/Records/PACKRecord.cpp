@@ -60,12 +60,12 @@ dataInputCount(0),
 packageTemplate(0),
 versionCounter(0)
 {
-	//
+    //
 }
 
 PACKRecord::PACKPKCU::~PACKPKCU()
 {
-	//
+    //
 }
 
 
@@ -154,7 +154,7 @@ PACKRecord::PACKPTDA::~PACKPTDA()
     }
 
 bool PACKRecord::PACKPTDA::operator ==(const PACKPTDA &other) const
-    {	
+    {
     return (targetType == other.targetType &&
             targetId == other.targetId &&
             targetCount == other.targetCount);
@@ -180,8 +180,8 @@ TES5Record()
     flags = srcRecord->flags;
     formID = srcRecord->formID;
     flagsUnk = srcRecord->flagsUnk;
-	formVersion = srcRecord->formVersion;
-	versionControl2[0] = srcRecord->versionControl2[0];
+    formVersion = srcRecord->formVersion;
+    versionControl2[0] = srcRecord->versionControl2[0];
 
 
     recData = srcRecord->recData;
@@ -208,32 +208,32 @@ bool PACKRecord::VisitFormIDs(FormIDOp &op)
     if(!IsLoaded())
         return false;
 
-	op.Accept(PKCU.value.packageTemplate);
+    op.Accept(PKCU.value.packageTemplate);
 
     for(uint32_t ListIndex = 0; ListIndex < CTDA.value.size(); ListIndex++) {
         CTDA.value[ListIndex]->VisitFormIDs(op);
-	}
+    }
     for(uint32_t ListIndex = 0; ListIndex < TDAT.ANAM.size(); ListIndex++) {
         
-		if (TDAT.ANAM[ListIndex] == "Location") {
+        if (TDAT.ANAM[ListIndex] == "Location") {
 
-			if ((TDAT.cnamData[ListIndex].writtenPLDT.locId == 0x07) || (TDAT.cnamData[ListIndex].writtenPLDT.locId == 0x01000007) || (TDAT.cnamData[ListIndex].writtenPLDT.locId == 0x01000014)) {
-				TDAT.cnamData[ListIndex].writtenPLDT.locId = 0x14;
-			}
+            if ((TDAT.cnamData[ListIndex].writtenPLDT.locId == 0x07) || (TDAT.cnamData[ListIndex].writtenPLDT.locId == 0x01000007) || (TDAT.cnamData[ListIndex].writtenPLDT.locId == 0x01000014)) {
+                TDAT.cnamData[ListIndex].writtenPLDT.locId = 0x14;
+            }
 
-			op.Accept((TDAT.cnamData[ListIndex].writtenPLDT.locId));		
-		}
-		
-		if (TDAT.ANAM[ListIndex] == "SingleRef" || TDAT.ANAM[ListIndex] == "TargetSelector") {
+            op.Accept((TDAT.cnamData[ListIndex].writtenPLDT.locId));        
+        }
+        
+        if (TDAT.ANAM[ListIndex] == "SingleRef" || TDAT.ANAM[ListIndex] == "TargetSelector") {
 
-			if ((TDAT.cnamData[ListIndex].writtenPTDA.targetId == 0x07) || (TDAT.cnamData[ListIndex].writtenPTDA.targetId == 0x01000007) || (TDAT.cnamData[ListIndex].writtenPTDA.targetId == 0x01000014)) {
-				TDAT.cnamData[ListIndex].writtenPTDA.targetId = 0x14;
-			}
+            if ((TDAT.cnamData[ListIndex].writtenPTDA.targetId == 0x07) || (TDAT.cnamData[ListIndex].writtenPTDA.targetId == 0x01000007) || (TDAT.cnamData[ListIndex].writtenPTDA.targetId == 0x01000014)) {
+                TDAT.cnamData[ListIndex].writtenPTDA.targetId = 0x14;
+            }
 
-			op.Accept((TDAT.cnamData[ListIndex].writtenPTDA.targetId));		
-		}		
-		
-	}	
+            op.Accept((TDAT.cnamData[ListIndex].writtenPTDA.targetId));        
+        }
+        
+    }
 
     return op.Stop();
     }
@@ -279,7 +279,7 @@ int32_t PACKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
     uint32_t subSize = 0;
     bool hasReachedOptionalSection = false;
     bool hasReachedTemplateSkippedData = false;
-	SKCondition *current_condition = NULL;
+    SKCondition *current_condition = NULL;
 
     while(buffer < end_buffer){
         subType = *(uint32_t *)buffer;
@@ -321,45 +321,45 @@ int32_t PACKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                 PKCU.Read(buffer, subSize);
                 break;
             case REV32(CTDT):
-			case REV32(CTDA):
-				current_condition = new SKCondition();
-				CTDA.value.push_back(current_condition);
-				current_condition->CTDA.Read(buffer, subSize);
-				break;
+            case REV32(CTDA):
+                current_condition = new SKCondition();
+                CTDA.value.push_back(current_condition);
+                current_condition->CTDA.Read(buffer, subSize);
+                break;
 
 
-			case REV32(CIS1):
-				if (current_condition == NULL) {
-					printer("  INFO: %08X - Reading CIS1 without current_condition set\n", formID);
-					CBASH_CHUNK_DEBUG
-						printer("  Size = %i\n", subSize);
-					printer("  CurPos = %08x\n\n", buffer - 6);
-					buffer = end_buffer;
-				}
-				else {
-					current_condition->CIS1.Read(buffer, subSize, CompressedOnDisk);
-				}
+            case REV32(CIS1):
+                if (current_condition == NULL) {
+                    printer("  INFO: %08X - Reading CIS1 without current_condition set\n", formID);
+                    CBASH_CHUNK_DEBUG
+                        printer("  Size = %i\n", subSize);
+                    printer("  CurPos = %08x\n\n", buffer - 6);
+                    buffer = end_buffer;
+                }
+                else {
+                    current_condition->CIS1.Read(buffer, subSize, CompressedOnDisk);
+                }
 
-				break;
+                break;
 
-			case REV32(CIS2):
-				if (current_condition == NULL) {
-					printer("  INFO: %08X - Reading CIS2 without current_condition set\n", formID);
-					CBASH_CHUNK_DEBUG
-						printer("  Size = %i\n", subSize);
-					printer("  CurPos = %08x\n\n", buffer - 6);
-					buffer = end_buffer;
-				}
-				else {
-					current_condition->CIS2.Read(buffer, subSize, CompressedOnDisk);
-				}
+            case REV32(CIS2):
+                if (current_condition == NULL) {
+                    printer("  INFO: %08X - Reading CIS2 without current_condition set\n", formID);
+                    CBASH_CHUNK_DEBUG
+                        printer("  Size = %i\n", subSize);
+                    printer("  CurPos = %08x\n\n", buffer - 6);
+                    buffer = end_buffer;
+                }
+                else {
+                    current_condition->CIS2.Read(buffer, subSize, CompressedOnDisk);
+                }
 
-				break;
-			case REV32(ANAM):	
+                break;
+            case REV32(ANAM):    
                 hasReachedOptionalSection = true;
-				TDAT.ReadANAM(buffer, subSize);
-				break;
-			case REV32(CNAM):
+                TDAT.ReadANAM(buffer, subSize);
+                break;
+            case REV32(CNAM):
                 if (hasReachedOptionalSection) {
                     TDAT.ReadSelector(buffer, subSize); //CNAM is a primitive value for the optional section
                 }
@@ -367,25 +367,22 @@ int32_t PACKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                     CNAM.Read(buffer, subSize); //CNAM is a pointer to combat style
                 }
                 break;
-			case REV32(PLDT):
-			case REV32(PTDA):
-				TDAT.ReadSelector(buffer, subSize);
+            case REV32(PLDT):
+            case REV32(PTDA):
+                TDAT.ReadSelector(buffer, subSize);
                 break;
-			case REV32(UNAM):
-				TDAT.ReadUNAM(buffer, subSize);
+            case REV32(UNAM):
+                TDAT.ReadUNAM(buffer, subSize);
                 break;
             case REV32(XNAM):
                 //XNAM.Read(buffer, subSize);
                 hasReachedTemplateSkippedData = true;
-				buffer += subSize;
-				break;
+                buffer += subSize;
+                break;
             default:
-                //printer("FileName = %s\n", FileName);
-                printer("PLDT debug %04x", REV32(PLDT));
-                printer("  PACK: %08X - Unknown subType = %04x [%c%c%c%c]\n", formID, subType, (subType >> 0) & 0xFF, (subType >> 8) & 0xFF, (subType >> 16) & 0xFF, (subType >> 24) & 0xFF);
+                log_debug << "PLDT debug " << REV32(PLDT) << std::endl;
+                CBASH_SUBTYPE_UNKNOWN
                 CBASH_CHUNK_DEBUG
-                printer("  Size = %i\n", subSize);
-                printer("  CurPos = %08x\n\n", buffer - 6);
                 buffer = end_buffer;
                 break;
             }
@@ -398,7 +395,7 @@ int32_t PACKRecord::Unload()
     IsChanged(false);
     IsLoaded(false);
    
-	EDID.Unload();
+    EDID.Unload();
     PKDT.Unload();
     PSDT.Unload();    
     CTDA.Unload();
@@ -408,11 +405,11 @@ int32_t PACKRecord::Unload()
 int32_t PACKRecord::WriteRecord(FileWriter &writer)
     {
     WRITE(EDID);
-	WRITE(PKDT);
+    WRITE(PKDT);
     WRITE(PSDT);
-	CTDA.Write(writer, true);
-	WRITE(PKCU);
-	TDAT.Write(writer);
+    CTDA.Write(writer, true);
+    WRITE(PKCU);
+    TDAT.Write(writer);
     //WRITE(XNAM);
 
     return -1;

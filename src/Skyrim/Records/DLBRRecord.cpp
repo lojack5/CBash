@@ -38,163 +38,160 @@
 
 namespace Sk
 {
-	DLBRRecord::DLBRRecord(unsigned char *_recData) :
-		TES5Record(_recData)
-	{
-		//
-	}
+    DLBRRecord::DLBRRecord(unsigned char *_recData) :
+        TES5Record(_recData)
+    {
+        //
+    }
 
-	DLBRRecord::DLBRRecord(DLBRRecord *srcRecord) :
-		TES5Record()
-	{
-		if (srcRecord == NULL)
-			return;
+    DLBRRecord::DLBRRecord(DLBRRecord *srcRecord) :
+        TES5Record()
+    {
+        if (srcRecord == NULL)
+            return;
 
-		flags = srcRecord->flags;
-		formID = srcRecord->formID;
-		flagsUnk = srcRecord->flagsUnk;
-		formVersion = srcRecord->formVersion;
-		versionControl2[0] = srcRecord->versionControl2[0];
-		versionControl2[1] = srcRecord->versionControl2[1];
+        flags = srcRecord->flags;
+        formID = srcRecord->formID;
+        flagsUnk = srcRecord->flagsUnk;
+        formVersion = srcRecord->formVersion;
+        versionControl2[0] = srcRecord->versionControl2[0];
+        versionControl2[1] = srcRecord->versionControl2[1];
 
-		EDID = srcRecord->EDID;
-		QNAM = srcRecord->QNAM;
-		TNAM = srcRecord->TNAM;
-		DNAM = srcRecord->DNAM;
-		SNAM = srcRecord->SNAM;
+        EDID = srcRecord->EDID;
+        QNAM = srcRecord->QNAM;
+        TNAM = srcRecord->TNAM;
+        DNAM = srcRecord->DNAM;
+        SNAM = srcRecord->SNAM;
 
-		recData = srcRecord->recData;
-		if (!srcRecord->IsChanged())
-			return;
+        recData = srcRecord->recData;
+        if (!srcRecord->IsChanged())
+            return;
 
-		return;
-	}
+        return;
+    }
 
-	DLBRRecord::~DLBRRecord()
-	{
-		//
-	}
+    DLBRRecord::~DLBRRecord()
+    {
+        //
+    }
 
-	uint32_t DLBRRecord::GetType()
-	{
-		return REV32(DLBR);
-	}
+    uint32_t DLBRRecord::GetType()
+    {
+        return REV32(DLBR);
+    }
 
-	char * DLBRRecord::GetStrType()
-	{
-		return "DLBR";
-	}
-
-
-	bool DLBRRecord::VisitFormIDs(FormIDOp &op)
-	{
-		if (!IsLoaded())
-			return false;
-		//REVERT ASAP
-		op.Accept(QNAM.value);
-		op.Accept(SNAM.value);
+    char * DLBRRecord::GetStrType()
+    {
+        return "DLBR";
+    }
 
 
-		return op.Stop();
-	}
+    bool DLBRRecord::VisitFormIDs(FormIDOp &op)
+    {
+        if (!IsLoaded())
+            return false;
+        //REVERT ASAP
+        op.Accept(QNAM.value);
+        op.Accept(SNAM.value);
 
 
-	int32_t DLBRRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk)
-	{
-		uint32_t subType = 0;
-		uint32_t subSize = 0;
-		while (buffer < end_buffer){
-			subType = *(uint32_t *)buffer;
-			buffer += 4;
-			switch (subType)
-			{
-			case REV32(XXXX):
-				buffer += 2;
-				subSize = *(uint32_t *)buffer;
-				buffer += 4;
-				subType = *(uint32_t *)buffer;
-				buffer += 6;
-				break;
-			default:
-				subSize = *(uint16_t *)buffer;
-				buffer += 2;
-				break;
-			}
-			switch (subType)
-			{
-			case REV32(EDID): 
-								  EDID.Read(buffer, subSize, CompressedOnDisk);
-								  break;
-			
-			case REV32(QNAM): 
-								  QNAM.Read(buffer, subSize);
-								  break;
-			
-			case REV32(TNAM): 
-								  TNAM.Read(buffer, subSize);
-								  break;
-			
-			case REV32(DNAM): 
-				  DNAM.Read(buffer, subSize);
-				  break;
-			
-			case REV32(SNAM): 
-				  SNAM.Read(buffer, subSize);
-				  break;
-			
-			default:
-				//printer("FileName = %s\n", FileName);
-				printer("  TXST: %08X - Unknown subType = %04x\n", formID, subType);
-				CBASH_CHUNK_DEBUG
-					printer("  Size = %i\n", subSize);
-				printer("  CurPos = %08x\n\n", buffer - 6);
-				buffer = end_buffer;
-				break;
-			}
-		};
-		return 0;
-	}
+        return op.Stop();
+    }
 
-	int32_t DLBRRecord::Unload()
-	{
-		IsChanged(false);
-		IsLoaded(false);
 
-		EDID.Unload();
-		QNAM.Unload();
-		TNAM.Unload();
-		DNAM.Unload();
-		SNAM.Unload();
-		return 1;
-	}
+    int32_t DLBRRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk)
+    {
+        uint32_t subType = 0;
+        uint32_t subSize = 0;
+        while (buffer < end_buffer){
+            subType = *(uint32_t *)buffer;
+            buffer += 4;
+            switch (subType)
+            {
+            case REV32(XXXX):
+                buffer += 2;
+                subSize = *(uint32_t *)buffer;
+                buffer += 4;
+                subType = *(uint32_t *)buffer;
+                buffer += 6;
+                break;
+            default:
+                subSize = *(uint16_t *)buffer;
+                buffer += 2;
+                break;
+            }
+            switch (subType)
+            {
+            case REV32(EDID): 
+                                  EDID.Read(buffer, subSize, CompressedOnDisk);
+                                  break;
+            
+            case REV32(QNAM): 
+                                  QNAM.Read(buffer, subSize);
+                                  break;
+            
+            case REV32(TNAM): 
+                                  TNAM.Read(buffer, subSize);
+                                  break;
+            
+            case REV32(DNAM): 
+                  DNAM.Read(buffer, subSize);
+                  break;
+            
+            case REV32(SNAM): 
+                  SNAM.Read(buffer, subSize);
+                  break;
+            
+            default:
+                CBASH_SUBTYPE_UNKNOWN
+                CBASH_CHUNK_DEBUG
+                buffer = end_buffer;
+                break;
+            }
+        };
+        return 0;
+    }
 
-	int32_t DLBRRecord::WriteRecord(FileWriter &writer)
-	{
-		WRITE(EDID);
-		WRITE(QNAM);
-		WRITE(TNAM);
-		WRITE(DNAM);
-		WRITE(SNAM);
-		return -1;
-	}
+    int32_t DLBRRecord::Unload()
+    {
+        IsChanged(false);
+        IsLoaded(false);
 
-	bool DLBRRecord::operator ==(const DLBRRecord &other) const
-	{
-		return (EDID.equalsi(other.EDID) &&
-			QNAM == other.QNAM &&
-			TNAM == other.TNAM &&
-			DNAM == other.DNAM &&
-			SNAM == other.SNAM
-			);
-	}
+        EDID.Unload();
+        QNAM.Unload();
+        TNAM.Unload();
+        DNAM.Unload();
+        SNAM.Unload();
+        return 1;
+    }
 
-	bool DLBRRecord::operator !=(const DLBRRecord &other) const
-	{
-		return !(*this == other);
-	}
+    int32_t DLBRRecord::WriteRecord(FileWriter &writer)
+    {
+        WRITE(EDID);
+        WRITE(QNAM);
+        WRITE(TNAM);
+        WRITE(DNAM);
+        WRITE(SNAM);
+        return -1;
+    }
 
-	bool DLBRRecord::equals(Record *other)
-	{
-		return *this == *(DLBRRecord *)other;
-	}
+    bool DLBRRecord::operator ==(const DLBRRecord &other) const
+    {
+        return (EDID.equalsi(other.EDID) &&
+            QNAM == other.QNAM &&
+            TNAM == other.TNAM &&
+            DNAM == other.DNAM &&
+            SNAM == other.SNAM
+            );
+    }
+
+    bool DLBRRecord::operator !=(const DLBRRecord &other) const
+    {
+        return !(*this == other);
+    }
+
+    bool DLBRRecord::equals(Record *other)
+    {
+        return *this == *(DLBRRecord *)other;
+    }
 }

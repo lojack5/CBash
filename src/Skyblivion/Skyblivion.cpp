@@ -202,7 +202,12 @@ namespace Skyblivion {
 
 		theScript->name.Copy(const_cast<char*>(scriptName.c_str()));
 
-		bindProperties(theScript, skScript);
+		try {
+			bindProperties(theScript, skScript);
+		}
+		catch (std::exception ex) {
+			log_warning << ex.what() << "\n";
+		}
 
 		return theScript;
 
@@ -390,7 +395,7 @@ namespace Skyblivion {
 								if (obTarget->CTDA.value[u + 1]->ifunc != 58) {
 									char buffix[16];
 									sprintf(buffix, "%x", obTarget->CTDA.value[u + 1]->ifunc);
-									std::cout << "GetStage ORed with non GetStage on quest " << std::string(skq->EDID.value) << " ifunc is 0x" << std::string(buffix) << std::endl;
+									log_warning << "GetStage ORed with non GetStage on quest " << std::string(skq->EDID.value) << " ifunc is 0x" << std::string(buffix) << std::endl;
 								}
 							}
 						}
@@ -441,21 +446,8 @@ namespace Skyblivion {
 
 			skq->VMAD.value = new VMADRecord();
 
-			if (q->SCRI.IsLoaded()) {
-				/**
-				 * Bind the standard papyrus scripts
-				 */
-				Ob::SCPTRecord* script = reinterpret_cast<Ob::SCPTRecord*>(*std::find_if(scripts.begin(), scripts.end(), [=](const Record* record) { return record->formID == q->SCRI.value;  }));
-				try {
-					Script* convertedScript = createVirtualMachineScriptFor(script);
-					skq->VMAD.value->scripts.push_back(convertedScript);
-				}
-				catch (std::exception &ex)
-				{
-					std::cout << "Cannot bind script to QUST: " + std::string(ex.what()) << std::endl;
-					//Silent catch - just do not do anything.
-				}
-			}
+			if (q->SCRI.IsLoaded())
+				qustsToBind[q] = skq;
 
 
             Script* QFScript = new Script();
@@ -730,20 +722,10 @@ namespace Skyblivion {
                 QFScript->properties.push_back(vmadProperty);
             }
 
-			try {
-				SkyblivionScript skScript = SkyblivionScript(this->BUILD_TARGET_QUESTS(), "", QFScriptName, this->ROOT_BUILD_PATH());
-				bindProperties(QFScript, skScript);
-			}
-			catch (std::exception ex) {
-
-			}
+			qfsToBind[QFScriptName] = QFScript;
 
             questsVector->push_back(skq);
 
-        }
-
-        for (uint32_t i = 0; i < questsVector->size(); i++) {
-            skyrimMod->QUST.pool.construct(questsVector->at(i), NULL, false);
         }
 
 		return questsVector;
@@ -864,8 +846,7 @@ namespace Skyblivion {
 
             }
             catch (std::exception &e) {
-                printer(e.what());
-                printer("\r\n");
+				log_error << e.what() << "\n";
                 continue;
             }
 
@@ -1294,7 +1275,7 @@ namespace Skyblivion {
 								}
 							}
 							else {
-								printf("Cannot map the TCLT../n");
+								log_warning << "Cannot map the TCLT..\n";
 							}
 						}
 					}
@@ -1352,69 +1333,8 @@ namespace Skyblivion {
 
                 //Creating Papyrus fragments
 
-                if (info->SCTX.IsLoaded()) {
-                    Script* TIFScript = new Script();
-
-                    std::string TIFScriptName = "TIF_";
-
-                    if (info->EDID.IsLoaded()) {
-                        TIFScriptName.append(info->EDID.value);
-                    }
-
-                    TIFScriptName.append("_");
-                    char* castedFormid = new char[9];
-                    sprintf(castedFormid, "%08x", info->formID + 0x01000000);
-                    TIFScriptName.append(castedFormid);
-                    delete castedFormid;
-
-                    char* cpyTwo = new char[TIFScriptName.size() + 1];
-                    strcpy(cpyTwo, TIFScriptName.c_str());
-
-                    TIFScript->name.Copy(cpyTwo);
-
-
-                    FragmentINFO* infoFragment = new FragmentINFO();
-					infoFragment->unk1 = 0;
-                    unsigned char* tifpointer = reinterpret_cast<unsigned char*>(TIFScript->name.value);
-                    infoFragment->fileName.Read(tifpointer, TIFScript->name.GetSize(), false);
-
-                    infoFragment->flags = 0x02; //Has onEnd
-
-                    std::string fragmentFragmentName = "Fragment_0";
-
-                    GenFragment* infoFragmentFragment = new GenFragment();
-                    infoFragmentFragment->fragmentName.Copy(const_cast<char *>(fragmentFragmentName.c_str()));
-
-
-                    unsigned char* tifsubpointer = reinterpret_cast<unsigned char*>(TIFScript->name.value);
-                    infoFragmentFragment->scriptName.Read(tifsubpointer, TIFScript->name.GetSize(), false);
-                    infoFragmentFragment->unk1 = 1;
-
-                    infoFragment->fragments.push_back(infoFragmentFragment);
-
-
-
-                    try {
-						SkyblivionScript skScript = SkyblivionScript(this->BUILD_TARGET_DIALOGUES(), "", TIFScriptName, this->ROOT_BUILD_PATH());
-						bindProperties(TIFScript, skScript);
-                        newInfo->VMAD.value = new VMADRecord();
-                        newInfo->VMAD.value->scripts.push_back(TIFScript);
-                        newInfo->VMAD.value->fragment = infoFragment;
-                    }
-                    catch (std::exception except) {
-                        
-                    }
-
-/* TODO - Check if needed, probably not
-					std::string outputPath = scriptOutputPath + "/" + std::string(TIFScript->name.value) + ".psc";
-					FILE* handle = fopen(outputPath.c_str(), "w+");
-					std::string TIFFragmentScript = std::string(info->SCTX.value);
-					const char* outputData = TIFFragmentScript.c_str();
-					fwrite(outputData, 1, TIFFragmentScript.size(), handle);
-					fclose(handle);
-*/                    
-
-                }
+                if (info->SCTX.IsLoaded())
+					infosToBind[info] = newInfo;
 
                 currentDialForInfo->INFO.push_back(newInfo);
 
@@ -1427,10 +1347,6 @@ namespace Skyblivion {
 
         for (uint32_t i = 0; i < branchVector.size(); i++) {
             skyrimMod->DLBR.pool.construct(branchVector.at(i), NULL, false);
-        }
-
-        for (uint32_t i = 0; i < dialogueVector->size(); i++) {
-            skyrimMod->DIAL.dial_pool.construct(dialogueVector->at(i), NULL, false);
         }
 
 		return dialogueVector;
@@ -1554,15 +1470,17 @@ namespace Skyblivion {
 						if (record->GetType() != REV32(REFR) && record->GetType() != REV32(ACHR) && record->GetType() != REV32(ACRE) && record->GetType() != REV32(QUST)) //If we try to bind a base form ( form which is not running in runtime )..
 						{
 							if (propertyType == "ObjectReference" || propertyType == "Actor" || propertyType.substr(0, 4) == "TES4") {
-								std::cout << "Found connection to base form for a custom script or object reference / actor, name: " << std::string(record->GetEditorIDKey()) << ", property type requested: " << propertyType << std::endl;
+								log_warning << "Found connection to base form for a custom script or object reference / actor, name: " <<
+									std::string(record->GetEditorIDKey()) << " property type requested: " << propertyType << "\n";
 								//Naive implementation - just look for XRef EDID.
 								std::string refName = realPropertyEdid + "ref";
 								if (this->edidMap->find(refName) != this->edidMap->end()) {
-									std::cout << "Found ref, binding instead" << std::endl;
+									log_info << "Found ref, binding instead\n";
 									boundFormid = (*this->edidMap)[refName];
 								}
 								else {
-									std::cout << "Ref not found, probably will make script not work ingame." << std::endl;
+									log_error << "No suitable ref found for " << std::string(record->GetEditorIDKey()) <<
+										", this will probably prevent script working in game\n";
 								}
 							}
 						}
@@ -1599,7 +1517,12 @@ namespace Skyblivion {
 					script->properties.push_back(property);
 				}
 				else {
-					std::cout << "Cannot find entry " + realPropertyEdid << std::endl;
+					if (realPropertyEdid.substr(0, 14) == "tes4tes4scene_")
+						log_warning << "Scenes are not imported yet - " << realPropertyEdid << "\n";
+					else if (realPropertyEdid.substr(0, 18) == "tes4tes4messagebox")
+						log_warning << "Messageboxes are not imported yet - " << realPropertyEdid << "\n";
+					else
+						log_warning << "Cannot find entry " << realPropertyEdid << "\n";
 				}
 
             }
@@ -1611,8 +1534,12 @@ namespace Skyblivion {
     }
 
     void SkyblivionConverter::convertPACKFromOblivion(Ob::PACKRecord& srcRecord, Sk::PACKRecord& dstRecord) {
-		
-        dstRecord.EDID = srcRecord.EDID;
+		if (srcRecord.EDID.IsLoaded()) {
+			std::string newEdid = srcRecord.EDID.value;
+			newEdid = "TES4" + newEdid;
+			dstRecord.EDID.value = new char[newEdid.length() + 1];
+			std::strcpy(dstRecord.EDID.value, newEdid.c_str());
+		}
         dstRecord.formID = srcRecord.formID + 0x01000000;
         dstRecord.formVersion = 0x28;
 
@@ -2445,7 +2372,9 @@ namespace Skyblivion {
 
 			//Actually this happens in vanilla oblivion too..
 			if (srec == NULL) {
-				printer("  GetVMScriptVariable %04x No script found\n", oCTDA->param1);
+				char buffer[50];
+				sprintf(buffer, "GetVMScriptVariable %04x No script found\n", oCTDA->param1);
+				log_warning << buffer;
 				return result;
 			}
 
@@ -2608,4 +2537,117 @@ namespace Skyblivion {
 
     }
 
+	void SkyblivionConverter::bindScriptProperties(std::vector<Sk::DIALRecord*>* dialogueVector, std::vector<Sk::QUSTRecord *>* questVector) {
+		TES5File* skyrimMod = (TES5File*)this->skyrimCollection.ModFiles[2];
+
+		for (auto it = infosToBind.begin(); it != infosToBind.end(); ++it) {
+			Ob::INFORecord* info = it->first;
+			Sk::INFORecord* newInfo = it->second;
+
+			Script* TIFScript = new Script();
+
+			std::string TIFScriptName = "TIF_";
+
+			if (info->EDID.IsLoaded()) {
+				TIFScriptName.append(info->EDID.value);
+			}
+
+			TIFScriptName.append("_");
+			char* castedFormid = new char[9];
+			sprintf(castedFormid, "%08x", info->formID + 0x01000000);
+			TIFScriptName.append(castedFormid);
+			delete castedFormid;
+
+			char* cpyTwo = new char[TIFScriptName.size() + 1];
+			strcpy(cpyTwo, TIFScriptName.c_str());
+
+			TIFScript->name.Copy(cpyTwo);
+
+			FragmentINFO* infoFragment = new FragmentINFO();
+			infoFragment->unk1 = 0;
+			unsigned char* tifpointer = reinterpret_cast<unsigned char*>(TIFScript->name.value);
+			infoFragment->fileName.Read(tifpointer, TIFScript->name.GetSize(), false);
+
+			infoFragment->flags = 0x02; //Has onEnd
+
+			std::string fragmentFragmentName = "Fragment_0";
+
+			GenFragment* infoFragmentFragment = new GenFragment();
+			infoFragmentFragment->fragmentName.Copy(const_cast<char *>(fragmentFragmentName.c_str()));
+
+
+			unsigned char* tifsubpointer = reinterpret_cast<unsigned char*>(TIFScript->name.value);
+			infoFragmentFragment->scriptName.Read(tifsubpointer, TIFScript->name.GetSize(), false);
+			infoFragmentFragment->unk1 = 1;
+
+			infoFragment->fragments.push_back(infoFragmentFragment);
+
+
+
+			try {
+				SkyblivionScript skScript = SkyblivionScript(this->BUILD_TARGET_DIALOGUES(), "", TIFScriptName, this->ROOT_BUILD_PATH());
+				bindProperties(TIFScript, skScript);
+				newInfo->VMAD.value = new VMADRecord();
+				newInfo->VMAD.value->scripts.push_back(TIFScript);
+				newInfo->VMAD.value->fragment = infoFragment;
+			}
+			catch (std::exception except) {
+				log_warning << except.what() << "\n";
+			}
+			/* TODO - Check if needed, probably not
+			std::string outputPath = scriptOutputPath + "/" + std::string(TIFScript->name.value) + ".psc";
+			FILE* handle = fopen(outputPath.c_str(), "w+");
+			std::string TIFFragmentScript = std::string(info->SCTX.value);
+			const char* outputData = TIFFragmentScript.c_str();
+			fwrite(outputData, 1, TIFFragmentScript.size(), handle);
+			fclose(handle);
+			*/
+		}
+
+		for (uint32_t i = 0; i < dialogueVector->size(); i++) {
+			skyrimMod->DIAL.dial_pool.construct(dialogueVector->at(i), NULL, false);
+		}
+
+		std::vector<Record*, std::allocator<Record*>> scripts;
+		TES4File* d = (TES4File *)this->oblivionCollection.ModFiles[0];
+		d->SCPT.pool.MakeRecordsVector(scripts);
+
+		for (auto it = qustsToBind.begin(); it != qustsToBind.end(); ++it) {
+			Ob::QUSTRecord* qust = it->first;
+			Sk::QUSTRecord* newQust = it->second;
+
+			Ob::SCPTRecord* script = reinterpret_cast<Ob::SCPTRecord*>(*std::find_if(scripts.begin(), scripts.end(), [=](const Record* record) { return record->formID == qust->SCRI.value;  }));
+			try {
+				Script* convertedScript = createVirtualMachineScriptFor(script);
+				newQust->VMAD.value->scripts.push_back(convertedScript);
+			}
+			catch (std::exception &ex)
+			{
+				log_warning << "Cannot bind script to QUST: " << std::string(ex.what()) << std::endl;
+				//Silent catch - just do not do anything.
+			}
+		}
+
+		for (auto it = qfsToBind.begin(); it != qfsToBind.end(); ++it) {
+			std::string qfName = it->first;
+			Script* qfScript = it->second;
+
+			try {
+				SkyblivionScript skScript = SkyblivionScript(this->BUILD_TARGET_QUESTS(), "", qfName, this->ROOT_BUILD_PATH());
+				bindProperties(qfScript, skScript);
+			}
+			catch (std::exception ex) {
+				log_warning << ex.what() << "\n";
+			}
+		}
+
+		for (uint32_t i = 0; i < questVector->size(); i++) {
+			skyrimMod->QUST.pool.construct(questVector->at(i), NULL, false);
+		}
+
+		// clear maps to prevent re-binding
+		infosToBind.clear();
+		qustsToBind.clear();
+		qfsToBind.clear();
+	}
 }

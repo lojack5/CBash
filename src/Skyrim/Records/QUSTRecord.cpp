@@ -143,49 +143,49 @@ namespace Sk {
                 questAliases.value[p]->CTDA.value[k]->VisitFormIDs(op);
             }
 
-			for (uint32_t k = 0; k < questAliases.value[p]->KWDA.value.size(); k++) {
-				op.Accept(questAliases.value[p]->KWDA.value[k]);
-			}
+            for (uint32_t k = 0; k < questAliases.value[p]->KWDA.value.size(); k++) {
+                op.Accept(questAliases.value[p]->KWDA.value[k]);
+            }
 
-			for (uint32_t k = 0; k < questAliases.value[p]->CNTO.value.size(); k++) {
-				op.Accept(questAliases.value[p]->CNTO.value[k].itemID);
-			}
+            for (uint32_t k = 0; k < questAliases.value[p]->CNTO.value.size(); k++) {
+                op.Accept(questAliases.value[p]->CNTO.value[k].itemID);
+            }
 
-			if (questAliases.value[p]->SPOR.IsLoaded()) {
-				op.Accept(questAliases.value[p]->SPOR.value);
-			}
+            if (questAliases.value[p]->SPOR.IsLoaded()) {
+                op.Accept(questAliases.value[p]->SPOR.value);
+            }
 
-			if (questAliases.value[p]->OCOR.IsLoaded()) {
-				op.Accept(questAliases.value[p]->OCOR.value);
-			}
+            if (questAliases.value[p]->OCOR.IsLoaded()) {
+                op.Accept(questAliases.value[p]->OCOR.value);
+            }
 
-			if (questAliases.value[p]->GWOR.IsLoaded()) {
-				op.Accept(questAliases.value[p]->GWOR.value);
-			}
+            if (questAliases.value[p]->GWOR.IsLoaded()) {
+                op.Accept(questAliases.value[p]->GWOR.value);
+            }
 
-			if (questAliases.value[p]->ECOR.IsLoaded()) {
-				op.Accept(questAliases.value[p]->ECOR.value);
-			}
+            if (questAliases.value[p]->ECOR.IsLoaded()) {
+                op.Accept(questAliases.value[p]->ECOR.value);
+            }
 
-			if (questAliases.value[p]->ALDN.IsLoaded()) {
-				op.Accept(questAliases.value[p]->ALDN.value);
-			}
+            if (questAliases.value[p]->ALDN.IsLoaded()) {
+                op.Accept(questAliases.value[p]->ALDN.value);
+            }
 
-			for (uint32_t k = 0; k < questAliases.value[p]->ALSP.value.size(); k++) {
-				op.Accept(questAliases.value[p]->ALSP.value[k]);
-			}
+            for (uint32_t k = 0; k < questAliases.value[p]->ALSP.value.size(); k++) {
+                op.Accept(questAliases.value[p]->ALSP.value[k]);
+            }
 
-			for (uint32_t k = 0; k < questAliases.value[p]->ALFC.value.size(); k++) {
-				op.Accept(questAliases.value[p]->ALFC.value[k]);
-			}
+            for (uint32_t k = 0; k < questAliases.value[p]->ALFC.value.size(); k++) {
+                op.Accept(questAliases.value[p]->ALFC.value[k]);
+            }
 
-			for (uint32_t k = 0; k < questAliases.value[p]->ALPC.value.size(); k++) {
-				op.Accept(questAliases.value[p]->ALPC.value[k]);
-			}
+            for (uint32_t k = 0; k < questAliases.value[p]->ALPC.value.size(); k++) {
+                op.Accept(questAliases.value[p]->ALPC.value[k]);
+            }
 
-			if (questAliases.value[p]->VTCK.IsLoaded()) {
-				op.Accept(questAliases.value[p]->VTCK.value);
-			}
+            if (questAliases.value[p]->VTCK.IsLoaded()) {
+                op.Accept(questAliases.value[p]->VTCK.value);
+            }
 
         }
 
@@ -203,7 +203,7 @@ namespace Sk {
         QUSTParseMode mode = QUSTParseMode::QUSTParseNormal;
         StringLookups *LookupStrings = GetParentMod()->TES4.LookupStrings;
 
-		SKCondition *current_condition = NULL;
+        SKCondition *current_condition = NULL;
 
         while (buffer < end_buffer){
             subType = *(uint32_t *)buffer;
@@ -259,16 +259,16 @@ namespace Sk {
 
                                   switch (mode) {
 
-									  current_condition = new SKCondition();
+                                      current_condition = new SKCondition();
 
 
                                   case QUSTParseMode::QUSTParseNormal:
 
                                       if (isQE) {
-										  QECTDA.value.push_back(current_condition);
+                                          QECTDA.value.push_back(current_condition);
                                       }
                                       else {
-										  QDCTDA.value.push_back(current_condition);
+                                          QDCTDA.value.push_back(current_condition);
                                       }
                                       break;
 
@@ -288,39 +288,39 @@ namespace Sk {
 
                                   }
 
-								  current_condition->CTDA.Read(buffer, subSize);
+                                  current_condition->CTDA.Read(buffer, subSize);
 
 
                                   break;
             }
 
-			case REV32(CIS1):
-				if (current_condition == NULL) {
-					printer("  INFO: %08X - Reading CIS1 without current_condition set\n", formID);
-					CBASH_CHUNK_DEBUG
-						printer("  Size = %i\n", subSize);
-					printer("  CurPos = %08x\n\n", buffer - 6);
-					buffer = end_buffer;
-				}
-				else {
-					current_condition->CIS1.Read(buffer, subSize, CompressedOnDisk);
-				}
+            case REV32(CIS1):
+                if (current_condition == NULL) {
+                    printer("  INFO: %08X - Reading CIS1 without current_condition set\n", formID);
+                    CBASH_CHUNK_DEBUG
+                        printer("  Size = %i\n", subSize);
+                    printer("  CurPos = %08x\n\n", buffer - 6);
+                    buffer = end_buffer;
+                }
+                else {
+                    current_condition->CIS1.Read(buffer, subSize, CompressedOnDisk);
+                }
 
-				break;
+                break;
 
-			case REV32(CIS2):
-				if (current_condition == NULL) {
-					printer("  INFO: %08X - Reading CIS2 without current_condition set\n", formID);
-					CBASH_CHUNK_DEBUG
-						printer("  Size = %i\n", subSize);
-					printer("  CurPos = %08x\n\n", buffer - 6);
-					buffer = end_buffer;
-				}
-				else {
-					current_condition->CIS2.Read(buffer, subSize, CompressedOnDisk);
-				}
+            case REV32(CIS2):
+                if (current_condition == NULL) {
+                    printer("  INFO: %08X - Reading CIS2 without current_condition set\n", formID);
+                    CBASH_CHUNK_DEBUG
+                        printer("  Size = %i\n", subSize);
+                    printer("  CurPos = %08x\n\n", buffer - 6);
+                    buffer = end_buffer;
+                }
+                else {
+                    current_condition->CIS2.Read(buffer, subSize, CompressedOnDisk);
+                }
 
-				break;
+                break;
 
             case REV32(NEXT):
                 NEXT.Read(buffer, subSize, CompressedOnDisk);
@@ -457,183 +457,180 @@ namespace Sk {
                                   break;
             }
 
-			case REV32(ALID): {
-				if (mode != QUSTParseMode::QUSTParseAliases) {
-					throw std::runtime_error("QUSTRecord::ParseRecords() - Unexpected ALID.");
-				}
+            case REV32(ALID): {
+                if (mode != QUSTParseMode::QUSTParseAliases) {
+                    throw std::runtime_error("QUSTRecord::ParseRecords() - Unexpected ALID.");
+                }
 
-				this->questAliases.value.back()->ALID.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			}
+                this->questAliases.value.back()->ALID.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            }
 
-			case REV32(ALFI): {
-				if (mode != QUSTParseMode::QUSTParseAliases) {
-					throw std::runtime_error("QUSTRecord::ParseRecords() - Unexpected ALFI.");
-				}
+            case REV32(ALFI): {
+                if (mode != QUSTParseMode::QUSTParseAliases) {
+                    throw std::runtime_error("QUSTRecord::ParseRecords() - Unexpected ALFI.");
+                }
 
-				this->questAliases.value.back()->ALFI.Read(buffer, subSize);
-				break;
-			}
+                this->questAliases.value.back()->ALFI.Read(buffer, subSize);
+                break;
+            }
 
-			case REV32(ALCO): {
-				if (mode != QUSTParseMode::QUSTParseAliases) {
-					throw std::runtime_error("QUSTRecord::ParseRecords() - Unexpected ALCO.");
-				}
+            case REV32(ALCO): {
+                if (mode != QUSTParseMode::QUSTParseAliases) {
+                    throw std::runtime_error("QUSTRecord::ParseRecords() - Unexpected ALCO.");
+                }
 
-				this->questAliases.value.back()->aliasType = new ALCOAliasFillType();
-				break;
-			}
+                this->questAliases.value.back()->aliasType = new ALCOAliasFillType();
+                break;
+            }
 
-			case REV32(ALEQ): {
-				if (mode != QUSTParseMode::QUSTParseAliases) {
-					throw std::runtime_error("QUSTRecord::ParseRecords() - Unexpected ALEQ.");
-				}
+            case REV32(ALEQ): {
+                if (mode != QUSTParseMode::QUSTParseAliases) {
+                    throw std::runtime_error("QUSTRecord::ParseRecords() - Unexpected ALEQ.");
+                }
 
-				this->questAliases.value.back()->aliasType = new ALEQAliasFillType();
-				break;
-			}
+                this->questAliases.value.back()->aliasType = new ALEQAliasFillType();
+                break;
+            }
 
-			case REV32(ALFA): {
-				if (mode != QUSTParseMode::QUSTParseAliases) {
-					throw std::runtime_error("QUSTRecord::ParseRecords() - Unexpected ALFA.");
-				}
+            case REV32(ALFA): {
+                if (mode != QUSTParseMode::QUSTParseAliases) {
+                    throw std::runtime_error("QUSTRecord::ParseRecords() - Unexpected ALFA.");
+                }
 
-				if (this->questAliases.value.back()->isLocation == true) {
-					this->questAliases.value.back()->aliasType = new LocALFAAliasFillType();
-				}
-				else {
-					this->questAliases.value.back()->aliasType = new RefALFAAliasFillType();
-				}
+                if (this->questAliases.value.back()->isLocation == true) {
+                    this->questAliases.value.back()->aliasType = new LocALFAAliasFillType();
+                }
+                else {
+                    this->questAliases.value.back()->aliasType = new RefALFAAliasFillType();
+                }
 
-				break;
-			}
+                break;
+            }
 
-			case REV32(ALFE): {
-				if (mode != QUSTParseMode::QUSTParseAliases) {
-					throw std::runtime_error("QUSTRecord::ParseRecords() - Unexpected ALFE.");
-				}
+            case REV32(ALFE): {
+                if (mode != QUSTParseMode::QUSTParseAliases) {
+                    throw std::runtime_error("QUSTRecord::ParseRecords() - Unexpected ALFE.");
+                }
 
-				this->questAliases.value.back()->aliasType = new ALFEAliasFillType();
-				break;
-			}
+                this->questAliases.value.back()->aliasType = new ALFEAliasFillType();
+                break;
+            }
 
-			case REV32(ALFL): {
-				if (mode != QUSTParseMode::QUSTParseAliases) {
-					throw std::runtime_error("QUSTRecord::ParseRecords() - Unexpected ALFL.");
-				}
+            case REV32(ALFL): {
+                if (mode != QUSTParseMode::QUSTParseAliases) {
+                    throw std::runtime_error("QUSTRecord::ParseRecords() - Unexpected ALFL.");
+                }
 
-				this->questAliases.value.back()->aliasType = new ALFLAliasFillType();
-				break;
-			}
+                this->questAliases.value.back()->aliasType = new ALFLAliasFillType();
+                break;
+            }
 
-			case REV32(ALFR): {
-				if (mode != QUSTParseMode::QUSTParseAliases) {
-					throw std::runtime_error("QUSTRecord::ParseRecords() - Unexpected ALFR.");
-				}
+            case REV32(ALFR): {
+                if (mode != QUSTParseMode::QUSTParseAliases) {
+                    throw std::runtime_error("QUSTRecord::ParseRecords() - Unexpected ALFR.");
+                }
 
-				this->questAliases.value.back()->aliasType = new ALFRAliasFillType();
-				break;
-			}
+                this->questAliases.value.back()->aliasType = new ALFRAliasFillType();
+                break;
+            }
 
-			case REV32(ALNA): {
-				if (mode != QUSTParseMode::QUSTParseAliases) {
-					throw std::runtime_error("QUSTRecord::ParseRecords() - Unexpected ALNA.");
-				}
+            case REV32(ALNA): {
+                if (mode != QUSTParseMode::QUSTParseAliases) {
+                    throw std::runtime_error("QUSTRecord::ParseRecords() - Unexpected ALNA.");
+                }
 
-				this->questAliases.value.back()->aliasType = new ALNAAliasFillType();
-				break;
+                this->questAliases.value.back()->aliasType = new ALNAAliasFillType();
+                break;
 
-			}
+            }
 
-			case REV32(ALUA): {
-				if (mode != QUSTParseMode::QUSTParseAliases) {
-					throw std::runtime_error("QUSTRecord::ParseRecords() - Unexpected ALFL.");
-				}
+            case REV32(ALUA): {
+                if (mode != QUSTParseMode::QUSTParseAliases) {
+                    throw std::runtime_error("QUSTRecord::ParseRecords() - Unexpected ALFL.");
+                }
 
-				this->questAliases.value.back()->aliasType = new ALUAAliasFillType();
-				break;
-			}
+                this->questAliases.value.back()->aliasType = new ALUAAliasFillType();
+                break;
+            }
 
-			case REV32(KWDA): {
-				this->questAliases.value.back()->KWDA.Read(buffer, subSize);
-				break;
-			}
+            case REV32(KWDA): {
+                this->questAliases.value.back()->KWDA.Read(buffer, subSize);
+                break;
+            }
 
-			case REV32(CNTO): {
-				this->questAliases.value.back()->CNTO.Read(buffer, subSize);
-				break;
-			}
-			case REV32(SPOR): {
-				this->questAliases.value.back()->SPOR.Read(buffer, subSize);
-				break;
-			}
+            case REV32(CNTO): {
+                this->questAliases.value.back()->CNTO.Read(buffer, subSize);
+                break;
+            }
+            case REV32(SPOR): {
+                this->questAliases.value.back()->SPOR.Read(buffer, subSize);
+                break;
+            }
 
-			case REV32(OCOR): {
-				this->questAliases.value.back()->OCOR.Read(buffer, subSize);
-				break;
-			}
+            case REV32(OCOR): {
+                this->questAliases.value.back()->OCOR.Read(buffer, subSize);
+                break;
+            }
 
-			case REV32(GWOR): {
-				this->questAliases.value.back()->GWOR.Read(buffer, subSize);
-				break;
-			}
+            case REV32(GWOR): {
+                this->questAliases.value.back()->GWOR.Read(buffer, subSize);
+                break;
+            }
 
-			case REV32(ECOR): {
-				this->questAliases.value.back()->ECOR.Read(buffer, subSize);
-				break;
-			}
+            case REV32(ECOR): {
+                this->questAliases.value.back()->ECOR.Read(buffer, subSize);
+                break;
+            }
 
-			case REV32(ALDN): {
-				this->questAliases.value.back()->ALDN.Read(buffer, subSize);
-				break;
-			}
+            case REV32(ALDN): {
+                this->questAliases.value.back()->ALDN.Read(buffer, subSize);
+                break;
+            }
 
-			case REV32(ALSP): {
-				this->questAliases.value.back()->ALSP.Read(buffer, subSize);
-				break;
-			}
+            case REV32(ALSP): {
+                this->questAliases.value.back()->ALSP.Read(buffer, subSize);
+                break;
+            }
 
-			case REV32(ALFC): {
-				this->questAliases.value.back()->ALFC.Read(buffer, subSize);
-				break;
-			}
+            case REV32(ALFC): {
+                this->questAliases.value.back()->ALFC.Read(buffer, subSize);
+                break;
+            }
 
-			case REV32(ALPC): {
-				this->questAliases.value.back()->ALPC.Read(buffer, subSize);
-				break;
-			}
+            case REV32(ALPC): {
+                this->questAliases.value.back()->ALPC.Read(buffer, subSize);
+                break;
+            }
 
-			case REV32(VTCK): {
-				this->questAliases.value.back()->VTCK.Read(buffer, subSize);
-				break;
-			}
+            case REV32(VTCK): {
+                this->questAliases.value.back()->VTCK.Read(buffer, subSize);
+                break;
+            }
 
-			case REV32(ALED):
-			case REV32(COCT):
-			case REV32(KSIZ): {
-				buffer += subSize;
-				break; //This is not maintained in memory, just written based on KWDA/CNTO. ALED is just a EOF.
-			}
+            case REV32(ALED):
+            case REV32(COCT):
+            case REV32(KSIZ): {
+                buffer += subSize;
+                break; //This is not maintained in memory, just written based on KWDA/CNTO. ALED is just a EOF.
+            }
 
-			default:
+            default:
 
-				if (mode == QUSTParseMode::QUSTParseAliases) {
-					//Try to proxy the reading to the quest alias type implementation.
-					bool result = this->questAliases.value.back()->aliasType->ParseRecord(buffer, subType, subSize, CompressedOnDisk);
+                if (mode == QUSTParseMode::QUSTParseAliases) {
+                    //Try to proxy the reading to the quest alias type implementation.
+                    bool result = this->questAliases.value.back()->aliasType->ParseRecord(buffer, subType, subSize, CompressedOnDisk);
 
-					if (result == true) {
-						break;
-					}
-				}
+                    if (result == true) {
+                        break;
+                    }
+                }
 
 
-				//printer("FileName = %s\n", FileName);
-				printer("  INFO: %08X - Unknown subType = %04x\n", formID, subType);
-				CBASH_CHUNK_DEBUG
-					printer("  Size = %i\n", subSize);
-				printer("  CurPos = %08x\n\n", buffer - 6);
-				buffer = end_buffer;
-				break;
+                CBASH_SUBTYPE_UNKNOWN
+                CBASH_CHUNK_DEBUG
+                buffer = end_buffer;
+                break;
             }
         };
         return 0;
@@ -659,13 +656,13 @@ namespace Sk {
         WRITE(ENAM);
         WRITE(QTGL);
         WRITE(FLTR);
-		QDCTDA.Write(writer);
-		WRITEEMPTY(NEXT);
+        QDCTDA.Write(writer);
+        WRITEEMPTY(NEXT);
         QECTDA.Write(writer);
-		questStages.Write(writer);
-		questObjectives.Write(writer);
+        questStages.Write(writer);
+        questObjectives.Write(writer);
         WRITE(ANAM);
-		questAliases.Write(writer);
+        questAliases.Write(writer);
         return -1;
     }
 
@@ -701,31 +698,31 @@ namespace Sk {
 
     int32_t  QUSTSTAGE::Write(FileWriter &writer) {
         WRITE(INDX);
-		LOGS.Write(writer);
+        LOGS.Write(writer);
         return -1;
     }
 
-	int32_t  QUSTLOGENTRY::Write(FileWriter &writer) {
-		WRITE(QSDT);
-		CTDA.Write(writer);
-		WRITE(CNAM);
-		WRITE(NAM0);
-		return -1;
-	}
+    int32_t  QUSTLOGENTRY::Write(FileWriter &writer) {
+        WRITE(QSDT);
+        CTDA.Write(writer);
+        WRITE(CNAM);
+        WRITE(NAM0);
+        return -1;
+    }
 
     int32_t  QUSTOBJECTIVE::Write(FileWriter &writer) {
         WRITE(QOBJ);
         WRITE(FNAM);
         WRITE(NNAM);
-		TGTS.Write(writer);
+        TGTS.Write(writer);
         return -1;
     }
 
-	int32_t QUSTCONDITIONALTARGET::Write(FileWriter &writer) {
-		WRITE(QSTA);
-		CTDA.Write(writer);
-		return -1;
-	}
+    int32_t QUSTCONDITIONALTARGET::Write(FileWriter &writer) {
+        WRITE(QSTA);
+        CTDA.Write(writer);
+        return -1;
+    }
 
     int32_t  QUSTALIAS::Write(FileWriter &writer) {
 
@@ -742,9 +739,9 @@ namespace Sk {
         WRITE(FNAM);
         WRITE(ALFI);
         aliasType->WriteRecord(writer);
-		CTDA.Write(writer);
-		WRITE(KWDA);
-		WRITE(CNTO);
+        CTDA.Write(writer);
+        WRITE(KWDA);
+        WRITE(CNTO);
         WRITE(SPOR);
         WRITE(OCOR);
         WRITE(GWOR);

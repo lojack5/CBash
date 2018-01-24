@@ -137,11 +137,8 @@ int32_t ASTPRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                     DATA.Read(buffer, subSize);
                     break;
                 default:
-                    //printer("Filename = %s\n", FileName);
-                    printer("  ASTP: %08X - Unknown subType = %04x\n", formID, subType);
+                    CBASH_SUBTYPE_UNKNOWN
                     CBASH_CHUNK_DEBUG
-                    printer("  Size = %i\n", subSize);
-                    printer("  CurPos = %08x\n", buffer - 6);
                     buffer = end_buffer;
                     break;
             }

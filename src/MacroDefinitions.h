@@ -329,3 +329,11 @@ typedef Record ** RECORDIDARRAY;
 #define SIZE_CHECK(type, size) \
     SIZE_CHECK_MSG(type, size, #type " must be " #size " bytes")
 
+
+#define CBASH_SUBTYPE_UNKNOWN char unknownSubBuffer[150]; \
+	sprintf(unknownSubBuffer, "%s: %08X - Unknown subType = %04x [%c%c%c%c]\n\tSize = %i\n\tCurPos = %08x\n\n", GetStrType(), formID, subType, (subType >> 0) & 0xFF, (subType >> 8) & 0xFF, (subType >> 16) & 0xFF, (subType >> 24) & 0xFF, subSize, buffer - 6); \
+	log_error << unknownSubBuffer;
+
+#define CBASH_SUBTYPE_NOT_IMPLEMENTED char notImpSubBuffer[150]; \
+	sprintf(notImpSubBuffer, "%s: %08X - Not Implemented subType = %04x [%c%c%c%c]\n\tSize = %i\n\tCurPos = %08x\n\n", GetStrType(), formID, subType, (subType >> 0) & 0xFF, (subType >> 8) & 0xFF, (subType >> 16) & 0xFF, (subType >> 24) & 0xFF, subSize, buffer - 6); \
+	log_warning << notImpSubBuffer;

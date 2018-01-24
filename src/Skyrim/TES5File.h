@@ -61,7 +61,7 @@
 // #include "Records/CLASRecord.h"
 // #include "Records/CLDCRecord.h" // Empty GRUP
 // #include "Records/CLFMRecord.h"
-// #include "Records/CLMTRecord.h"
+#include "Records/CLMTRecord.h"
 // #include "Records/COBJRecord.h"
 #include "Records/COLLRecord.h"
 #include "Records/CONTRecord.h"
@@ -81,11 +81,11 @@
 // #include "Records/EXPLRecord.h"
 // #include "Records/EYESRecord.h"
 #include "Records/FACTRecord.h"
-// #include "Records/FLORRecord.h"
+#include "Records/FLORRecord.h"
 // #include "Records/FLSTRecord.h"
 // #include "Records/FSTPRecord.h"
 // #include "Records/FSTSRecord.h"
-// #include "Records/FURNRecord.h"
+#include "Records/FURNRecord.h"
 #include "Records/GLOBRecord.h"
 // #include "Records/GMSTRecord.h"
 // #include "Records/GRASRecord.h"
@@ -104,7 +104,7 @@
 // #include "Records/LCRTRecord.h"
 // #include "Records/LCTNRecord.h"
 // #include "Records/LGTMRecord.h"
-// #include "Records/LIGHRecord.h"
+#include "Records/LIGHRecord.h"
 // #include "Records/LSCRRecord.h"
 #include "Records/LTEXRecord.h"
 #include "Records/LVLIRecord.h"
@@ -113,7 +113,7 @@
 // #include "Records/MATORecord.h"
 #include "Records/MATTRecord.h"
 // #include "Records/MESGRecord.h"
-// #include "Records/MGEFRecord.h"
+#include "Records/MGEFRecord.h"
 #include "Records/MISCRecord.h"
 // #include "Records/MOVTRecord.h"
 // #include "Records/MSTTRecord.h"
@@ -136,9 +136,9 @@
 // #include "Records/SCENRecord.h"
 // #include "Records/SCOLRecord.h" // Empty GRUP
 // #include "Records/SCPTRecord.h"
-// #include "Records/SCRLRecord.h"
+#include "Records/SCRLRecord.h"
 #include "Records/SHOURecord.h"
-// #include "Records/SLGMRecord.h"
+#include "Records/SLGMRecord.h"
 // #include "Records/SMBNRecord.h"
 // #include "Records/SMENRecord.h"
 // #include "Records/SMQNRecord.h"
@@ -157,7 +157,7 @@
 #include "Records/WEAPRecord.h"
 #include "Records/WOOPRecord.h"
 #include "Records/WRLDRecord.h"
-// #include "Records/WTHRRecord.h"
+#include "Records/WTHRRecord.h"
 
 
 // Helper macros
@@ -190,7 +190,7 @@ class TES5File : public ModFile
         // GRUP(CLAS);
         // GRUP(CLDC); // Empty GRUP
         // GRUP(CLFM);
-        // GRUP(CLMT);
+        GRUP(CLMT);
         // GRUP(COBJ);
         GRUP(COLL);
         GRUP(CONT);
@@ -210,11 +210,11 @@ class TES5File : public ModFile
         // GRUP(EXPL);
         // GRUP(EYES);
         GRUP(FACT);
-        // GRUP(FLOR);
+        GRUP(FLOR);
         // GRUP(FLST);
         // GRUP(FSTP);
         // GRUP(FSTS);
-        // GRUP(FURN);
+        GRUP(FURN);
         GRUP(GLOB);
         // GRUP_EDID(GMST);
         // GRUP(GRAS);
@@ -233,7 +233,7 @@ class TES5File : public ModFile
         // GRUP(LCRT);
         // GRUP(LCTN);
         // GRUP(LGTM);
-        // GRUP(LIGH);
+        GRUP(LIGH);
         // GRUP(LSCR);
         GRUP(LTEX);
         GRUP(LVLI);
@@ -242,7 +242,7 @@ class TES5File : public ModFile
         // GRUP(MATO);
         GRUP(MATT);
         // GRUP(MESG);
-        // GRUP(MGEF);
+        GRUP(MGEF);
         GRUP(MISC);
         // GRUP(MOVT);
         // GRUP(MSTT);
@@ -265,9 +265,9 @@ class TES5File : public ModFile
         // GRUP(SCEN);
         // GRUP(SCOL); // Empty GRUP
         // GRUP(SCPT);
-        // GRUP(SCRL);
+        GRUP(SCRL);
         GRUP(SHOU);
-        // GRUP(SLGM);
+        GRUP(SLGM);
         // GRUP(SMBN);
         // GRUP(SMEN);
         // GRUP(SMQN);
@@ -286,7 +286,7 @@ class TES5File : public ModFile
         GRUP(WEAP);
         GRUP(WOOP);
         GRUP(WRLD);
-        // GRUP(WTHR);
+        GRUP(WTHR);
 
         TES5File(Collection *_Parent, char * FileName, char * ModName, const uint32_t _flags);
         ~TES5File();

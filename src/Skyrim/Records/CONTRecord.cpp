@@ -39,206 +39,208 @@
 
 namespace Sk
 {
-	CONTRecord::CONTRecord(unsigned char *_recData) :
-		TES5Record(_recData)
-	{
-		//
-	}
+    CONTRecord::CONTRecord(unsigned char *_recData) :
+        TES5Record(_recData)
+    {
+        //
+    }
 
-	CONTRecord::CONTRecord(CONTRecord *srcRecord) :
-		TES5Record()
-	{
-		if (srcRecord == NULL)
-			return;
+    CONTRecord::CONTRecord(CONTRecord *srcRecord) :
+        TES5Record()
+    {
+        if (srcRecord == NULL)
+            return;
 
-		flags = srcRecord->flags;
-		formID = srcRecord->formID;
-		flagsUnk = srcRecord->flagsUnk;
-		formVersion = srcRecord->formVersion;
-		versionControl2[0] = srcRecord->versionControl2[0];
-		versionControl2[1] = srcRecord->versionControl2[1];
+        flags = srcRecord->flags;
+        formID = srcRecord->formID;
+        flagsUnk = srcRecord->flagsUnk;
+        formVersion = srcRecord->formVersion;
+        versionControl2[0] = srcRecord->versionControl2[0];
+        versionControl2[1] = srcRecord->versionControl2[1];
 
-		recData = srcRecord->recData;
-		if (!srcRecord->IsChanged())
-			return;
+        recData = srcRecord->recData;
+        if (!srcRecord->IsChanged())
+            return;
 
-		EDID = srcRecord->EDID;
-		VMAD = srcRecord->VMAD;
-		OBND = srcRecord->OBND;
-		FULL = srcRecord->FULL;
-		MODL = srcRecord->MODL;
-		CNTO = srcRecord->CNTO;
-		DATA = srcRecord->DATA;
-		SNAM = srcRecord->SNAM;
-		QNAM = srcRecord->QNAM;
+        EDID = srcRecord->EDID;
+        VMAD = srcRecord->VMAD;
+        OBND = srcRecord->OBND;
+        FULL = srcRecord->FULL;
+        MODL = srcRecord->MODL;
+        CNTO = srcRecord->CNTO;
+        DATA = srcRecord->DATA;
+        SNAM = srcRecord->SNAM;
+        QNAM = srcRecord->QNAM;
 
-		if (!srcRecord->IsChanged())
-			return;
+        if (!srcRecord->IsChanged())
+            return;
 
-		return;
-	}
+        return;
+    }
 
-	CONTRecord::~CONTRecord()
-	{
-		//
-	}
+    CONTRecord::~CONTRecord()
+    {
+        //
+    }
 
-	uint32_t CONTRecord::GetType()
-	{
-		return REV32(CONT);
-	}
+    uint32_t CONTRecord::GetType()
+    {
+        return REV32(CONT);
+    }
 
-	char * CONTRecord::GetStrType()
-	{
-		return "CONT";
-	}
-
-
-	bool CONTRecord::VisitFormIDs(FormIDOp &op)
-	{
-		if (!IsLoaded())
-			return false;
-		//TODO - implement VisitFormIDs for struct GENOBND
-
-		if (CNTO.IsLoaded()) {
-			//TODO - implement VisitFormIDs for struct ContainerItems
-		}
-		if (DATA.IsLoaded()) {
-			//TODO - implement VisitFormIDs for struct CONTDATA
-		}
-		if (SNAM.IsLoaded()) {
-			op.Accept(SNAM.value);
-		}
-		if (QNAM.IsLoaded()) {
-			op.Accept(QNAM.value);
-		}
-
-		return op.Stop();
-	}
+    char * CONTRecord::GetStrType()
+    {
+        return "CONT";
+    }
 
 
-	int32_t CONTRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk)
-	{
-		uint32_t subType = 0;
-		uint32_t subSize = 0;
-		StringLookups *LookupStrings = GetParentMod()->TES4.LookupStrings;
-		while (buffer < end_buffer) {
-			subType = *(uint32_t *)buffer;
-			buffer += 4;
-			switch (subType)
-			{
-			case REV32(XXXX):
-				buffer += 2;
-				subSize = *(uint32_t *)buffer;
-				buffer += 4;
-				subType = *(uint32_t *)buffer;
-				buffer += 6;
-				break;
-			default:
-				subSize = *(uint16_t *)buffer;
-				buffer += 2;
-				break;
-			}
-			switch (subType)
-			{
-			case REV32(EDID):
-				EDID.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(VMAD):
-				VMAD.Read(buffer, subSize, GetType(), CompressedOnDisk);
-				break;
-			case REV32(OBND):
-				OBND.Read(buffer, subSize);
-				break;
-			case REV32(FULL):
-				FULL.Read(buffer, subSize, CompressedOnDisk, LookupStrings);
-				break;
-			case REV32(MODL):
-				MODL.MODL.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(MODT):
-				MODL.MODT.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(COCT):
-				// Ignore on read
-				buffer += subSize;
-				break;
-			case REV32(CNTO):
-				CNTO.Read(buffer, subSize);
-				break;
-			case REV32(DATA):
-				DATA.Read(buffer, subSize);
-				break;
-			case REV32(SNAM):
-				SNAM.Read(buffer, subSize);
-				break;
-			case REV32(QNAM):
-				QNAM.Read(buffer, subSize);
-				break;
+    bool CONTRecord::VisitFormIDs(FormIDOp &op)
+    {
+        if (!IsLoaded())
+            return false;
+        //TODO - implement VisitFormIDs for struct GENOBND
 
-			default:
-				//printer("FileName = %s\n", FileName);
-				printer("  CONT: %08X - Unknown subType = %04x [%c%c%c%c]\n", formID, subType, (subType >> 0) & 0xFF, (subType >> 8) & 0xFF, (subType >> 16) & 0xFF, (subType >> 24) & 0xFF);
-				CBASH_CHUNK_DEBUG
-					printer("  Size = %i\n", subSize);
-				printer("  CurPos = %08x\n\n", buffer - 6);
-				buffer = end_buffer;
-				break;
-			}
-		};
-		return 0;
-	}
+        if (CNTO.IsLoaded()) {
+            //TODO - implement VisitFormIDs for struct ContainerItems
+        }
+        if (DATA.IsLoaded()) {
+            //TODO - implement VisitFormIDs for struct CONTDATA
+        }
+        if (SNAM.IsLoaded()) {
+            op.Accept(SNAM.value);
+        }
+        if (QNAM.IsLoaded()) {
+            op.Accept(QNAM.value);
+        }
 
-	int32_t CONTRecord::Unload()
-	{
-		IsChanged(false);
-		IsLoaded(false);
-		EDID.Unload();
-		VMAD.Unload();
-		OBND.Unload();
-		FULL.Unload();
-		CNTO.Unload();
-		DATA.Unload();
-		SNAM.Unload();
-		QNAM.Unload();
+        return op.Stop();
+    }
 
-		return 1;
-	}
 
-	int32_t CONTRecord::WriteRecord(FileWriter &writer)
-	{
-		WRITE(EDID);
-		WRITE(VMAD);
-		WRITE(OBND);
-		WRITE(FULL);
-		MODL.Write(writer);
-		WRITE(CNTO);
-		WRITE(DATA);
-		WRITE(SNAM);
-		WRITE(QNAM);
-		return -1;
-	}
+    int32_t CONTRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk)
+    {
+        uint32_t subType = 0;
+        uint32_t subSize = 0;
+        StringLookups *LookupStrings = GetParentMod()->TES4.LookupStrings;
+        while (buffer < end_buffer) {
+            subType = *(uint32_t *)buffer;
+            buffer += 4;
+            switch (subType)
+            {
+            case REV32(XXXX):
+                buffer += 2;
+                subSize = *(uint32_t *)buffer;
+                buffer += 4;
+                subType = *(uint32_t *)buffer;
+                buffer += 6;
+                break;
+            default:
+                subSize = *(uint16_t *)buffer;
+                buffer += 2;
+                break;
+            }
+            switch (subType)
+            {
+            case REV32(EDID):
+                EDID.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(VMAD):
+                VMAD.Read(buffer, subSize, GetType(), CompressedOnDisk);
+                break;
+            case REV32(OBND):
+                OBND.Read(buffer, subSize);
+                break;
+            case REV32(FULL):
+                FULL.Read(buffer, subSize, CompressedOnDisk, LookupStrings);
+                break;
+            case REV32(MODL):
+                MODL.MODL.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(MODT):
+                MODL.MODT.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(COCT):
+                // Ignore on read
+                buffer += subSize;
+                break;
+            case REV32(CNTO):
+                CNTO.Read(buffer, subSize);
+                break;
+            case REV32(DATA):
+                DATA.Read(buffer, subSize);
+                break;
+            case REV32(SNAM):
+                SNAM.Read(buffer, subSize);
+                break;
+            case REV32(QNAM):
+                QNAM.Read(buffer, subSize);
+                break;
+            case REV32(COED):
+            case REV32(MODS):
+                CBASH_SUBTYPE_NOT_IMPLEMENTED
+                buffer = end_buffer;
+                break;
 
-	bool CONTRecord::operator ==(const CONTRecord &other) const
-	{
-		return (EDID.equalsi(other.EDID) &&
-			VMAD == other.VMAD &&
-			OBND == other.OBND &&
-			FULL.equalsi(other.FULL) &&
-			MODL == other.MODL &&
-			CNTO == other.CNTO &&
-			DATA == other.DATA &&
-			SNAM == other.SNAM &&
-			QNAM == other.QNAM);
-	}
+            default:
+                CBASH_SUBTYPE_UNKNOWN
+                CBASH_CHUNK_DEBUG
+                buffer = end_buffer;
+                break;
+            }
+        };
+        return 0;
+    }
 
-	bool CONTRecord::operator !=(const CONTRecord &other) const
-	{
-		return !(*this == other);
-	}
+    int32_t CONTRecord::Unload()
+    {
+        IsChanged(false);
+        IsLoaded(false);
+        EDID.Unload();
+        VMAD.Unload();
+        OBND.Unload();
+        FULL.Unload();
+        CNTO.Unload();
+        DATA.Unload();
+        SNAM.Unload();
+        QNAM.Unload();
 
-	bool CONTRecord::equals(Record *other)
-	{
-		return *this == *(CONTRecord *)other;
-	}
+        return 1;
+    }
+
+    int32_t CONTRecord::WriteRecord(FileWriter &writer)
+    {
+        WRITE(EDID);
+        WRITE(VMAD);
+        WRITE(OBND);
+        WRITE(FULL);
+        MODL.Write(writer);
+        WRITE(CNTO);
+        WRITE(DATA);
+        WRITE(SNAM);
+        WRITE(QNAM);
+        return -1;
+    }
+
+    bool CONTRecord::operator ==(const CONTRecord &other) const
+    {
+        return (EDID.equalsi(other.EDID) &&
+            VMAD == other.VMAD &&
+            OBND == other.OBND &&
+            FULL.equalsi(other.FULL) &&
+            MODL == other.MODL &&
+            CNTO == other.CNTO &&
+            DATA == other.DATA &&
+            SNAM == other.SNAM &&
+            QNAM == other.QNAM);
+    }
+
+    bool CONTRecord::operator !=(const CONTRecord &other) const
+    {
+        return !(*this == other);
+    }
+
+    bool CONTRecord::equals(Record *other)
+    {
+        return *this == *(CONTRecord *)other;
+    }
 }
