@@ -2076,6 +2076,8 @@ public:
 	{
 		stamp = *(uint32_t *)buffer_position;
 		buffer_position += 4;
+		unknown = *(uint32_t *)buffer_position;
+		buffer_position += 4;
 		if (group_buffer_end <= buffer_position)
 		{
 			printer("TES5GRUPRecords<Sk::DIALRecord>::Read: Error - Unable to load group in file \"%s\". The group has a size of 0.\n", FileName);

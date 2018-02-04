@@ -137,7 +137,8 @@ namespace Sk {
         }
 
         for (uint32_t p = 0; p < questAliases.value.size(); p++) {
-            questAliases.value[p]->aliasType->VisitFormIDs(op);
+            if (questAliases.value[p]->aliasType != NULL)
+                questAliases.value[p]->aliasType->VisitFormIDs(op);
 
             for (uint32_t k = 0; k < questAliases.value[p]->CTDA.value.size(); k++) {
                 questAliases.value[p]->CTDA.value[k]->VisitFormIDs(op);
@@ -256,42 +257,31 @@ namespace Sk {
                 break;
 
             case REV32(CTDA): {
+                current_condition = new SKCondition();
+                switch (mode) {
+                case QUSTParseMode::QUSTParseNormal:
+                    if (isQE) {
+                        QECTDA.value.push_back(current_condition);
+                    }
+                    else {
+                        QDCTDA.value.push_back(current_condition);
+                    }
+                    break;
 
-                                  switch (mode) {
+                case QUSTParseMode::QUSTParseStages:
+                    this->questStages.value.back()->LOGS.value.back()->CTDA.value.push_back(current_condition);
+                    break;
 
-                                      current_condition = new SKCondition();
+                case QUSTParseMode::QUSTParseObjectives:
+                    this->questObjectives.value.back()->TGTS.value.back()->CTDA.value.push_back(current_condition);
+                    break;
 
+                case QUSTParseMode::QUSTParseAliases:
+                    this->questAliases.value.back()->CTDA.value.push_back(current_condition);
+                }
 
-                                  case QUSTParseMode::QUSTParseNormal:
-
-                                      if (isQE) {
-                                          QECTDA.value.push_back(current_condition);
-                                      }
-                                      else {
-                                          QDCTDA.value.push_back(current_condition);
-                                      }
-                                      break;
-
-                                  case QUSTParseMode::QUSTParseStages:
-
-                                      this->questStages.value.back()->LOGS.value.back()->CTDA.value.push_back(current_condition);
-
-                                      break;
-
-                                  case QUSTParseMode::QUSTParseObjectives:
-                                      this->questObjectives.value.back()->TGTS.value.back()->CTDA.value.push_back(current_condition);
-                                      break;
-
-
-                                  case QUSTParseMode::QUSTParseAliases:
-                                      this->questAliases.value.back()->CTDA.value.push_back(current_condition);
-
-                                  }
-
-                                  current_condition->CTDA.Read(buffer, subSize);
-
-
-                                  break;
+                current_condition->CTDA.Read(buffer, subSize);
+                break;
             }
 
             case REV32(CIS1):
