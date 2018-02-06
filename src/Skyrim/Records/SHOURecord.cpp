@@ -153,6 +153,10 @@ int32_t SHOURecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
         case REV32(SNAM):
             SNAM.Read(buffer, subSize);
             break;
+        case REV32(DESC):
+            CBASH_SUBTYPE_NOT_IMPLEMENTED
+            buffer = end_buffer;
+            break;
         default:
             CBASH_SUBTYPE_UNKNOWN
             CBASH_CHUNK_DEBUG

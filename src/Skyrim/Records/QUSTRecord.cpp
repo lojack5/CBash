@@ -339,12 +339,13 @@ namespace Sk {
                                       }
 
                                       if ((this->questAliases.value.back()->FNAM.value & (~allowedBitmask)) > 0) {
-                                          throw std::runtime_error("QUSTRecord::ParseRecords() - FNAM Alias bitmask is wrong ( has unsupported flags ).");
+                                          log_error << "(" << (EDID.IsLoaded() ? EDID.value : "") << ") QUSTRecord::ParseRecords() - FNAM Alias bitmask is wrong ( has unsupported flags ).\n";
                                       }
 
                                       break;
 
                                   }
+                break;
             }
 
                 //QUSTParseObjectives, parsing objectives.
@@ -471,6 +472,7 @@ namespace Sk {
                 }
 
                 this->questAliases.value.back()->aliasType = new ALCOAliasFillType();
+                buffer += subSize; // Not implemented, skip sub record
                 break;
             }
 
@@ -480,6 +482,7 @@ namespace Sk {
                 }
 
                 this->questAliases.value.back()->aliasType = new ALEQAliasFillType();
+                buffer += subSize; // Not implemented, skip sub record
                 break;
             }
 
@@ -495,6 +498,7 @@ namespace Sk {
                     this->questAliases.value.back()->aliasType = new RefALFAAliasFillType();
                 }
 
+                buffer += subSize; // Not implemented, skip sub record
                 break;
             }
 
@@ -504,6 +508,7 @@ namespace Sk {
                 }
 
                 this->questAliases.value.back()->aliasType = new ALFEAliasFillType();
+                buffer += subSize; // Not implemented, skip sub record
                 break;
             }
 
@@ -513,6 +518,7 @@ namespace Sk {
                 }
 
                 this->questAliases.value.back()->aliasType = new ALFLAliasFillType();
+                buffer += subSize; // Not implemented, skip sub record
                 break;
             }
 
@@ -522,6 +528,7 @@ namespace Sk {
                 }
 
                 this->questAliases.value.back()->aliasType = new ALFRAliasFillType();
+                buffer += subSize; // Not implemented, skip sub record
                 break;
             }
 
@@ -531,6 +538,7 @@ namespace Sk {
                 }
 
                 this->questAliases.value.back()->aliasType = new ALNAAliasFillType();
+                buffer += subSize; // Not implemented, skip sub record
                 break;
 
             }
@@ -541,6 +549,7 @@ namespace Sk {
                 }
 
                 this->questAliases.value.back()->aliasType = new ALUAAliasFillType();
+                buffer += subSize; // Not implemented, skip sub record
                 break;
             }
 
@@ -605,6 +614,14 @@ namespace Sk {
                 break; //This is not maintained in memory, just written based on KWDA/CNTO. ALED is just a EOF.
             }
 
+            case REV32(SCHR):
+            case REV32(SCTX):
+            case REV32(QNAM): {
+                buffer += subSize;
+                CBASH_SUBTYPE_NOT_IMPLEMENTED
+                break;
+            }
+
             default:
 
                 if (mode == QUSTParseMode::QUSTParseAliases) {
@@ -612,10 +629,10 @@ namespace Sk {
                     bool result = this->questAliases.value.back()->aliasType->ParseRecord(buffer, subType, subSize, CompressedOnDisk);
 
                     if (result == true) {
+                        buffer += subSize; // Not implemented, skip sub record
                         break;
                     }
                 }
-
 
                 CBASH_SUBTYPE_UNKNOWN
                 CBASH_CHUNK_DEBUG
