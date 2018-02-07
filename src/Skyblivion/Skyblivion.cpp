@@ -1327,7 +1327,7 @@ namespace Skyblivion {
 				for (uint32_t ctdaIt = 0; ctdaIt < newInfo->CTDA.value.size(); ++ctdaIt) {
 					Sk::SKCondition * ctda = newInfo->CTDA.value[ctdaIt];
                     if (ctda->CTDA.value.ifunc == 72) { //get is id.
-						if (ctda->CTDA.value.IsEqual() && ctda->CTDA.value.compValue == 1 || !ctda->CTDA.value.IsEqual() && ctda->CTDA.value.compValue == 0)
+						if (ctda->CTDA.value.IsEqual() && ctda->CTDA.value.compValue > 0 || !ctda->CTDA.value.IsEqual() && ctda->CTDA.value.compValue == 0)
 							newInfo->ANAM.value = ctda->CTDA.value.param1; //Speaker
                     }
                 }
