@@ -617,8 +617,8 @@ namespace Sk {
             case REV32(SCHR):
             case REV32(SCTX):
             case REV32(QNAM): {
-                buffer += subSize;
                 CBASH_SUBTYPE_NOT_IMPLEMENTED
+                buffer += subSize;
                 break;
             }
 

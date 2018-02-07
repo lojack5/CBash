@@ -155,7 +155,7 @@ int32_t SHOURecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
             break;
         case REV32(DESC):
             CBASH_SUBTYPE_NOT_IMPLEMENTED
-            buffer = end_buffer;
+            buffer += subSize;
             break;
         default:
             CBASH_SUBTYPE_UNKNOWN

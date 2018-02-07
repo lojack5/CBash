@@ -39,259 +39,259 @@
 
 namespace Sk
 {
-	FLORPFPC::FLORPFPC() :
-		spring(0),
-		summer(0),
-		fall(0),
-		winter(0)
-	{
-		//
-	}
+    FLORPFPC::FLORPFPC() :
+        spring(0),
+        summer(0),
+        fall(0),
+        winter(0)
+    {
+        //
+    }
 
-	FLORPFPC::~FLORPFPC()
-	{
-		//
-	}
+    FLORPFPC::~FLORPFPC()
+    {
+        //
+    }
 
-	bool FLORPFPC::operator ==(const FLORPFPC &other) const
-	{
-		return (spring == other.spring &&
-			summer == other.summer &&
-			fall == other.fall &&
-			winter == other.winter);
-	}
+    bool FLORPFPC::operator ==(const FLORPFPC &other) const
+    {
+        return (spring == other.spring &&
+            summer == other.summer &&
+            fall == other.fall &&
+            winter == other.winter);
+    }
 
-	bool FLORPFPC::operator !=(const FLORPFPC &other) const
-	{
-		return !(*this == other);
-	}
+    bool FLORPFPC::operator !=(const FLORPFPC &other) const
+    {
+        return !(*this == other);
+    }
 
-	FLORRecord::FLORRecord(unsigned char *_recData) :
-		TES5Record(_recData)
-	{
-		//
-	}
+    FLORRecord::FLORRecord(unsigned char *_recData) :
+        TES5Record(_recData)
+    {
+        //
+    }
 
-	FLORRecord::FLORRecord(FLORRecord *srcRecord) :
-		TES5Record()
-	{
-		if (srcRecord == NULL)
-			return;
+    FLORRecord::FLORRecord(FLORRecord *srcRecord) :
+        TES5Record()
+    {
+        if (srcRecord == NULL)
+            return;
 
-		flags = srcRecord->flags;
-		formID = srcRecord->formID;
-		flagsUnk = srcRecord->flagsUnk;
-		formVersion = srcRecord->formVersion;
-		versionControl2[0] = srcRecord->versionControl2[0];
-		versionControl2[1] = srcRecord->versionControl2[1];
+        flags = srcRecord->flags;
+        formID = srcRecord->formID;
+        flagsUnk = srcRecord->flagsUnk;
+        formVersion = srcRecord->formVersion;
+        versionControl2[0] = srcRecord->versionControl2[0];
+        versionControl2[1] = srcRecord->versionControl2[1];
 
-		recData = srcRecord->recData;
-		if (!srcRecord->IsChanged())
-			return;
-		EDID = srcRecord->EDID;
-		VMAD = srcRecord->VMAD;
-		OBND = srcRecord->OBND;
-		FULL = srcRecord->FULL;
-		MODL = srcRecord->MODL;
-		DEST = srcRecord->DEST;
-		KWDA = srcRecord->KWDA;
-		PNAM = srcRecord->PNAM;
-		RNAM = srcRecord->RNAM;
-		FNAM = srcRecord->FNAM;
-		PFIG = srcRecord->PFIG;
-		SNAM = srcRecord->SNAM;
-		PFPC = srcRecord->PFPC;
-
-
-		return;
-	}
-
-	FLORRecord::~FLORRecord()
-	{
-		//
-	}
-
-	uint32_t FLORRecord::GetType()
-	{
-		return REV32(FLOR);
-	}
-
-	char * FLORRecord::GetStrType()
-	{
-		return "FLOR";
-	}
+        recData = srcRecord->recData;
+        if (!srcRecord->IsChanged())
+            return;
+        EDID = srcRecord->EDID;
+        VMAD = srcRecord->VMAD;
+        OBND = srcRecord->OBND;
+        FULL = srcRecord->FULL;
+        MODL = srcRecord->MODL;
+        DEST = srcRecord->DEST;
+        KWDA = srcRecord->KWDA;
+        PNAM = srcRecord->PNAM;
+        RNAM = srcRecord->RNAM;
+        FNAM = srcRecord->FNAM;
+        PFIG = srcRecord->PFIG;
+        SNAM = srcRecord->SNAM;
+        PFPC = srcRecord->PFPC;
 
 
-	bool FLORRecord::VisitFormIDs(FormIDOp &op)
-	{
-		if (!IsLoaded())
-			return false;
-		//TODO - implement VisitFormIDs for struct GENOBND
+        return;
+    }
 
-		if (DEST.IsLoaded()) {
-			//TODO - implement VisitFormIDs for struct GENDESTRUCT
-		}
-		if (PFIG.IsLoaded())
-			op.Accept(PFIG.value);
-		if (KWDA.IsLoaded()) {
-			for (uint32_t i = 0; i < KWDA.value.size(); ++i) {
+    FLORRecord::~FLORRecord()
+    {
+        //
+    }
 
-				op.Accept(KWDA.value[i]);
+    uint32_t FLORRecord::GetType()
+    {
+        return REV32(FLOR);
+    }
 
-			};
-		}
-
-		return op.Stop();
-	}
+    char * FLORRecord::GetStrType()
+    {
+        return "FLOR";
+    }
 
 
-	int32_t FLORRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk)
-	{
-		uint32_t subType = 0;
-		uint32_t subSize = 0;
-		StringLookups *LookupStrings = GetParentMod()->TES4.LookupStrings;
-		while (buffer < end_buffer) {
-			subType = *(uint32_t *)buffer;
-			buffer += 4;
-			switch (subType)
-			{
-			case REV32(XXXX):
-				buffer += 2;
-				subSize = *(uint32_t *)buffer;
-				buffer += 4;
-				subType = *(uint32_t *)buffer;
-				buffer += 6;
-				break;
-			default:
-				subSize = *(uint16_t *)buffer;
-				buffer += 2;
-				break;
-			}
-			switch (subType)
-			{
-			case REV32(EDID):
-				EDID.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(VMAD):
-				VMAD.Read(buffer, subSize, GetType(), CompressedOnDisk);
-				break;
-			case REV32(OBND):
-				OBND.Read(buffer, subSize);
-				break;
-			case REV32(FULL):
-				FULL.Read(buffer, subSize, CompressedOnDisk, LookupStrings);
-				break;
-			case REV32(MODL):
-				MODL.MODL.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(MODT):
-				MODL.MODT.Read(buffer, subSize, CompressedOnDisk);
-				break;
-			case REV32(DEST):
-				DEST.Read(buffer, subSize);
-				break;
-			case REV32(KSIZ):
-				// Ignore on read
-				buffer += subSize;
-				break;
-			case REV32(KWDA):
-				KWDA.Read(buffer, subSize);
-				break;
-			case REV32(PNAM):
-				PNAM.Read(buffer, subSize);
-				break;
-			case REV32(RNAM):
-				RNAM.Read(buffer, subSize, CompressedOnDisk, LookupStrings);
-				break;
-			case REV32(FNAM):
-				FNAM.Read(buffer, subSize);
-				break;
-			case REV32(PFIG):
-				PFIG.Read(buffer, subSize);
-				break;
-			case REV32(SNAM):
-				SNAM.Read(buffer, subSize);
-				break;
-			case REV32(PFPC):
-				PFPC.Read(buffer, subSize);
-				break;
-			case REV32(MODS):
-				CBASH_SUBTYPE_NOT_IMPLEMENTED
-					buffer = end_buffer;
-				break;
+    bool FLORRecord::VisitFormIDs(FormIDOp &op)
+    {
+        if (!IsLoaded())
+            return false;
+        //TODO - implement VisitFormIDs for struct GENOBND
 
-			default:
-				CBASH_SUBTYPE_UNKNOWN
-					CBASH_CHUNK_DEBUG
-					buffer = end_buffer;
-				break;
-			}
-		};
-		return 0;
-	}
+        if (DEST.IsLoaded()) {
+            //TODO - implement VisitFormIDs for struct GENDESTRUCT
+        }
+        if (PFIG.IsLoaded())
+            op.Accept(PFIG.value);
+        if (KWDA.IsLoaded()) {
+            for (uint32_t i = 0; i < KWDA.value.size(); ++i) {
 
-	int32_t FLORRecord::Unload()
-	{
-		IsChanged(false);
-		IsLoaded(false);
-		EDID.Unload();
-		VMAD.Unload();
-		OBND.Unload();
-		FULL.Unload();
-		DEST.Unload();
-		KWDA.Unload();
-		PNAM.Unload();
-		RNAM.Unload();
-		FNAM.Unload();
-		PFIG.Unload();
-		SNAM.Unload();
-		PFPC.Unload();
+                op.Accept(KWDA.value[i]);
 
-		return 1;
-	}
+            };
+        }
 
-	int32_t FLORRecord::WriteRecord(FileWriter &writer)
-	{
-		WRITE(EDID);
-		WRITE(VMAD);
-		WRITE(OBND);
-		WRITE(FULL);
-		MODL.Write(writer);
-		WRITE(DEST);
-		WRITE(KWDA);
-		WRITE(PNAM);
-		WRITE(RNAM);
-		WRITE(FNAM);
-		WRITE(PFIG);
-		WRITE(SNAM);
-		WRITE(PFPC);
-		return -1;
-	}
+        return op.Stop();
+    }
 
-	bool FLORRecord::operator ==(const FLORRecord &other) const
-	{
-		return (EDID.equalsi(other.EDID) &&
-			VMAD == other.VMAD &&
-			OBND == other.OBND &&
-			FULL.equalsi(other.FULL) &&
-			MODL == other.MODL &&
-			DEST == other.DEST &&
-			KWDA == other.KWDA &&
-			PNAM == other.PNAM &&
-			RNAM.equals(other.RNAM) &&
-			FNAM == other.FNAM &&
-			PFIG == other.PFIG &&
-			SNAM == other.SNAM &&
-			PFPC == other.PFPC);
-	}
 
-	bool FLORRecord::operator !=(const FLORRecord &other) const
-	{
-		return !(*this == other);
-	}
+    int32_t FLORRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk)
+    {
+        uint32_t subType = 0;
+        uint32_t subSize = 0;
+        StringLookups *LookupStrings = GetParentMod()->TES4.LookupStrings;
+        while (buffer < end_buffer) {
+            subType = *(uint32_t *)buffer;
+            buffer += 4;
+            switch (subType)
+            {
+            case REV32(XXXX):
+                buffer += 2;
+                subSize = *(uint32_t *)buffer;
+                buffer += 4;
+                subType = *(uint32_t *)buffer;
+                buffer += 6;
+                break;
+            default:
+                subSize = *(uint16_t *)buffer;
+                buffer += 2;
+                break;
+            }
+            switch (subType)
+            {
+            case REV32(EDID):
+                EDID.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(VMAD):
+                VMAD.Read(buffer, subSize, GetType(), CompressedOnDisk);
+                break;
+            case REV32(OBND):
+                OBND.Read(buffer, subSize);
+                break;
+            case REV32(FULL):
+                FULL.Read(buffer, subSize, CompressedOnDisk, LookupStrings);
+                break;
+            case REV32(MODL):
+                MODL.MODL.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(MODT):
+                MODL.MODT.Read(buffer, subSize, CompressedOnDisk);
+                break;
+            case REV32(DEST):
+                DEST.Read(buffer, subSize);
+                break;
+            case REV32(KSIZ):
+                // Ignore on read
+                buffer += subSize;
+                break;
+            case REV32(KWDA):
+                KWDA.Read(buffer, subSize);
+                break;
+            case REV32(PNAM):
+                PNAM.Read(buffer, subSize);
+                break;
+            case REV32(RNAM):
+                RNAM.Read(buffer, subSize, CompressedOnDisk, LookupStrings);
+                break;
+            case REV32(FNAM):
+                FNAM.Read(buffer, subSize);
+                break;
+            case REV32(PFIG):
+                PFIG.Read(buffer, subSize);
+                break;
+            case REV32(SNAM):
+                SNAM.Read(buffer, subSize);
+                break;
+            case REV32(PFPC):
+                PFPC.Read(buffer, subSize);
+                break;
+            case REV32(MODS):
+                CBASH_SUBTYPE_NOT_IMPLEMENTED
+                buffer += subSize;
+                break;
 
-	bool FLORRecord::equals(Record *other)
-	{
-		return *this == *(FLORRecord *)other;
-	}
+            default:
+                CBASH_SUBTYPE_UNKNOWN
+                    CBASH_CHUNK_DEBUG
+                    buffer = end_buffer;
+                break;
+            }
+        };
+        return 0;
+    }
+
+    int32_t FLORRecord::Unload()
+    {
+        IsChanged(false);
+        IsLoaded(false);
+        EDID.Unload();
+        VMAD.Unload();
+        OBND.Unload();
+        FULL.Unload();
+        DEST.Unload();
+        KWDA.Unload();
+        PNAM.Unload();
+        RNAM.Unload();
+        FNAM.Unload();
+        PFIG.Unload();
+        SNAM.Unload();
+        PFPC.Unload();
+
+        return 1;
+    }
+
+    int32_t FLORRecord::WriteRecord(FileWriter &writer)
+    {
+        WRITE(EDID);
+        WRITE(VMAD);
+        WRITE(OBND);
+        WRITE(FULL);
+        MODL.Write(writer);
+        WRITE(DEST);
+        WRITE(KWDA);
+        WRITE(PNAM);
+        WRITE(RNAM);
+        WRITE(FNAM);
+        WRITE(PFIG);
+        WRITE(SNAM);
+        WRITE(PFPC);
+        return -1;
+    }
+
+    bool FLORRecord::operator ==(const FLORRecord &other) const
+    {
+        return (EDID.equalsi(other.EDID) &&
+            VMAD == other.VMAD &&
+            OBND == other.OBND &&
+            FULL.equalsi(other.FULL) &&
+            MODL == other.MODL &&
+            DEST == other.DEST &&
+            KWDA == other.KWDA &&
+            PNAM == other.PNAM &&
+            RNAM.equals(other.RNAM) &&
+            FNAM == other.FNAM &&
+            PFIG == other.PFIG &&
+            SNAM == other.SNAM &&
+            PFPC == other.PFPC);
+    }
+
+    bool FLORRecord::operator !=(const FLORRecord &other) const
+    {
+        return !(*this == other);
+    }
+
+    bool FLORRecord::equals(Record *other)
+    {
+        return *this == *(FLORRecord *)other;
+    }
 }

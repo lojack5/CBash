@@ -180,7 +180,7 @@ namespace Sk
 
             case REV32(CIS2):
                 CBASH_SUBTYPE_NOT_IMPLEMENTED
-                buffer = end_buffer;
+                buffer += subSize;
                 break;
                             
             default:
