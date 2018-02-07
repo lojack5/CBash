@@ -444,7 +444,7 @@ int32_t WRLDRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
             case REV32(MHDT):
             case REV32(WCTR):
                 CBASH_SUBTYPE_NOT_IMPLEMENTED
-                buffer = end_buffer;
+                buffer += subSize;
                 break;
             default:
                 CBASH_SUBTYPE_UNKNOWN

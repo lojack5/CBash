@@ -522,7 +522,7 @@ int32_t CELLRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
             case REV32(XWCN):
             case REV32(XWCS):
                 CBASH_SUBTYPE_NOT_IMPLEMENTED
-                    buffer = end_buffer;
+                buffer += subSize;
                 break;
             default:
                 CBASH_SUBTYPE_UNKNOWN

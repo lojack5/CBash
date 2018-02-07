@@ -311,7 +311,7 @@ namespace Sk
             case REV32(MODS):
             case REV32(NNAM):
                 CBASH_SUBTYPE_NOT_IMPLEMENTED
-                buffer = end_buffer;
+                buffer += subSize;
                 break;
 
             default:

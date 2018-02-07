@@ -291,6 +291,11 @@ namespace Sk {
                 ONAM.Read(buffer, subSize);
                 break;
 
+			case REV32(SCHR):
+				// not implemented yet
+				buffer = end_buffer;
+				break;
+
             default:
                 CBASH_SUBTYPE_UNKNOWN
                 CBASH_CHUNK_DEBUG

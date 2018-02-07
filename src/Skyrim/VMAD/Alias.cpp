@@ -77,7 +77,7 @@ void Alias::Read(unsigned char *&buffer, const int16_t &version, const int16_t &
         buffer += 4;
     }
     // version, objFormat
-    buffer += 8;
+    buffer += 4;
     // scriptCount
     uint16_t count = *(uint16_t *)buffer;
     buffer += 2;

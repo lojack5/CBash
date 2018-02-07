@@ -1329,7 +1329,8 @@ bool UnorderedPackedStrings::Read(unsigned char *&buffer, const uint32_t &subSiz
         }
     char * curString = NULL;
 
-    for(unsigned char *end_buffer = buffer + subSize;buffer < (end_buffer - 1);)
+    unsigned char *end_buffer = buffer + subSize;
+    for(;buffer < (end_buffer - 1);)
         {
         if(((char *)buffer)[0] == 0x00)
             {
@@ -1342,7 +1343,8 @@ bool UnorderedPackedStrings::Read(unsigned char *&buffer, const uint32_t &subSiz
         value.push_back(curString);
         buffer += size;
         }
-    buffer++; //Skip the final null terminator
+    if(buffer < end_buffer)
+        buffer++; //Skip the final null terminator
     return true;
     }
 

@@ -187,7 +187,7 @@ int32_t LVLNRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                     break;
                 case REV32(COED):
                     CBASH_SUBTYPE_NOT_IMPLEMENTED
-                    buffer = end_buffer;
+                    buffer += subSize;
                     break;
                 default:
                     CBASH_SUBTYPE_UNKNOWN

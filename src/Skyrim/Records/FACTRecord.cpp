@@ -286,8 +286,9 @@ int32_t FACTRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                 RNAM.value.back()->FNAM.Read(buffer, subSize, CompressedOnDisk);
                 break;
             case REV32(CITC):
+            case REV32(CIS2):
                 CBASH_SUBTYPE_NOT_IMPLEMENTED
-                buffer = end_buffer;
+                buffer += subSize;
                 break;
             default:
                 CBASH_SUBTYPE_UNKNOWN

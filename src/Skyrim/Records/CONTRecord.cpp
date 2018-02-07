@@ -178,7 +178,7 @@ namespace Sk
             case REV32(COED):
             case REV32(MODS):
                 CBASH_SUBTYPE_NOT_IMPLEMENTED
-                buffer = end_buffer;
+                buffer += subSize;
                 break;
 
             default:

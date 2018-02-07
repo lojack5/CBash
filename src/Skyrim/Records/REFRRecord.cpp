@@ -472,7 +472,7 @@ namespace Sk
             case REV32(XLCN):
             case REV32(XLTW):
                 CBASH_SUBTYPE_NOT_IMPLEMENTED
-                buffer = end_buffer;
+                buffer += subSize;
                 break;
 
             default:

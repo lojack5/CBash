@@ -237,6 +237,7 @@ int32_t ALCHRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
             break;
         case REV32(MODS):
             MODL.Textures.Read(buffer, subSize);
+            break;
         case REV32(DEST):
             Destructable.Load();
             Destructable->DEST.Read(buffer, subSize);
