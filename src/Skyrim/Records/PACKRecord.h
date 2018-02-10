@@ -87,6 +87,11 @@ namespace Sk
 				bool operator !=(const PACKPLDT &other) const;
 			};
 
+			struct PACKPRCB {
+				uint32_t numOfChild = 0;
+				uint32_t flags = 0;
+			};
+
 
 
 		struct PACKACTIVITY {
@@ -157,6 +162,7 @@ namespace Sk
                             memcpy(&p.writtenPTDA, buffer, subSize);
                         }
 
+                        cnamData.push_back(p);
                         buffer += subSize;
 
 						return true;
@@ -220,31 +226,6 @@ namespace Sk
 							writer.record_write(&unamData[i], 1);
 						
 						}
-
-						int xnamNumber = 10;
-						int emptyNumber = 0;
-						writer.record_write_subheader(REV32(XNAM), 1);
-						writer.record_write(&xnamNumber, 1);
-
-
-						writer.record_write_subheader(REV32(POBA), 0);
-						writer.record_write_subheader(REV32(INAM), 4);
-						writer.record_write(&emptyNumber, 4);
-						writer.record_write_subheader(REV32(PDTO), 8);
-						writer.record_write(&emptyNumber, 4);
-						writer.record_write(&emptyNumber, 4);
-						writer.record_write_subheader(REV32(POEA), 0);
-						writer.record_write_subheader(REV32(INAM), 4);
-						writer.record_write(&emptyNumber, 4);
-						writer.record_write_subheader(REV32(PDTO), 8);
-						writer.record_write(&emptyNumber, 4);
-						writer.record_write(&emptyNumber, 4);
-						writer.record_write_subheader(REV32(POCA), 0);
-						writer.record_write_subheader(REV32(INAM), 4);
-						writer.record_write(&emptyNumber, 4);
-						writer.record_write_subheader(REV32(PDTO), 8);
-						writer.record_write(&emptyNumber, 4);
-						writer.record_write(&emptyNumber, 4);
 					}
 		
 		};
@@ -279,6 +260,138 @@ namespace Sk
             bool operator ==(const PACKPSDT &other) const;
             bool operator !=(const PACKPSDT &other) const;
             };
+
+		struct PACKPTRE {
+			char *ANAM = NULL;
+			uint32_t CITC;
+            UnorderedSparseArray<SKCondition*> CTDA;
+			PACKPRCB PRCB;
+			char *PNAM = NULL;
+			uint32_t FNAM;
+			std::vector<uint8_t> PKC2;
+
+            bool ReadANAM(unsigned char *&buffer, const uint32_t &subSize) {
+                ANAM = new char[subSize + 1];
+                ANAM[subSize] = 0x00;
+                memcpy(ANAM, buffer, subSize);
+                buffer += subSize;
+                return true;
+            }
+
+            bool ReadPNAM(unsigned char *&buffer, const uint32_t &subSize) {
+                PNAM = new char[subSize + 1];
+                PNAM[subSize] = 0x00;
+                memcpy(PNAM, buffer, subSize);
+                buffer += subSize;
+                return true;
+            }
+
+            bool ReadPKC2(unsigned char *&buffer, const uint32_t &subSize) {
+                uint8_t pkc2;
+                memcpy(&pkc2, buffer, subSize);
+                buffer += subSize;
+                PKC2.push_back(pkc2);
+                return true;
+            }
+
+			void Write(FileWriter &writer) {
+				if (ANAM == NULL)
+					return;
+
+				std::string stringData = std::string(ANAM);
+				size_t sizeString = stringData.size() + 1;
+
+				writer.record_write_subheader(REV32(ANAM), sizeString);
+				writer.record_write(stringData.c_str(), sizeString);
+
+				CITC = std::min((int)CITC, (int)CTDA.value.size());
+
+				writer.record_write_subheader(REV32(CITC), 4);
+				writer.record_write(&CITC, 4);
+
+                CTDA.Write(writer);
+
+				if (stringData != "Procedure") {
+					int sizeData = sizeof(PRCB);
+					writer.record_write_subheader(REV32(PRCB), sizeData);
+					writer.record_write(&PRCB, sizeData);
+				}
+				else {
+
+					if (PNAM != NULL) {
+						stringData = std::string(PNAM);
+						sizeString = stringData.size() + 1;
+
+						writer.record_write_subheader(REV32(PNAM), sizeString);
+						writer.record_write(stringData.c_str(), sizeString);
+					}
+
+					writer.record_write_subheader(REV32(FNAM), 4);
+					writer.record_write(&FNAM, 4);
+
+					for (int i = 0; i < PKC2.size(); i++) {
+						writer.record_write_subheader(REV32(PKC2), 1);
+						writer.record_write(&PKC2[i], 1);
+					}
+				}
+			}
+
+            PACKPTRE& operator=(const PACKPTRE& other) {
+                ANAM = new char[std::string(other.ANAM).size() + 1];
+                std::strcpy(ANAM, other.ANAM);
+                CITC = other.CITC;
+                CTDA = other.CTDA;
+                PRCB = other.PRCB;
+                if (other.PNAM != NULL) {
+                    PNAM = new char[std::string(other.PNAM).size() + 1];
+                    std::strcpy(PNAM, other.PNAM);
+                }
+                FNAM = other.FNAM;
+                PKC2 = other.PKC2;
+
+                return *this;
+            }
+		};
+
+		struct PACKPDAT {
+			uint8_t UNAM;
+			char *BNAM = NULL;
+			uint32_t PNAM;
+
+            bool ReadBNAM(unsigned char *&buffer, const uint32_t &subSize) {
+                BNAM = new char[subSize + 1];
+                BNAM[subSize] = 0x00;
+                memcpy(BNAM, buffer, subSize);
+                buffer += subSize;
+                return true;
+            }
+
+			void Write(FileWriter &writer) {
+				writer.record_write_subheader(REV32(UNAM), 1);
+				writer.record_write(&UNAM, 1);
+
+				if(BNAM == NULL)
+					writer.record_write_subheader(REV32(BNAM), 0);
+				else {
+					std::string stringData = std::string(BNAM);
+					size_t sizeString = stringData.size() + 1;
+
+					writer.record_write_subheader(REV32(BNAM), sizeString);
+					writer.record_write(stringData.c_str(), sizeString);
+				}
+
+				writer.record_write_subheader(REV32(PNAM), 4);
+				writer.record_write(&PNAM, 4);
+			}
+
+            PACKPDAT& operator=(const PACKPDAT& other) {
+                BNAM = new char[std::string(other.BNAM).size() + 1];
+                std::strcpy(BNAM, other.BNAM);
+                UNAM = other.UNAM;
+                PNAM = other.PNAM;
+                return *this;
+            }
+		};
 
 		enum interruptFlagsFlags
 		{
@@ -346,11 +459,16 @@ namespace Sk
         ReqSubRecord<PACKPKCU> PKCU; //Template Info
         ReqSubRecord<PACKPKDT> PKDT; //General
         ReqSubRecord<PACKPSDT> PSDT; //Schedule
+        ReqSimpleSubRecord<int8_t> XNAM;
         OptSimpleSubRecord<FORMID> CNAM; //Combat style
 		PACKTDAT TDAT; //Template data.
+
+		UnorderedSparseArray<PACKPTRE*> PTRE; // Procedure tree
+		UnorderedSparseArray<PACKPDAT*> PDAT; // Procedure data
 		
         PACKRecord(unsigned char *_recData=NULL);
         PACKRecord(PACKRecord *srcRecord);
+        PACKRecord(const PACKRecord &srcRecord);
         ~PACKRecord();
 
         bool   VisitFormIDs(FormIDOp &op);
