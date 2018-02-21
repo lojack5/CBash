@@ -193,9 +193,31 @@ TES5Record()
     PKCU = srcRecord->PKCU;
     PKDT = srcRecord->PKDT;
     PSDT = srcRecord->PSDT;
+    XNAM = srcRecord->XNAM;
     TDAT = srcRecord->TDAT;
+	PTRE = srcRecord->PTRE;
+	PDAT = srcRecord->PDAT;
     return;
     }
+
+PACKRecord::PACKRecord(const PACKRecord &srcRecord) {
+    flags = srcRecord.flags;
+    formID = srcRecord.formID;
+    flagsUnk = srcRecord.flagsUnk;
+    formVersion = srcRecord.formVersion;
+    versionControl2[0] = srcRecord.versionControl2[0];
+
+    EDID = srcRecord.EDID;
+    CTDA = srcRecord.CTDA;
+    PKCU = srcRecord.PKCU;
+    PKDT = srcRecord.PKDT;
+    PSDT = srcRecord.PSDT;
+    XNAM = srcRecord.XNAM;
+    CNAM = srcRecord.CNAM;
+    TDAT = srcRecord.TDAT;
+    PTRE = srcRecord.PTRE;
+    PDAT = srcRecord.PDAT;
+}
 
 PACKRecord::~PACKRecord()
     {
@@ -278,7 +300,8 @@ int32_t PACKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
     uint32_t subType = 0;
     uint32_t subSize = 0;
     bool hasReachedOptionalSection = false;
-    bool hasReachedTemplateSkippedData = false;
+    bool hasReachedTemplateData = false;
+    bool hasTemplateDataEnded = false;
     SKCondition *current_condition = NULL;
 
     while(buffer < end_buffer){
@@ -301,11 +324,6 @@ int32_t PACKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                 break;
             }
 
-        if (hasReachedTemplateSkippedData) {
-            buffer += subSize;
-            continue; //We just skip the records if this flag is on
-        }
-
         switch(subType)
             {
             case REV32(EDID):
@@ -323,8 +341,14 @@ int32_t PACKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
             case REV32(CTDT):
             case REV32(CTDA):
                 current_condition = new SKCondition();
-                CTDA.value.push_back(current_condition);
-                current_condition->CTDA.Read(buffer, subSize);
+                if (!hasReachedTemplateData) {
+                    CTDA.value.push_back(current_condition);
+                    current_condition->CTDA.Read(buffer, subSize);
+                }
+                else {
+                    PTRE.value.back()->CTDA.value.push_back(current_condition);
+                    current_condition->CTDA.Read(buffer, subSize);
+                }
                 break;
 
 
@@ -355,9 +379,16 @@ int32_t PACKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                 }
 
                 break;
-            case REV32(ANAM):    
-                hasReachedOptionalSection = true;
-                TDAT.ReadANAM(buffer, subSize);
+            case REV32(ANAM):
+                if (!hasReachedTemplateData) {
+                    hasReachedOptionalSection = true;
+                    TDAT.ReadANAM(buffer, subSize);
+                }
+                else {
+                    PACKPTRE* ptre = new PACKPTRE();
+                    ptre->ReadANAM(buffer, subSize);
+                    PTRE.value.push_back(ptre);
+                }
                 break;
             case REV32(CNAM):
                 if (hasReachedOptionalSection) {
@@ -372,15 +403,71 @@ int32_t PACKRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                 TDAT.ReadSelector(buffer, subSize);
                 break;
             case REV32(UNAM):
-                TDAT.ReadUNAM(buffer, subSize);
+                if (!hasReachedTemplateData) {
+                    TDAT.ReadUNAM(buffer, subSize);
+                }
+                else {
+                    PACKPDAT* pdat = new PACKPDAT();
+                    memcpy(&pdat->UNAM, buffer, subSize);
+                    PDAT.value.push_back(pdat);
+                    buffer += subSize;
+                    hasTemplateDataEnded = true;
+                }
                 break;
             case REV32(XNAM):
-                //XNAM.Read(buffer, subSize);
-                hasReachedTemplateSkippedData = true;
+                XNAM.Read(buffer, subSize);
+                hasReachedTemplateData = true;
+                break;
+            case REV32(CITC):
+                memcpy(&PTRE.value.back()->CITC, buffer, subSize);
+                buffer += subSize;
+                break;
+            case REV32(PRCB):
+                memcpy(&PTRE.value.back()->PRCB.numOfChild, buffer, 4);
+                memcpy(&PTRE.value.back()->PRCB.flags, buffer, 4);
+                buffer += subSize;
+                break;
+            case REV32(PNAM):
+                if (hasTemplateDataEnded) {
+                    memcpy(&PDAT.value.back()->PNAM, buffer, subSize);
+                    buffer += subSize;
+                }
+                else {
+                    PTRE.value.back()->ReadPNAM(buffer, subSize);
+                }
+                break;
+            case REV32(FNAM):
+                memcpy(&PTRE.value.back()->FNAM, buffer, subSize);
+                buffer += subSize;
+                break;
+            case REV32(PKC2):
+                PTRE.value.back()->ReadPKC2(buffer, subSize);
+                break;
+            case REV32(BNAM):
+                PDAT.value.back()->ReadBNAM(buffer, subSize);
+                break;
+            case REV32(PFO2):
+            case REV32(PFOR):
+            case REV32(POBA):
+            case REV32(POEA):
+            case REV32(POCA):
+            case REV32(INAM):
+            case REV32(SCHR):
+            case REV32(TNAM):
+            case REV32(PDTO):
+            case REV32(IDLC):
+            case REV32(IDLA):
+            case REV32(IDLF):
+            case REV32(IDLT):
+            case REV32(QNAM):
+            case REV32(VMAD):
+            case REV32(SCTX):
+            case REV32(TPIC):
+            case REV32(SCDA):
+                CBASH_SUBTYPE_NOT_IMPLEMENTED
                 buffer += subSize;
                 break;
             default:
-                log_debug << "PLDT debug " << REV32(PLDT) << std::endl;
                 CBASH_SUBTYPE_UNKNOWN
                 CBASH_CHUNK_DEBUG
                 buffer = end_buffer;
@@ -410,7 +497,29 @@ int32_t PACKRecord::WriteRecord(FileWriter &writer)
     CTDA.Write(writer, true);
     WRITE(PKCU);
     TDAT.Write(writer);
-    //WRITE(XNAM);
+    WRITE(XNAM);
+	PTRE.Write(writer);
+	PDAT.Write(writer);
+
+	int emptyNumber = 0;
+	writer.record_write_subheader(REV32(POBA), 0);
+	writer.record_write_subheader(REV32(INAM), 4);
+	writer.record_write(&emptyNumber, 4);
+	writer.record_write_subheader(REV32(PDTO), 8);
+	writer.record_write(&emptyNumber, 4);
+	writer.record_write(&emptyNumber, 4);
+	writer.record_write_subheader(REV32(POEA), 0);
+	writer.record_write_subheader(REV32(INAM), 4);
+	writer.record_write(&emptyNumber, 4);
+	writer.record_write_subheader(REV32(PDTO), 8);
+	writer.record_write(&emptyNumber, 4);
+	writer.record_write(&emptyNumber, 4);
+	writer.record_write_subheader(REV32(POCA), 0);
+	writer.record_write_subheader(REV32(INAM), 4);
+	writer.record_write(&emptyNumber, 4);
+	writer.record_write_subheader(REV32(PDTO), 8);
+	writer.record_write(&emptyNumber, 4);
+	writer.record_write(&emptyNumber, 4);
 
     return -1;
     }

@@ -1696,6 +1696,26 @@ namespace Skyblivion {
                 dstRecord.addFloatTemplateSetting(300, 0x23); //Min wander distance
                 dstRecord.addBoolTemplateSetting(false, 0x8); //Wander pref path only?
                 dstRecord.addFloatTemplateSetting(0, 0x20); //Energy
+
+                if ((srcRecord.PKDT.value.flags & 0x1F8) != 0) {
+                    // Handle Un/Locking
+                    FORMID formid = findRecordFormidByEDID("TES4EatLockTemplate");
+
+                    if (formid != NULL) {
+                        dstRecord.PKCU->packageTemplate = formid;
+                        dstRecord.PKCU->dataInputCount += 7;
+                        dstRecord.addBoolTemplateSetting(srcRecord.IsLockAtStart(), 0x24); //Lock at Start?
+                        dstRecord.addBoolTemplateSetting(srcRecord.IsLockAtLocation(), 0x25); //Lock at Location?
+                        dstRecord.addBoolTemplateSetting(srcRecord.IsLockAtEnd(), 0x26); //Lock at End?
+                        dstRecord.addBoolTemplateSetting(srcRecord.IsUnlockAtStart(), 0x27); //Unlock at Start?
+                        dstRecord.addBoolTemplateSetting(srcRecord.IsUnlockAtLocation(), 0x28); //Unlock at Location?
+                        dstRecord.addBoolTemplateSetting(srcRecord.IsUnlockAtEnd(), 0x29); //Unlock at End?
+                        Sk::PACKRecord::PACKPLDT pldt;
+                        pldt.locRadius = 1000;
+                        pldt.locType = 12;
+                        dstRecord.addLocationTemplateSetting(pldt, 0x2a); //Near self
+                    }
+                }
             }
             catch (std::exception) {
                 char reference[150];
@@ -1740,6 +1760,26 @@ namespace Skyblivion {
             dstRecord.addIntTemplateSetting(1, 5);
             dstRecord.addFloatTemplateSetting(3, 6);
             dstRecord.addBoolTemplateSetting(false, 8);
+
+            if ((srcRecord.PKDT.value.flags & 0x1F8) != 0) {
+                // Handle Un/Locking
+                FORMID formid = findRecordFormidByEDID("TES4FindLockPackageTemplate");
+
+                if (formid != NULL) {
+                    dstRecord.PKCU->packageTemplate = formid;
+                    dstRecord.PKCU->dataInputCount += 7;
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsLockAtStart(), 0x9); //Lock at Start?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsLockAtLocation(), 0xa); //Lock at Location?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsLockAtEnd(), 0xb); //Lock at End?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsUnlockAtStart(), 0xc); //Unlock at Start?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsUnlockAtLocation(), 0xd); //Unlock at Location?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsUnlockAtEnd(), 0xe); //Unlock at End?
+                    Sk::PACKRecord::PACKPLDT pldt;
+                    pldt.locRadius = 1000;
+                    pldt.locType = 12;
+                    dstRecord.addLocationTemplateSetting(pldt, 0xf); //Near self
+                }
+            }
             //throw std::exception("Not implemented");
         }
         else if (srcRecord.IsAIFleeNotCombat()) {
@@ -1822,6 +1862,26 @@ namespace Skyblivion {
             dstRecord.addFloatTemplateSetting(300, 0x1A);
             dstRecord.addBoolTemplateSetting(false, 0x6);
             dstRecord.addFloatTemplateSetting(50, 0x18);
+
+            if ((srcRecord.PKDT.value.flags & 0x1F8) != 0) {
+                // Handle Un/Locking
+                FORMID formid = findRecordFormidByEDID("TES4SleepLockTemplate");
+
+                if (formid != NULL) {
+                    dstRecord.PKCU->packageTemplate = formid;
+                    dstRecord.PKCU->dataInputCount += 7;
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsLockAtStart(), 0x1b); //Lock at Start?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsLockAtLocation(), 0x1c); //Lock at Location?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsLockAtEnd(), 0x1d); //Lock at End?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsUnlockAtStart(), 0x1e); //Unlock at Start?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsUnlockAtLocation(), 0x1f); //Unlock at Location?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsUnlockAtEnd(), 0x20); //Unlock at End?
+                    Sk::PACKRecord::PACKPLDT pldt;
+                    pldt.locRadius = 1000;
+                    pldt.locType = 12;
+                    dstRecord.addLocationTemplateSetting(pldt, 0x21); //Near self
+                }
+            }
         }
         else if (srcRecord.IsAITravel()) {
             dstRecord.PKCU->packageTemplate = 0x00016FAA; //Travel package
@@ -1831,6 +1891,26 @@ namespace Skyblivion {
             dstRecord.addLocationTemplateSetting(convertLocationType(srcRecord), 0);
             dstRecord.addBoolTemplateSetting(false, 2);
             dstRecord.addBoolTemplateSetting(false, 4);
+
+            if ((srcRecord.PKDT.value.flags & 0x1F8) != 0) {
+                // Handle Un/Locking
+                FORMID formid = findRecordFormidByEDID("TES4TravelLockTemplate");
+
+                if (formid != NULL) {
+                    dstRecord.PKCU->packageTemplate = formid;
+                    dstRecord.PKCU->dataInputCount += 7;
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsLockAtStart(), 0x5); //Lock at Start?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsLockAtLocation(), 0x6); //Lock at Location?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsLockAtEnd(), 0x7); //Lock at End?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsUnlockAtStart(), 0x8); //Unlock at Start?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsUnlockAtLocation(), 0x9); //Unlock at Location?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsUnlockAtEnd(), 0xa); //Unlock at End?
+                    Sk::PACKRecord::PACKPLDT pldt;
+                    pldt.locRadius = 1000;
+                    pldt.locType = 12;
+                    dstRecord.addLocationTemplateSetting(pldt, 0xb); //Near self
+                }
+            }
         }
         else if (srcRecord.IsAIUseItemAt()) {
             //Needs to be converted 2 idles i think
@@ -1842,6 +1922,26 @@ namespace Skyblivion {
             dstRecord.addTargetTemplateSetting("SingleRef", convertTargetType(srcRecord), 1);
             dstRecord.addIntTemplateSetting(1, 2);
             dstRecord.addBoolTemplateSetting(false, 4);
+
+            if ((srcRecord.PKDT.value.flags & 0x1F8) != 0) {
+                // Handle Un/Locking
+                FORMID formid = findRecordFormidByEDID("TES4UseItemAtLockPackageTemplate");
+
+                if (formid != NULL) {
+                    dstRecord.PKCU->packageTemplate = formid;
+                    dstRecord.PKCU->dataInputCount += 7;
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsLockAtStart(), 0x5); //Lock at Start?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsLockAtLocation(), 0x6); //Lock at Location?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsLockAtEnd(), 0x7); //Lock at End?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsUnlockAtStart(), 0x8); //Unlock at Start?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsUnlockAtLocation(), 0x9); //Unlock at Location?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsUnlockAtEnd(), 0xa); //Unlock at End?
+                    Sk::PACKRecord::PACKPLDT pldt;
+                    pldt.locRadius = 1000;
+                    pldt.locType = 12;
+                    dstRecord.addLocationTemplateSetting(pldt, 0xb); //Near self
+                }
+            }
             //throw std::exception("Use item at Not implemented");
         }
         else if (srcRecord.IsAIWander()) {
@@ -1861,6 +1961,26 @@ namespace Skyblivion {
             dstRecord.addBoolTemplateSetting(false, 0x19);
             dstRecord.addBoolTemplateSetting(false, 0x1b);
             dstRecord.addFloatTemplateSetting(50, 0x1d);
+
+            if ((srcRecord.PKDT.value.flags & 0x1F8) != 0) {
+                // Handle Un/Locking
+                FORMID formid = findRecordFormidByEDID("TES4SandboxLockTemplate");
+
+                if (formid != NULL) {
+                    dstRecord.PKCU->packageTemplate = formid;
+                    dstRecord.PKCU->dataInputCount += 7;
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsLockAtStart(), 0x20); //Lock at Start?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsLockAtLocation(), 0x21); //Lock at Location?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsLockAtEnd(), 0x22); //Lock at End?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsUnlockAtStart(), 0x23); //Unlock at Start?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsUnlockAtLocation(), 0x24); //Unlock at Location?
+                    dstRecord.addBoolTemplateSetting(srcRecord.IsUnlockAtEnd(), 0x25); //Unlock at End?
+                    Sk::PACKRecord::PACKPLDT pldt;
+                    pldt.locRadius = 1000;
+                    pldt.locType = 12;
+                    dstRecord.addLocationTemplateSetting(pldt, 0x26); //Near self
+                }
+            }
 
         }
 
