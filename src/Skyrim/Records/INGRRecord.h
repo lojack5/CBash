@@ -76,7 +76,7 @@ namespace Sk {
 	{
 	public:
 		StringRecord EDID; // Editor ID
-		OptSubRecord<VMADRecord> VMAD;
+		VMADRecord VMAD; // VM data
 		ReqSubRecord<GENOBND> OBND; // Object Bounds
 		LStringRecord FULL; // Full Name
 		OptCounted<OrderedPackedArray<FORMID>, uint32_t, REV32(KSIZ)> KWDA;

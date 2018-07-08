@@ -153,10 +153,9 @@ namespace Sk
             case REV32(EDID):
                 EDID.Read(buffer, subSize, CompressedOnDisk);
                 break;
-            case REV32(VMAD):
-                VMAD.Load();
-                VMAD.value->Read(buffer, subSize, REV32(INGR), CompressedOnDisk);
-                break;
+			case REV32(VMAD):
+				VMAD.Read(buffer, subSize, GetType(), CompressedOnDisk);
+				break;
             case REV32(OBND):
                 OBND.Read(buffer, subSize);
                 break;

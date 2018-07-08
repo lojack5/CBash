@@ -16,6 +16,7 @@ option(PROJECT_STATIC_RUNTIME "Build with static runtime libs (/MT)" ON)
 option(CBASH_NO_BOOST_ZLIB "Build with external Zlib" OFF)
 
 set (Boost_USE_STATIC_LIBS ON)
+set (Boost_DEBUG ON)
 set (Boost_USE_MULTITHREADED ON)
 set (Boost_USE_STATIC_RUNTIME PROJECT_STATIC_RUNTIME)
 
@@ -37,6 +38,7 @@ set (CBASH_SRC  "${CMAKE_CURRENT_SOURCE_DIR}/src/CBash.cpp"
                 "${CMAKE_CURRENT_SOURCE_DIR}/src/ModFile.cpp"
                 "${CMAKE_CURRENT_SOURCE_DIR}/src/TES4Record.cpp"
                 "${CMAKE_CURRENT_SOURCE_DIR}/src/TES4RecordAPI.cpp"
+				"${CMAKE_CURRENT_SOURCE_DIR}/src/Logger.cpp"
                 "${CMAKE_CURRENT_SOURCE_DIR}/src/Visitors.cpp"
                 "${CMAKE_CURRENT_SOURCE_DIR}/src/CBash.rc"
                 ${CBASH_FONV}
@@ -81,7 +83,7 @@ IF (CMAKE_SYSTEM_NAME MATCHES "Windows")
 ENDIF ()
 
 IF (MSVC)
-	set (CMAKE_GENERATOR_TOOLSET "v120" CACHE STRING "Platform Toolset" FORCE)
+	# set (CMAKE_GENERATOR_TOOLSET "v141" CACHE STRING "Platform Toolset" FORCE)
     # Force static C++ runtime linkage.
     IF (PROJECT_STATIC_RUNTIME)
         FOREACH(flag
