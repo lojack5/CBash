@@ -1805,31 +1805,67 @@ namespace Skyblivion {
             //Not implemented, only a few and hard to implement.
             throw std::runtime_error("Flee not Combat Not implemented");
         }
-        else if (srcRecord.IsAIFollow()) {
-            //Follow conversion.
-            dstRecord.PKCU->packageTemplate = 0x00019B2C; //Follow package
-            dstRecord.PKCU->dataInputCount = 6;
-            dstRecord.PKCU->versionCounter = 4;
-            dstRecord.versionControl2[0] = 0x06;
-            float minRadius = 128.00;
-            float maxRadius = 256;
+		else if (srcRecord.IsAIFollow()) {
+			//Follow conversion.
+			bool hasTargetLocation = srcRecord.PLDT.IsLoaded();
+			if (hasTargetLocation)
+			{
+				dstRecord.PKCU->packageTemplate = 0x00025E6D; //FollowTo
 
-            try {
-                Sk::PACKRecord::PACKPTDA ptda = convertTargetType(srcRecord);
-                dstRecord.addTargetTemplateSetting("SingleRef", ptda, 0);
-            }
-            catch (std::exception) {
-                char reference[150];
-                sprintf(reference, "Package %s ( Accompany ) : Cannot convert target type.", srcRecord.EDID.value);
-                throw std::runtime_error(reference); //Cannot convert this package type.
-            }
+				dstRecord.PKCU->dataInputCount = 5;
+				dstRecord.PKCU->versionCounter = 9;
+				dstRecord.versionControl2[0] = 0x06;
+				float minRadius = 128.00;
+				float maxRadius = 256;
 
-            dstRecord.addFloatTemplateSetting(minRadius, 1);
-            dstRecord.addFloatTemplateSetting(maxRadius, 2);
-            dstRecord.addBoolTemplateSetting(false, 4);
-            dstRecord.addBoolTemplateSetting(false, 6);
-            dstRecord.addBoolTemplateSetting(false, 8);
-        }
+				try {
+					Sk::PACKRecord::PACKPTDA ptda = convertTargetType(srcRecord);
+					dstRecord.addTargetTemplateSetting("SingleRef", ptda, 2);
+				}
+				catch (std::exception) {
+					char reference[150];
+					sprintf(reference, "Package %s ( Accompany ) : Cannot convert target type.", srcRecord.EDID.value);
+					throw std::runtime_error(reference); //Cannot convert this package type.
+				}
+
+				dstRecord.addFloatTemplateSetting(minRadius, 4);
+				dstRecord.addFloatTemplateSetting(maxRadius, 5);
+				try {
+					dstRecord.addLocationTemplateSetting(convertLocationType(srcRecord), 8);
+				}
+				catch (std::exception) {
+					char reference[150];
+					sprintf(reference, "Package %s ( FollowTo ) : Cannot convert target type.", srcRecord.EDID.value);
+					throw std::runtime_error(reference); //Cannot convert this package type.
+				}
+			
+				dstRecord.addBoolTemplateSetting(true, 6);
+			}
+			else {
+				dstRecord.PKCU->packageTemplate = 0x00019B2C; //Follow package
+				dstRecord.PKCU->dataInputCount = 6;
+				dstRecord.PKCU->versionCounter = 4;
+				dstRecord.versionControl2[0] = 0x06;
+				float minRadius = 128.00;
+				float maxRadius = 256;
+
+				try {
+					Sk::PACKRecord::PACKPTDA ptda = convertTargetType(srcRecord);
+					dstRecord.addTargetTemplateSetting("SingleRef", ptda, 0);
+				}
+				catch (std::exception) {
+					char reference[150];
+					sprintf(reference, "Package %s ( Accompany ) : Cannot convert target type.", srcRecord.EDID.value);
+					throw std::runtime_error(reference); //Cannot convert this package type.
+				}
+
+				dstRecord.addFloatTemplateSetting(minRadius, 1);
+				dstRecord.addFloatTemplateSetting(maxRadius, 2);
+				dstRecord.addBoolTemplateSetting(false, 4);
+				dstRecord.addBoolTemplateSetting(false, 6);
+				dstRecord.addBoolTemplateSetting(false, 8);
+			}
+		}
         else if (srcRecord.IsAISleep()) {
             dstRecord.PKCU->packageTemplate = 0x00019717; //Sleep package
             dstRecord.PKCU->dataInputCount = 17;
@@ -2689,7 +2725,7 @@ namespace Skyblivion {
 			unsigned char* tifpointer = reinterpret_cast<unsigned char*>(TIFScript->name.value);
 			infoFragment->fileName.Read(tifpointer, TIFScript->name.GetSize(), false);
 
-			infoFragment->flags = 0x02; //Has onEnd
+			infoFragment->flags = 0x01; //Has onEnd
 
 			std::string fragmentFragmentName = "Fragment_0";
 
