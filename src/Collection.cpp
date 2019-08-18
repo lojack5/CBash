@@ -34,8 +34,12 @@
  *
  * ***** END LICENSE BLOCK ***** */
 // Collection.cpp
+#include <string.h>
 #include "Collection.h"
+#ifdef _WIN32
 #include <direct.h>
+#endif
+
 //#include <boost/threadpool.hpp>
 
 //SortedRecords::SortedRecords():
@@ -157,11 +161,11 @@ Collection::Collection(char * const &ModsPath, uint32_t _CollectionType):
     filter_wspaces(),
     filter_inclusive(false)
     {
-    if (_CollectionType >= CB_UNKNOWN_GAME_TYPE)
-        throw std::exception("CreateCollection: Error - Unable to create the collection. Invalid collection type specified.\n");
-    CollectionType = (cb_game_type_t)_CollectionType;
+    if(_CollectionType >= eIsUnknownGameType)
+        throw std::runtime_error("CreateCollection: Error - Unable to create the collection. Invalid collection type specified.\n");
+    CollectionType = (whichGameTypes)_CollectionType;
     ModsDir = new char[strlen(ModsPath)+1];
-    strcpy_s(ModsDir, strlen(ModsPath)+1, ModsPath);
+    strncpy(ModsDir, ModsPath, strlen(ModsPath) + 1);
     }
 
 Collection::~Collection()
@@ -193,7 +197,11 @@ void Collection::ResetFilter() {
 
 ModFile * Collection::AddMod(char * const &_FileName, ModFlags &flags, bool IsPreloading)
     {
+#ifdef _WIN32
     _chdir(ModsDir);
+#else
+    chdir(ModsDir);
+#endif
     //Mods may not be added after collection is loaded.
     //Prevent loading mods more than once
 
@@ -207,7 +215,7 @@ ModFile * Collection::AddMod(char * const &_FileName, ModFlags &flags, bool IsPr
             delete []ModName;
             return IsPreloading ? NULL : ModID;
             }
-        printer("AddMod: Warning - Unable to add mod \"%s\". It already exists in the collection.\n", ModName ? ModName : _FileName);
+        log_warning << "AddMod: Warning - Unable to add mod \"" << (ModName ? ModName : _FileName) << "\". It already exists in the collection.\n";
         delete []ModName;
         return NULL;
         }
@@ -215,39 +223,42 @@ ModFile * Collection::AddMod(char * const &_FileName, ModFlags &flags, bool IsPr
     if(IsLoaded)
         {
         if(!IsPreloading)
-            printer("AddMod: Error - Unable to add mod \"%s\". The collection has already been loaded.\n", ModName ? ModName : _FileName);
+            log_error << "AddMod: Error - Unable to add mod \"" << (ModName ? ModName : _FileName) << "\". The collection has already been loaded.\n";
         delete []ModName;
         return NULL;
         }
 
     char * FileName = new char[strlen(_FileName) + 1];
-    strcpy_s(FileName, strlen(_FileName) + 1, _FileName);
+    strncpy(FileName, _FileName, strlen(_FileName) + 1);
     ModName = ModName ? ModName : FileName;
+
+    ModFile* ModFile = nullptr;
 
     switch(CollectionType)
         {
-        case CB_OBLIVION:
-            ModFiles.push_back(new TES4File(this, FileName, ModName, flags.GetFlags()));
-            ModFiles.back()->TES4.whichGame = CB_OBLIVION;
+        case eIsOblivion:
+            ModFile = new TES4File(this, FileName, ModName, flags.GetFlags());            
             break;
-        case CB_FALLOUT3:
-            printer("AddMod: Error - Unable to add mod \"%s\". Fallout 3 mod support is unimplemented.\n", ModName);
+        case eIsFallout3:
+            log_error << "AddMod: Error - Unable to add mod \"" << ModName << "\". Fallout 3 mod support is unimplemented.\n";
             delete []ModName;
             return NULL;
-        case CB_FALLOUT_NEW_VEGAS:
-            ModFiles.push_back(new FNVFile(this, FileName, ModName, flags.GetFlags()));
-            ModFiles.back()->TES4.whichGame = CB_FALLOUT_NEW_VEGAS;
+        case eIsFalloutNewVegas:
+            ModFile = new FNVFile(this, FileName, ModName, flags.GetFlags());
             break;
-        case CB_SKYRIM:
-            ModFiles.push_back(new TES5File(this, FileName, ModName, flags.GetFlags()));
-            ModFiles.back()->TES4.whichGame = CB_SKYRIM;
+        case eIsSkyrim:
+            ModFile = new TES5File(this, FileName, ModName, flags.GetFlags());
             break;
         default:
-            printer("AddMod: Error - Unable to add mod \"%s\". Invalid collection type.\n", ModName);
+            log_error << "AddMod: Error - Unable to add mod \"" << ModName << "\". Invalid collection type.\n";
             delete []ModName;
             return NULL;
         }
-    return ModFiles.back();
+
+        ModFiles.push_back(ModFile);
+        ModFile->TES4.whichGame = CollectionType;
+        MappedModFiles[ModName] = ModFile;        
+        return ModFiles.back();
     }
 
 ModFile * Collection::IsModAdded(char * const &ModName)
@@ -262,7 +273,7 @@ int32_t Collection::SaveMod(ModFile *&curModFile, SaveFlags &flags, char * const
     {
     if(!curModFile->Flags.IsSaveable)
         {
-        printer("SaveMod: Error - Unable to save mod \"%s\". It is flagged as being non-saveable.\n", curModFile->ModName);
+        log_error << "SaveMod: Error - Unable to save mod \"" << curModFile->ModName << "\". It is flagged as being non-saveable.\n";
         return -1;
         }
 
@@ -279,36 +290,43 @@ int32_t Collection::SaveMod(ModFile *&curModFile, SaveFlags &flags, char * const
         CleanModMasters(curModFile);
 
     //Some records (WRLD->CELL) may be created during the save process if necessary
-    RecordIndexer indexer(curModFile, curModFile->Flags.IsExtendedConflicts ? ExtendedEditorID_ModFile_Record: EditorID_ModFile_Record, curModFile->Flags.IsExtendedConflicts ? ExtendedFormID_ModFile_Record: FormID_ModFile_Record);
+    RecordIndexer indexer(curModFile, curModFile->Flags.IsExtendedConflicts ? ExtendedEditorID_ModFile_Record: EditorID_ModFile_Record, curModFile->Flags.IsExtendedConflicts ? ExtendedFormID_ModFile_Record: FormID_ModFile_Record, EDIDIndex);
 
+#ifdef _WIN32
     _chdir(ModsDir);
+#else
+    chdir(ModsDir);
+#endif
 
     char * temp_name = GetTemporaryFileName(DestinationName != NULL ? DestinationName : curModFile->ModName); //deleted when RenameOp is destroyed
 
     //Save the mod to temp file
     curModFile->Save(temp_name, Expanders, flags.IsCloseCollection, indexer);
-    //Delay renaming temp file to original filename until collection is closed
-    //This way the file mapping can remain open and the entire file doesn't have to be loaded into memory
-    closing_ops.push_back(new RenameOp(temp_name, DestinationName != NULL ? DestinationName : curModFile->FileName));
+    RenameOp *op = new RenameOp(temp_name, DestinationName != NULL ? DestinationName : curModFile->FileName);
+    op->perform();
     return 0;
     }
 
 int32_t Collection::Load(bool (*_ProgressCallback)(const uint32_t, const uint32_t, const char *))
     {
     ModFile *curModFile = NULL;
-    RecordIndexer indexer(EditorID_ModFile_Record, FormID_ModFile_Record);
-    RecordIndexer extended_indexer(ExtendedEditorID_ModFile_Record, ExtendedFormID_ModFile_Record);
+    RecordIndexer indexer(EditorID_ModFile_Record, FormID_ModFile_Record, EDIDIndex);
+    RecordIndexer extended_indexer(ExtendedEditorID_ModFile_Record, ExtendedFormID_ModFile_Record, EDIDIndex);
     bool Preloading = false;
     std::vector<std::pair<ModFile *, std::vector<Record *> > > DeletedRecords;
 
     if(IsLoaded)
         {
-        printer("Load: Warning - Unable to load collection. It is already loaded.\n");
+        log_warning << "Load: Warning - Unable to load collection. It is already loaded.\n";
         return 0;
         }
     try
         {
+#ifdef _WIN32
         _chdir(ModsDir);
+#else
+        chdir(ModsDir);
+#endif
         //Brute force approach to loading all masters
         //Could be done more elegantly with recursion
         //printer("Before Preloading\n");
@@ -332,7 +350,7 @@ int32_t Collection::Load(bool (*_ProgressCallback)(const uint32_t, const uint32_
         //for(uint32_t x = 0; x < ModFiles.size(); ++x)
         //    printer("%02X: %s\n", x, ModFiles[x]->FileName);
         //printer("\n");
-        std::_Insertion_sort(ModFiles.begin(), ModFiles.end(), sortMod);
+        //std::sort(ModFiles.begin(), ModFiles.end(), sortMod);
         std::vector<char *> strLoadOrder255;
         std::vector<char *> strTempLoadOrder;
         std::vector< std::vector<char *> > strAllLoadOrder;
@@ -346,7 +364,7 @@ int32_t Collection::Load(bool (*_ProgressCallback)(const uint32_t, const uint32_
             if(curModFile->Flags.IsInLoadOrder)
                 {
                 if(LoadOrder255.size() >= 255)
-                    throw std::exception("Tried to load more than 255 mods.");
+                    throw std::runtime_error("Tried to load more than 255 mods.");
                 LoadOrder255.push_back(curModFile);
                 strLoadOrder255.push_back(curModFile->ModName);
                 //printer(" , OrderID %02X", LoadOrder255.size() - 1);
@@ -768,7 +786,7 @@ Record * Collection::CreateRecord(ModFile *&curModFile, const uint32_t &RecordTy
     {
     if(!curModFile->Flags.IsInLoadOrder)
         {
-        printer("CreateRecord: Error - Unable to create any records in mod \"%s\". It is not in the load order.\n", curModFile->ModName);
+        log_error << "CreateRecord: Error - Unable to create any records in mod \"" << curModFile->ModName << "\". It is not in the load order.\n";
         return NULL;
         }
 
@@ -794,7 +812,9 @@ Record * Collection::CreateRecord(ModFile *&curModFile, const uint32_t &RecordTy
         LookupRecord(curModFile, ParentFormID, ParentRecord);
         if(ParentRecord == NULL)
             {
-            printer("CreateRecord: Error - Unable to locate parent record (%08X). It does not exist in \"%s\".\n", ParentFormID, curModFile->ModName);
+        char strBuff[120];
+            sprintf(strBuff, "CreateRecord: Error - Unable to locate parent record (%08X). It does not exist in \"%s\".\n", ParentFormID, curModFile->ModName);
+            log_error << strBuff;
             return NULL;
             }
         }
@@ -803,7 +823,9 @@ Record * Collection::CreateRecord(ModFile *&curModFile, const uint32_t &RecordTy
     Record *curRecord = curModFile->CreateRecord(RecordType, RecordEditorID, DummyRecord, ParentRecord, options);
     if(curRecord == NULL)
         {
-        printer("CreateRecord: Error - Unable to create record of type \"%c%c%c%c\" in mod \"%s\". An unknown error occurred.\n", ((char *)&RecordType)[0], ((char *)&RecordType)[1], ((char *)&RecordType)[2], ((char *)&RecordType)[3], curModFile->ModName);
+        char strBuff[120];
+        sprintf(strBuff, "CreateRecord: Error - Unable to create record of type \"%c%c%c%c\" in mod \"%s\". An unknown error occurred.\n", ((char *)&RecordType)[0], ((char *)&RecordType)[1], ((char *)&RecordType)[2], ((char *)&RecordType)[3], curModFile->ModName);
+        log_error << strBuff;
         return NULL;
         }
 
@@ -825,7 +847,7 @@ Record * Collection::CreateRecord(ModFile *&curModFile, const uint32_t &RecordTy
     //curRecord->VisitFormIDs(checker); //Shouldn't be needed unless a record defaults to having formIDs set (none do atm)
 
     //Index the new record
-    RecordIndexer indexer(curModFile, curModFile->Flags.IsExtendedConflicts ? ExtendedEditorID_ModFile_Record: EditorID_ModFile_Record, curModFile->Flags.IsExtendedConflicts ? ExtendedFormID_ModFile_Record: FormID_ModFile_Record);
+    RecordIndexer indexer(curModFile, curModFile->Flags.IsExtendedConflicts ? ExtendedEditorID_ModFile_Record: EditorID_ModFile_Record, curModFile->Flags.IsExtendedConflicts ? ExtendedFormID_ModFile_Record: FormID_ModFile_Record, EDIDIndex);
     indexer.Accept(curRecord);
 
     if(RecordFormID != 0)
@@ -847,7 +869,7 @@ Record * Collection::CopyRecord(Record *&curRecord, ModFile *&DestModFile, const
     ModFile *curModFile = curRecord->GetParentMod();
     if(!curModFile->Flags.IsInLoadOrder && !curModFile->Flags.IsIgnoreInactiveMasters)
         {
-        printer("CopyRecord: Error - Unable to copy any records from source mod \"%s\". It is not in the load order and may require absent masters.\n", curModFile->ModName);
+        log_error << "CopyRecord: Error - Unable to copy any records from source mod \"" << curModFile->ModName << "\". It is not in the load order and may require absent masters.\n";
         return NULL;
         }
 
@@ -899,13 +921,17 @@ Record * Collection::CopyRecord(Record *&curRecord, ModFile *&DestModFile, const
                 LookupRecord(curModFile, DestParentFormID, ParentRecord);
             if(ParentRecord == NULL)
                 {
-                printer("CopyRecord: Error - Unable to locate destination parent record (%08X). It does not exist in \"%s\" or \"%s\".\n", DestParentFormID, DestModFile->ModName, curModFile->ModName);
+                char strBuff[150];
+                sprintf(strBuff, "CopyRecord: Error - Unable to locate destination parent record (%08X). It does not exist in \"%s\" or \"%s\".\n", DestParentFormID, DestModFile->ModName, curModFile->ModName);
+                log_error << strBuff;
                 return NULL;
                 }
             ParentRecord = CopyRecord(ParentRecord, DestModFile, ParentRecord->GetParentRecord() != NULL ? ParentRecord->GetParentRecord()->formID : 0, 0, 0, options.GetFlags());
             if(ParentRecord == NULL)
                 {
-                printer("CopyRecord: Error - Unable to copy missing destination parent record (%08X). It does not exist in \"%s\", and there was an error copying it from \"%s\".\n", DestParentFormID, DestModFile->ModName, curModFile->ModName);
+                char strBuff[150];
+                sprintf(strBuff, "CopyRecord: Error - Unable to copy missing destination parent record (%08X). It does not exist in \"%s\", and there was an error copying it from \"%s\".\n", DestParentFormID, DestModFile->ModName, curModFile->ModName);
+                log_error << strBuff;
                 return NULL;
                 }
             }
@@ -913,13 +939,17 @@ Record * Collection::CopyRecord(Record *&curRecord, ModFile *&DestModFile, const
 
     if(curModFile == DestModFile && options.SetAsOverride)
         {
-        printer("CopyRecord: Error - Unable to copy (%08X) as an override record. Source and destination mods \"%s\" are the same.\n", curRecord->formID, curModFile->ModName);
+        char strBuff[150];
+        sprintf(strBuff, "CopyRecord: Error - Unable to copy (%08X) as an override record. Source and destination mods \"%s\" are the same.\n", curRecord->formID, curModFile->ModName);
+        log_error << strBuff;
         return NULL;
         }
 
     if(!DestModFile->Flags.IsInLoadOrder && !options.SetAsOverride)
         {
-        printer("CopyRecord: Error - Unable to copy (%08X) as a new record. Destination \"%s\" is not in the load order.\n", curRecord->formID, DestModFile->ModName);
+        char strBuff[150];
+        sprintf(strBuff, "CopyRecord: Error - Unable to copy (%08X) as a new record. Destination \"%s\" is not in the load order.\n", curRecord->formID, DestModFile->ModName);
+        log_error << strBuff;
         return NULL;
         }
 
@@ -927,7 +957,9 @@ Record * Collection::CopyRecord(Record *&curRecord, ModFile *&DestModFile, const
     RecordCopy = DestModFile->CreateRecord(curRecord->GetType(), DestRecordEditorID, curRecord, ParentRecord, options);
     if(RecordCopy == NULL)
         {
-        printer("CopyRecord: Error - Unable to create the copied record (%08X). An unknown error occurred when copying the record from \"%s\" to \"%s\".\n", curRecord->formID, DestModFile->ModName, curModFile->ModName);
+        char strBuff[150];
+        sprintf(strBuff, "CopyRecord: Error - Unable to create the copied record (%08X). An unknown error occurred when copying the record from \"%s\" to \"%s\".\n", curRecord->formID, DestModFile->ModName, curModFile->ModName);
+        log_error << strBuff;
         return NULL;
         }
 
@@ -963,7 +995,7 @@ Record * Collection::CopyRecord(Record *&curRecord, ModFile *&DestModFile, const
     RecordCopy->VisitFormIDs(checker);
 
     //Index the record
-    RecordIndexer indexer(DestModFile, DestModFile->Flags.IsExtendedConflicts ? ExtendedEditorID_ModFile_Record: EditorID_ModFile_Record, DestModFile->Flags.IsExtendedConflicts ? ExtendedFormID_ModFile_Record: FormID_ModFile_Record);
+    RecordIndexer indexer(DestModFile, DestModFile->Flags.IsExtendedConflicts ? ExtendedEditorID_ModFile_Record: EditorID_ModFile_Record, DestModFile->Flags.IsExtendedConflicts ? ExtendedFormID_ModFile_Record: FormID_ModFile_Record, EDIDIndex);
     indexer.Accept(RecordCopy);
 
     if(curRecord->IsWinningDetermined() || curRecord->formID != RecordCopy->formID)
@@ -986,7 +1018,7 @@ int32_t Collection::CleanModMasters(ModFile *curModFile)
     {
     if(!curModFile->Flags.IsInLoadOrder)
         {
-        printer("CleanModMasters: Error - Unable to clean \"%s\"'s masters. It is not in the load order.\n", curModFile->ModName);
+        log_error << "CleanModMasters: Error - Unable to clean \"" << curModFile->ModName << "\"'s masters. It is not in the load order.\n";
         return NULL;
         }
 
@@ -994,7 +1026,7 @@ int32_t Collection::CleanModMasters(ModFile *curModFile)
     curModFile->VisitAllRecords(collector);
 
     uint32_t cleaned = 0;
-    for(int32_t ListIndex = curModFile->TES4.MAST.size() - 1; ListIndex >= 0 ; --ListIndex)
+    for(size_t ListIndex = curModFile->TES4.MAST.size() - 1; ListIndex >= 0 ; --ListIndex)
         {
         if(collector.collector.UsedTable[ListIndex] == 0)
             {
@@ -1048,7 +1080,9 @@ int32_t Collection::SetIDFields(Record *&RecordID, FORMID FormID, char * const &
 
     if(curRecord != NULL)
         {
-        printer("SetRecordIDs: Error - Unable to set the new record ids (%08X, %s) on record (%08X, %s) in mod \"%s\". The formID is already in use.\n", FormID, EditorID, curRecord->formID, curRecord->GetEditorIDKey(), curModFile->ModName);
+        char strBuff[180];
+        sprintf(strBuff, "SetRecordIDs: Error - Unable to set the new record ids (%08X, %s) on record (%08X, %s) in mod \"%s\". The formID is already in use.\n", FormID, EditorID, curRecord->formID, curRecord->GetEditorIDKey(), curModFile->ModName);
+        log_error << strBuff;
         return -1;
         }
 
@@ -1059,7 +1093,9 @@ int32_t Collection::SetIDFields(Record *&RecordID, FORMID FormID, char * const &
 
     if(curRecord != NULL)
         {
-        printer("SetRecordIDs: Error - Unable to set the new record ids (%08X, %s) on record (%08X, %s) in mod \"%s\". The EditorID is already in use.\n", FormID, EditorID, curRecord->formID, curRecord->GetEditorIDKey(), curModFile->ModName);
+        char strBuff[180];
+        sprintf(strBuff, "SetRecordIDs: Error - Unable to set the new record ids (%08X, %s) on record (%08X, %s) in mod \"%s\". The EditorID is already in use.\n", FormID, EditorID, curRecord->formID, curRecord->GetEditorIDKey(), curModFile->ModName);
+        log_error << strBuff;
         return -1;
         }
 
@@ -1070,7 +1106,9 @@ int32_t Collection::SetIDFields(Record *&RecordID, FORMID FormID, char * const &
         deindexer.Accept(RecordID);
         if(deindexer.GetCount() == 0)
             {
-            printer("SetRecordIDs: Error - Unable to set the new record ids (%08X, %s) on record (%08X, %s) in mod \"%s\". Unable to deindex the record.\n", FormID, EditorID, RecordID->formID, RecordID->GetEditorIDKey(), curModFile->ModName);
+            char strBuff[180];
+            sprintf(strBuff, "SetRecordIDs: Error - Unable to set the new record ids (%08X, %s) on record (%08X, %s) in mod \"%s\". Unable to deindex the record.\n", FormID, EditorID, RecordID->formID, RecordID->GetEditorIDKey(), curModFile->ModName);
+            log_error << strBuff;
             return -1;
             }
         }
@@ -1096,7 +1134,7 @@ int32_t Collection::SetIDFields(Record *&RecordID, FORMID FormID, char * const &
     //Re-index the record
     if(bChangingFormID || (bChangingEditorID && RecordID->IsKeyedByEditorID()))
         {
-        RecordIndexer indexer(curModFile, curModFile->Flags.IsExtendedConflicts ? ExtendedEditorID_ModFile_Record: EditorID_ModFile_Record, curModFile->Flags.IsExtendedConflicts ? ExtendedFormID_ModFile_Record: FormID_ModFile_Record);
+        RecordIndexer indexer(curModFile, curModFile->Flags.IsExtendedConflicts ? ExtendedEditorID_ModFile_Record: EditorID_ModFile_Record, curModFile->Flags.IsExtendedConflicts ? ExtendedFormID_ModFile_Record: FormID_ModFile_Record, EDIDIndex);
         indexer.Accept(RecordID);
         }
 
@@ -1119,7 +1157,9 @@ int32_t Collection::SetIDFields(Record *&RecordID, FORMID FormID, char * const &
         {
         //RecordID->HasInvalidFormIDs(true);
         ModFile *ModID = RecordID->GetParentMod();
-        printer("SetIDFields: Error! Record (%08X) in mod %s uses an invalid FormID!\n", RecordID->formID, ModID->ModName);
+        char strBuff[100];
+        sprintf(strBuff, "SetIDFields: Error! Record (%08X) in mod %s uses an invalid FormID!\n", RecordID->formID, ModID->ModName);
+        log_error << strBuff;
         }
 
     return (bChangingFormID || bChangingEditorID) ? 1 : -1;
@@ -1323,7 +1363,9 @@ bool RecordReader::Accept(Record *&curRecord)
                 uint8_t CollapsedIndex = ModID->FormIDHandler.CollapseTable[ModIndex];
                 char * LongID = CollapsedIndex >= ModID->TES4.MAST.size() ? ModID->ModName : ModID->TES4.MAST[CollapsedIndex];
 
-                printer("RecordReader: Error - Unable to find the correct expander for record (%s, %06X) in mod %s!\n", LongID, curRecord->formID & 0x00FFFFFF, ModID->ModName);
+                char strBuff[120];
+                sprintf(strBuff, "RecordReader: Error - Unable to find the correct expander for record (%s, %06X) in mod %s!\n", LongID, curRecord->formID & 0x00FFFFFF, ModID->ModName);
+                log_error << strBuff;
                 //expander.result = false;
                 curRecord->VisitFormIDs(expander);
                 //curRecord->HasInvalidFormIDs(expander.result);

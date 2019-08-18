@@ -36,7 +36,6 @@
 // Common.cpp
 #include "Common.h"
 #include "zlib.h"
-#include <sys/utime.h>
 
 int (*printer)(const char * _Format, ...) = &printf;
 int32_t (*LoggingCallback)(const char *) = NULL;
@@ -62,22 +61,22 @@ void (*RaiseCallback)(const char *) = NULL;
     std::map<char *, unsigned long> CallCount;
 #endif
 
-const char * Ex_NULL::__CLR_OR_THIS_CALL what() const
+const char * Ex_NULL::__CLR_OR_THIS_CALL what() const NOEXCEPT
     {
     return "NULL Pointer";
     }
 
-const char * Ex_INVALIDINDEX::__CLR_OR_THIS_CALL what() const
+const char * Ex_INVALIDINDEX::__CLR_OR_THIS_CALL what() const NOEXCEPT 
     {
     return "Invalid Index";
     }
 
-const char * Ex_INVALIDCOLLECTIONINDEX::__CLR_OR_THIS_CALL what() const
+const char * Ex_INVALIDCOLLECTIONINDEX::__CLR_OR_THIS_CALL what() const NOEXCEPT 
     {
     return "Invalid Collection Index";
     }
 
-const char * Ex_INVALIDMODINDEX::__CLR_OR_THIS_CALL what() const
+const char * Ex_INVALIDMODINDEX::__CLR_OR_THIS_CALL what() const NOEXCEPT 
     {
     return "Invalid Mod Index";
     }
@@ -90,7 +89,12 @@ int icmps(const char * lhs, const char * rhs)
         return -1;
     if(rhs == NULL)
         return 1;
-    return _stricmp(lhs, rhs);
+
+#ifdef WIN32
+    return stricmp(lhs, rhs);
+#else
+	return strcasecmp(lhs, rhs);
+#endif
     }
 
 int cmps(const char * lhs, const char * rhs)
@@ -144,7 +148,7 @@ char * DeGhostModName(char * const ModName)
         if(icmps(".ghost",ModName + NameLength - 7) == 0)
             {
             NonGhostName = new char[NameLength];
-            strcpy_s(NonGhostName, NameLength, ModName);
+            strncpy(NonGhostName, ModName, NameLength);
             NonGhostName[NameLength - 7] = 0x00;
             //printer("DeGhostModName: De-ghosted (%s)(%d) to (%s)(%d)\n", ModName, strlen(ModName), NonGhostName, strlen(NonGhostName));
             return NonGhostName;
@@ -155,8 +159,8 @@ char * DeGhostModName(char * const ModName)
 
 bool FileExists(char * const FileName)
     {
-    struct stat statBuffer;
-    return (stat(FileName, &statBuffer) >= 0 && statBuffer.st_mode & S_IFREG);
+	struct stat statBuffer;
+	return (stat(FileName, &statBuffer) >= 0 && statBuffer.st_mode & S_IFREG);
     }
 
 char * GetTemporaryFileName(char * FileName, bool IsBackup)
@@ -167,6 +171,7 @@ char * GetTemporaryFileName(char * FileName, bool IsBackup)
 
     time_t ltime;
     struct tm current_time;
+	struct tm* current_time_p;
 
     //Keep at least 1 minute between each datestamp
     time(&ltime);
@@ -174,8 +179,19 @@ char * GetTemporaryFileName(char * FileName, bool IsBackup)
         ltime = last_save + 60;
     last_save = ltime;
 
-    switch(_localtime64_s(&current_time, &ltime))
-        {
+#ifdef _WIN32
+	current_time_p = &current_time;
+	switch(_localtime64_s(current_time_p, &ltime))
+#else
+	int lerr = 0;
+	current_time_p = localtime(&ltime);
+	if (current_time_p == NULL)
+	{
+		lerr = EINVAL;
+	}
+	switch (lerr)
+#endif
+	{
         case 0:
             break;
         case EINVAL:
@@ -185,14 +201,14 @@ char * GetTemporaryFileName(char * FileName, bool IsBackup)
             return NULL;
         }
 
-    char * temp_extension = IsBackup ? ".bak.%Y_%m_%d_%H_%M_%S" : ".new.%Y_%m_%d_%H_%M_%S";
+    const char * temp_extension = IsBackup ? ".bak.%Y_%m_%d_%H_%M_%S" : ".new.%Y_%m_%d_%H_%M_%S";
     uint32_t name_size = (uint32_t)strlen(UsedName);
     uint32_t temp_size = name_size + (uint32_t)strlen(".XXX.XXXX_XX_XX_XX_XX_XX") + 1;
     char * temp_name = new char[temp_size];
 
-    strcpy_s(temp_name, temp_size, UsedName);
+    strncpy(temp_name, UsedName, temp_size);
     delete []NonGhostName;
-    strftime(temp_name + name_size, temp_size, temp_extension, &current_time);
+    strftime(temp_name + name_size, temp_size, temp_extension, current_time_p);
 
     //If the new name already exists, add another minute until a free name is available
     //If 10 tries pass, then give up.
@@ -202,9 +218,9 @@ char * GetTemporaryFileName(char * FileName, bool IsBackup)
         if(attempts > 10)
             break;
         attempts++;
-        current_time.tm_min++;
-        mktime(&current_time);
-        strftime(temp_name + name_size, temp_size, temp_extension, &current_time);
+		current_time_p->tm_min++;
+        mktime(current_time_p);
+        strftime(temp_name + name_size, temp_size, temp_extension, current_time_p);
         };
 
     return temp_name;
@@ -236,23 +252,17 @@ bool RenameOp::perform()
     last_save = ltime;
 
     struct stat o_time;
-    struct _utimbuf original_times;
 
-    original_times.actime = ltime;
-    original_times.modtime = ltime;
 
     //Backup any existing file
     if(FileExists(destination_name))
         {
         stat(destination_name, &o_time);
-        original_times.actime = o_time.st_atime;
-        original_times.modtime = o_time.st_mtime;
         char * backup_name = GetTemporaryFileName(destination_name, true);
 
         switch(rename(destination_name, backup_name))
             {
             case 0:
-                _utime(backup_name, &original_times);
                 break;
             case EACCES:
                 printer("RenameOp: Error - Unable to rename existing file from \"%s\" to \"%s\". File or directory specified by newname already exists or could not be created (invalid path); or oldname is a directory and newname specifies a different path.\n", destination_name, backup_name);
@@ -278,7 +288,6 @@ bool RenameOp::perform()
     switch(rename(original_name, destination_name))
         {
         case 0:
-            _utime(destination_name, &original_times);
             return true;
         case EACCES:
             printer("RenameOp: Warning - Unable to rename temporary file from \"%s\" to \"%s\". File or directory specified by newname already exists or could not be created (invalid path); or oldname is a directory and newname specifies a different path.\n", original_name, destination_name);
@@ -318,15 +327,6 @@ bool AlmostEqual(float A, float B, int32_t maxUlps)
     return false;
     }
 
-void UnrecognizedSubRecord(cb_formid_t formID, uint32_t subType, uint32_t subSize, unsigned char *&buffer, unsigned char *end_buffer)
-{
-    //printf("FileName = %s\n", FileName);
-    printf("  BPTD: %08X - Unknown subType = %04x\n", formID, subType);
-    printf("  Size = %i\n", subSize);
-    printf("  CurPos = %04x\n\n", reinterpret_cast<unsigned int>(buffer - 6));
-    buffer = end_buffer;
-}
-
 FileWriter::FileWriter(char * filename, uint32_t size):
     file_buffer(NULL),
     record_buffer(NULL),
@@ -356,10 +356,25 @@ FileWriter::~FileWriter()
     }
 
 int32_t FileWriter::open()
-    {
-    if(fh != -1 || FileName == NULL)
-        return -1;
-    errno_t err = _sopen_s(&fh, FileName, _O_CREAT | _O_RDWR | _O_BINARY, _SH_DENYWR, _S_IREAD | _S_IWRITE );
+{
+	if (fh != -1 || FileName == NULL)
+		return -1;
+
+#ifdef _WIN32
+	errno_t err = _sopen_s(&fh, FileName, _O_CREAT | _O_RDWR | _O_BINARY, _SH_DENYWR, _S_IREAD | _S_IWRITE);
+#else
+	int err = 0;
+	int fd = ::open(FileName, O_CREAT | O_RDWR, 0777);
+	if (fd < 0)
+	{
+		err = errno;
+	}
+	else
+	{
+		fh = fd;
+	}
+#endif
+
     if( err != 0 )
         {
         switch(err)
@@ -383,8 +398,6 @@ int32_t FileWriter::open()
                 printer("FileWriter: Error - Unable to open \"%s\" as read,write via file handle. An unknown error occurred.\n", FileName);
                 return -1;
             }
-        _close(fh);
-        return -1;
         }
     return 0;
     }
@@ -395,10 +408,18 @@ int32_t FileWriter::close()
         {
         if(file_buffer_used)
             {
+#ifdef _WIN32
             _write(fh, file_buffer, file_buffer_used);
+#else
+			write(fh, file_buffer, file_buffer_used);
+#endif
             file_buffer_used = 0;
             }
-        _close(fh);
+#ifdef _WIN32
+		_close(fh);
+#else
+		::close(fh);
+#endif
         }
     fh = -1;
     return 0;
@@ -489,7 +510,11 @@ void FileWriter::record_flush()
 
 uint32_t FileWriter::file_tell()
     {
+#ifdef _WIN32
     return file_buffer_used + _tell(fh);
+#else
+	return file_buffer_used + lseek(fh, 0, SEEK_CUR);
+#endif
     }
 
 void FileWriter::file_write(const void *source_buffer, uint32_t source_buffer_used)
@@ -512,7 +537,11 @@ void FileWriter::file_write(const void *source_buffer, uint32_t source_buffer_us
     if((file_buffer_used + source_buffer_used) >= file_buffer_size)
         {
         //file_flush();
-        _write(fh, file_buffer, file_buffer_used);
+#ifdef _WIN32
+		_write(fh, file_buffer, file_buffer_used);
+#else
+		write(fh, file_buffer, file_buffer_used);
+#endif
         file_buffer_used = 0;
         }
     //Use the file buffer if there's room
@@ -524,7 +553,11 @@ void FileWriter::file_write(const void *source_buffer, uint32_t source_buffer_us
     else
         {
         //Otherwise, write directly to disk.
-        _write(fh, source_buffer, source_buffer_used);
+#ifdef _WIN32
+		_write(fh, source_buffer, source_buffer_used);
+#else
+		write(fh, source_buffer, source_buffer_used);
+#endif
         }
     return;
     }
@@ -545,14 +578,23 @@ void FileWriter::file_write(uint32_t position, const void *source_buffer, uint32
         printer("FileWriter::file_write: Error - Unable to write. Source buffer is NULL.\n");
         return;
         }
+#ifdef _WIN32
     int32_t curPos = _tell(fh);
-
+#else
+	int32_t curPos = lseek(fh, 0, SEEK_CUR);
+#endif
     if(position < (uint32_t)curPos)
         {
         //It has already been written to disk.
-        _lseek(fh, position, SEEK_SET);
-        _write(fh, source_buffer, source_buffer_used);
-        _lseek(fh, curPos, SEEK_SET);
+#ifdef _WIN32
+		_lseek(fh, position, SEEK_SET);
+		_write(fh, source_buffer, source_buffer_used);
+		_lseek(fh, curPos, SEEK_SET);
+#else
+        lseek(fh, position, SEEK_SET);
+        write(fh, source_buffer, source_buffer_used);
+        lseek(fh, curPos, SEEK_SET);
+#endif
         }
     else if(position < (file_buffer_used + curPos))
         {
@@ -743,8 +785,8 @@ CreationFlags::CreationFlags():
     }
 
 CreationFlags::CreationFlags(uint32_t nFlags):
-    SetAsOverride((nFlags & CB_SET_AS_OVERRIDE) != 0),
-    CopyWinningParent((nFlags & CB_COPY_WINNING_PARENT) != 0),
+    SetAsOverride((nFlags & fSetAsOverride) != 0),
+    CopyWinningParent((nFlags & fCopyWinningParent) != 0),
     ExistingReturned(false)
     {
     //
@@ -759,9 +801,9 @@ uint32_t CreationFlags::GetFlags()
     {
     uint32_t flags = 0;
     if(SetAsOverride)
-        flags |= CB_SET_AS_OVERRIDE;
+        flags |= fSetAsOverride;
     if(CopyWinningParent)
-        flags |= CB_COPY_WINNING_PARENT;
+        flags |= fCopyWinningParent;
     return flags;
     }
 
@@ -786,21 +828,21 @@ ModFlags::ModFlags():
     }
 
 ModFlags::ModFlags(uint32_t _Flags):
-    IsMinLoad((_Flags & CB_MIN_LOAD) != 0 && (_Flags & CB_FULL_LOAD) == 0),
-    IsFullLoad((_Flags & CB_FULL_LOAD) != 0),
+    IsMinLoad((_Flags & fIsMinLoad) != 0 && (_Flags & fIsFullLoad) == 0),
+    IsFullLoad((_Flags & fIsFullLoad) != 0),
     IsNoLoad(!(IsMinLoad || IsFullLoad)),
-    IsSkipNewRecords((_Flags & CB_SKIP_NEW_RECORDS) != 0),
-    IsSkipAllRecords((_Flags & CB_SKIP_ALL_RECORDS) != 0),
-    IsInLoadOrder((_Flags & CB_IN_LOAD_ORDER) != 0),
-    IsSaveable(((_Flags & CB_IN_LOAD_ORDER) != 0) ? ((_Flags & CB_SAVEABLE) != 0) : false),
-    IsAddMasters(((_Flags & CB_IGNORE_INACTIVE_MASTERS) != 0) ? false : ((_Flags & CB_ADD_MASTERS) != 0)),
-    IsLoadMasters((_Flags & CB_LOAD_MASTERS) != 0),
-    IsExtendedConflicts((_Flags & CB_EXTENDED_CONFLICTS) != 0),
-    IsTrackNewTypes((_Flags & CB_TRACK_NEW_TYPES) != 0),
-    IsIndexLANDs((_Flags & CB_INDEX_LANDS) != 0),
-    IsFixupPlaceables((_Flags & CB_FIXUP_PLACEABLES) != 0),
-    IsCreateNew((_Flags & CB_CREATE_NEW) != 0),
-    IsIgnoreInactiveMasters((_Flags & CB_IGNORE_INACTIVE_MASTERS) != 0),
+    IsSkipNewRecords((_Flags & fIsSkipNewRecords) != 0),
+    IsSkipAllRecords((_Flags & fIsSkipAllRecords) != 0),
+    IsInLoadOrder((_Flags & fIsInLoadOrder) != 0),
+    IsSaveable(((_Flags & fIsInLoadOrder) != 0) ? ((_Flags & fIsSaveable) != 0) : false),
+    IsAddMasters(((_Flags & fIsIgnoreInactiveMasters) != 0) ? false : ((_Flags & fIsAddMasters) != 0)),
+    IsLoadMasters((_Flags & fIsLoadMasters) != 0),
+    IsExtendedConflicts((_Flags & fIsExtendedConflicts) != 0),
+    IsTrackNewTypes((_Flags & fIsTrackNewTypes) != 0),
+    IsIndexLANDs((_Flags & fIsIndexLANDs) != 0),
+    IsFixupPlaceables((_Flags & fIsFixupPlaceables) != 0),
+    IsCreateNew((_Flags & fIsCreateNew) != 0),
+    IsIgnoreInactiveMasters((_Flags & fIsIgnoreInactiveMasters) != 0),
     LoadedGRUPs(false)
     {
     //
@@ -815,43 +857,43 @@ uint32_t ModFlags::GetFlags()
     {
     uint32_t flags = 0;
     if(IsMinLoad)
-        flags |= CB_MIN_LOAD;
+        flags |= fIsMinLoad;
     if(IsFullLoad)
         {
-        flags |= CB_FULL_LOAD;
-        flags &= ~CB_MIN_LOAD;
+        flags |= fIsFullLoad;
+        flags &= ~fIsMinLoad;
         }
     if(IsNoLoad)
         {
-        flags &= ~CB_FULL_LOAD;
-        flags &= ~CB_MIN_LOAD;
+        flags &= ~fIsFullLoad;
+        flags &= ~fIsMinLoad;
         }
     if(IsSkipNewRecords)
-        flags |= CB_SKIP_NEW_RECORDS;
+        flags |= fIsSkipNewRecords;
     if(IsSkipAllRecords)
-        flags |= CB_SKIP_ALL_RECORDS;
+        flags |= fIsSkipAllRecords;
     if(IsInLoadOrder)
-        flags |= CB_IN_LOAD_ORDER;
+        flags |= fIsInLoadOrder;
     if(IsSaveable)
-        flags |= CB_SAVEABLE;
+        flags |= fIsSaveable;
     if(IsAddMasters)
-        flags |= CB_ADD_MASTERS;
+        flags |= fIsAddMasters;
     if(IsLoadMasters)
-        flags |= CB_LOAD_MASTERS;
+        flags |= fIsLoadMasters;
     if(IsExtendedConflicts)
-        flags |= CB_EXTENDED_CONFLICTS;
+        flags |= fIsExtendedConflicts;
     if(IsTrackNewTypes)
-        flags |= CB_TRACK_NEW_TYPES;
+        flags |= fIsTrackNewTypes;
     if(IsIndexLANDs)
-        flags |= CB_INDEX_LANDS;
+        flags |= fIsIndexLANDs;
     if(IsFixupPlaceables)
-        flags |= CB_FIXUP_PLACEABLES;
+        flags |= fIsFixupPlaceables;
     if(IsCreateNew)
-        flags |= CB_CREATE_NEW;
+        flags |= fIsCreateNew;
     if(IsIgnoreInactiveMasters)
         {
-        flags &= ~CB_ADD_MASTERS;
-        flags |= CB_IGNORE_INACTIVE_MASTERS;
+        flags &= ~fIsAddMasters;
+        flags |= fIsIgnoreInactiveMasters;
         }
     return flags;
     }
@@ -864,8 +906,8 @@ SaveFlags::SaveFlags():
     }
 
 SaveFlags::SaveFlags(uint32_t _Flags):
-    IsCleanMasters((_Flags & CB_CLEAN_MASTERS) != 0),
-    IsCloseCollection((_Flags & CB_CLOSE_COLLECTION) != 0)
+    IsCleanMasters((_Flags & fIsCleanMasters) != 0),
+    IsCloseCollection((_Flags & fIsCloseCollection) != 0)
     {
     //
     }
@@ -1045,41 +1087,44 @@ StringRecord& StringRecord::operator = (const StringRecord &rhs)
     }
 
 NonNullStringRecord::NonNullStringRecord():
-    _value(NULL),
-    DiskSize(0)
+    value(NULL),
+    DiskSize(0),
+    fIsAllocated(false)
     {
     //
     }
 
 NonNullStringRecord::NonNullStringRecord(const NonNullStringRecord &p):
-    _value(NULL),
-    DiskSize(0)
+    value(NULL),
+    DiskSize(0),
+    fIsAllocated(false)
     {
     if(!p.IsLoaded())
         return;
 
-    if(p.DiskSize)
-        {
-        _value = p._value;
-        DiskSize = p.DiskSize;
-        }
-    else
-        {
+    char *val;
+    if(p.fIsAllocated) {
         uint32_t size = p.GetSize();
-        _value = new char[size];
-        memcpy(_value, p._value, size);
-        }
+        val = new char[size];
+        memcpy(val, p.value, size);
+    } else {
+        val = p.value;
+    }
+
+    value = val;
+    DiskSize = p.DiskSize;
+    fIsAllocated = p.fIsAllocated;
     }
 
 NonNullStringRecord::~NonNullStringRecord()
     {
-    if(DiskSize == 0)
-        delete []_value;
+    if(fIsAllocated)
+        delete []value;
     }
 
 uint32_t NonNullStringRecord::GetSize() const
     {
-    return _value != NULL ? (DiskSize ? DiskSize : (uint32_t)strlen(_value)) : 0;
+    return value != NULL ? (DiskSize ? DiskSize : (uint32_t)strlen(value)) : 0;
     }
 
 char * NonNullStringRecord::GetString()
@@ -1090,16 +1135,28 @@ char * NonNullStringRecord::GetString()
         //The string needs a null terminator added, so load it from disk
         char * nvalue = new char[DiskSize + 1];
         nvalue[DiskSize] = 0x00;
-        memcpy(nvalue, _value, DiskSize);
-        _value = nvalue;
+        memcpy(nvalue, value, DiskSize);
+        value = nvalue;
         DiskSize = 0;
+        fIsAllocated = true;
         }
-    return _value;
+    return value;
     }
+
+
+void NonNullStringRecord::PutString(char* value, int ignored) {
+    //Clone the data and store the new pointer
+
+    size_t size = strlen(value);
+    char* nvalue = new char[size];
+    strncpy(nvalue, value, size);
+    value = nvalue;
+    
+}
 
 bool NonNullStringRecord::IsLoaded() const
     {
-    return _value != NULL;
+    return value != NULL;
     }
 
 void NonNullStringRecord::Load()
@@ -1109,10 +1166,10 @@ void NonNullStringRecord::Load()
 
 void NonNullStringRecord::Unload()
     {
-    if(DiskSize == 0)
+    if(fIsAllocated)
         {
-        delete []_value;
-        _value = NULL;
+        delete []value;
+        value = NULL;
         }
     }
 
@@ -1125,14 +1182,15 @@ bool NonNullStringRecord::Read(unsigned char *&buffer, const uint32_t &subSize, 
         }
     if(CompressedOnDisk)
         {
-        _value = new char[subSize + 1];
-        _value[subSize] = 0x00;
-        memcpy(_value, buffer, subSize);
+        value = new char[subSize + 1];
+        value[subSize] = 0x00;
+        memcpy(value, buffer, subSize);
+        fIsAllocated = true;
         }
     else
         {
         DiskSize = subSize;
-        _value = (char *)buffer;
+        value = (char *)buffer;
         }
     buffer += subSize;
     return true;
@@ -1140,24 +1198,24 @@ bool NonNullStringRecord::Read(unsigned char *&buffer, const uint32_t &subSize, 
 
 void NonNullStringRecord::Write(uint32_t _Type, FileWriter &writer)
     {
-    if(_value != NULL)
-        writer.record_write_subrecord(_Type, _value, DiskSize ? DiskSize : (uint32_t)strlen(_value));
+    if(value != NULL)
+        writer.record_write_subrecord(_Type, value, DiskSize ? DiskSize : (uint32_t)strlen(value));
     }
 
 void NonNullStringRecord::Write16(FileWriter &writer) const
     {
-    if (_value != NULL)
+    if (value != NULL)
     {
-        uint16_t size = DiskSize ? (uint16_t)DiskSize : (uint16_t)strlen(_value);
+        uint16_t size = DiskSize ? (uint16_t)DiskSize : (uint16_t)strlen(value);
         writer.record_write(&size, sizeof(size));
-        writer.record_write(_value, size);
+        writer.record_write(value, size);
     }
     }
 
 void NonNullStringRecord::ReqWrite(uint32_t _Type, FileWriter &writer)
     {
-    if(_value != NULL)
-        writer.record_write_subrecord(_Type, _value, DiskSize ? DiskSize : (uint32_t)strlen(_value));
+    if(value != NULL)
+        writer.record_write_subrecord(_Type, value, DiskSize ? DiskSize : (uint32_t)strlen(value));
     else
         {
         char null = 0x00;
@@ -1172,19 +1230,20 @@ void NonNullStringRecord::Copy(char * FieldValue)
         {
         DiskSize = 0;
         uint32_t size = (uint32_t)strlen(FieldValue) + 1;
-        _value = new char[size];
-        memcpy(_value, FieldValue, size);
+        value = new char[size];
+        memcpy(value, FieldValue, size);
+        fIsAllocated = true;
         }
     }
 
 bool NonNullStringRecord::equals(const NonNullStringRecord &other) const
     {
-    return cmps(_value, other._value) == 0;
+    return cmps(value, other.value) == 0;
     }
 
 bool NonNullStringRecord::equalsi(const NonNullStringRecord &other) const
     {
-    return icmps(_value, other._value) == 0;
+    return icmps(value, other.value) == 0;
     }
 
 NonNullStringRecord& NonNullStringRecord::operator = (const NonNullStringRecord &rhs)
@@ -1194,15 +1253,16 @@ NonNullStringRecord& NonNullStringRecord::operator = (const NonNullStringRecord 
         Unload();
         if(rhs.DiskSize)
             {
-            _value = rhs._value;
+            value = rhs.value;
             DiskSize = rhs.DiskSize;
             }
-        else if(rhs._value != NULL)
+        else if(rhs.value != NULL)
             {
             DiskSize = 0;
-            uint32_t size = (uint32_t)strlen(rhs._value) + 1;
-            _value = new char[size];
-            memcpy(_value, rhs._value, size);
+            uint32_t size = (uint32_t)strlen(rhs.value) + 1;
+            value = new char[size];
+            memcpy(value, rhs.value, size);
+            fIsAllocated = true;
             }
         }
     return *this;
@@ -1269,7 +1329,8 @@ bool UnorderedPackedStrings::Read(unsigned char *&buffer, const uint32_t &subSiz
         }
     char * curString = NULL;
 
-    for(unsigned char *end_buffer = buffer + subSize;buffer < (end_buffer - 1);)
+    unsigned char *end_buffer = buffer + subSize;
+    for(;buffer < (end_buffer - 1);)
         {
         if(((char *)buffer)[0] == 0x00)
             {
@@ -1278,11 +1339,12 @@ bool UnorderedPackedStrings::Read(unsigned char *&buffer, const uint32_t &subSiz
             }
         uint32_t size = (uint32_t)strlen((char *)buffer) + 1;
         curString = new char[size];
-        strcpy_s(curString, size, (char *)buffer);
+        strncpy(curString, (char *)buffer, size);
         value.push_back(curString);
         buffer += size;
         }
-    buffer++; //Skip the final null terminator
+    if(buffer < end_buffer)
+        buffer++; //Skip the final null terminator
     return true;
     }
 
@@ -1329,7 +1391,7 @@ UnorderedPackedStrings& UnorderedPackedStrings::operator = (const UnorderedPacke
                     {
                     size = (uint32_t)strlen(rhs.value[p]) + 1;
                     value[p] = new char[size];
-                    strcpy_s(value[p], size, rhs.value[p]);
+                    strncpy(value[p], rhs.value[p], size);
                     }
                 }
             }
@@ -3265,3 +3327,5 @@ const float flt_3 = 3.0f;
 const float flt_1 = 1.0f;
 const float flt_0 = 0.0f;
 const float flt_n2147483648 = -2147483648.0f;
+
+Logger logger = Logger::getInstance();

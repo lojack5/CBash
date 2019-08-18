@@ -67,7 +67,11 @@ void PropertyObject::Write(FileWriter &writer)
 {
     // Always in format 2
     uint16_t null = 0;
+
+    //Workaround for a strange bug - type is resetted to 0x00 even though we explicitly set it to 0x01.
+    this->type = eObject;
     Property::Write(writer);
+    
     writer.record_write(&null, sizeof(null));
     writer.record_write(&aliasId, sizeof(aliasId));
     writer.record_write(&formId, sizeof(formId));
@@ -103,6 +107,7 @@ PropertyObject & PropertyObject::operator = (const PropertyObject &other)
 {
     name = other.name;
     // type - same already
+    type = other.type;
     status = other.status;
     formId = other.formId;
     aliasId = other.aliasId;
@@ -112,7 +117,7 @@ PropertyObject & PropertyObject::operator = (const PropertyObject &other)
 uint32_t PropertyObjectArray::GetSize() const
 {
     // common + itemCount + itemCount * (formId + aliasId + null)
-    return Property::GetSize() + sizeof(uint32_t)+(size() * 8);
+    return Property::GetSize() + sizeof(uint32_t)+((uint32_t)size() * 8);
 }
 
 void PropertyObjectArray::Read(unsigned char *&buffer, const int16_t &version, const int16_t &objFormat, const bool &CompressedOnDisk)
@@ -147,10 +152,10 @@ void PropertyObjectArray::Read(unsigned char *&buffer, const int16_t &version, c
 void PropertyObjectArray::Write(FileWriter &writer)
 {
     Property::Write(writer);
-    uint32_t count = size();
+    size_t count = size();
     uint16_t null = 0;
-    writer.record_write(&count, sizeof(count));
-    for (uint32_t i = 0; i < count; ++i)
+    writer.record_write(&count, sizeof(uint32_t));
+    for (size_t i = 0; i < count; ++i)
     {
         // always write format 2
         writer.record_write(&null, sizeof(null));

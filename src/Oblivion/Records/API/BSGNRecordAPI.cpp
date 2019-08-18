@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\..\Common.h"
-#include "..\BSGNRecord.h"
+#include "../../../Common.h"
+#include "../BSGNRecord.h"
 
 namespace Ob
 {
@@ -45,33 +45,33 @@ uint32_t BSGNRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
         case 0: //recType
             return GetType();
         case 1: //flags1
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 2: //fid
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 3: //flags2
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 4: //eid
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 5: //full
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 6: //iconPath
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 7: //text
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 8: //spells
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_FORMID_ARRAY_FIELD;
+                    return FORMID_ARRAY_FIELD;
                 case 1: //fieldSize
                     return (uint32_t)SPLO.value.size();
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
         default:
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         }
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * BSGNRecord::GetField(FIELD_IDENTIFIERS, void **FieldValues)

@@ -45,34 +45,34 @@
 #include "Records/ACTIRecord.h"
 #include "Records/ADDNRecord.h"
 #include "Records/ALCHRecord.h"
-// #include "Records/AMMORecord.h"
+#include "Records/AMMORecord.h"
 #include "Records/ANIORecord.h"
 #include "Records/APPARecord.h"
 // #include "Records/ARMARecord.h"
-// #include "Records/ARMORecord.h"
+#include "Records/ARMORecord.h"
 #include "Records/ARTORecord.h"
 #include "Records/ASPCRecord.h"
 #include "Records/ASTPRecord.h"
 // #include "Records/AVIFRecord.h"
-// #include "Records/BOOKRecord.h"
+#include "Records/BOOKRecord.h"
 // #include "Records/BPTDRecord.h"
 // #include "Records/CAMSRecord.h"
 #include "Records/CELLRecord.h"
 // #include "Records/CLASRecord.h"
 // #include "Records/CLDCRecord.h" // Empty GRUP
 // #include "Records/CLFMRecord.h"
-// #include "Records/CLMTRecord.h"
+#include "Records/CLMTRecord.h"
 // #include "Records/COBJRecord.h"
 #include "Records/COLLRecord.h"
-// #include "Records/CONTRecord.h"
+#include "Records/CONTRecord.h"
 // #include "Records/CPTHRecord.h"
 // #include "Records/CSTYRecord.h"
 // #include "Records/DEBRRecord.h"
-// #include "Records/DIALRecord.h"
-// #include "Records/DLBRRecord.h"
+#include "Records/DIALRecord.h"
+#include "Records/DLBRRecord.h"
 // #include "Records/DLVWRecord.h"
 // #include "Records/DOBJRecord.h"
-// #include "Records/DOORRecord.h"
+#include "Records/DOORRecord.h"
 // #include "Records/DUALRecord.h"
 // #include "Records/ECZNRecord.h"
 // #include "Records/EFSHRecord.h"
@@ -80,13 +80,13 @@
 #include "Records/EQUPRecord.h"
 // #include "Records/EXPLRecord.h"
 // #include "Records/EYESRecord.h"
-// #include "Records/FACTRecord.h"
-// #include "Records/FLORRecord.h"
+#include "Records/FACTRecord.h"
+#include "Records/FLORRecord.h"
 // #include "Records/FLSTRecord.h"
 // #include "Records/FSTPRecord.h"
 // #include "Records/FSTSRecord.h"
-// #include "Records/FURNRecord.h"
-// #include "Records/GLOBRecord.h"
+#include "Records/FURNRecord.h"
+#include "Records/GLOBRecord.h"
 // #include "Records/GMSTRecord.h"
 // #include "Records/GRASRecord.h"
 // #include "Records/HAIRRecord.h" // Empty GRUP
@@ -96,15 +96,15 @@
 // #include "Records/IDLMRecord.h"
 // #include "Records/IMADRecord.h"
 // #include "Records/IMGSRecord.h"
-// #include "Records/INGRRecord.h"
+#include "Records/INGRRecord.h"
 // #include "Records/IPCTRecord.h"
 // #include "Records/IPDSRecord.h"
-// #include "Records/KEYMRecord.h"
+#include "Records/KEYMRecord.h"
 #include "Records/KYWDRecord.h"
 // #include "Records/LCRTRecord.h"
 // #include "Records/LCTNRecord.h"
 // #include "Records/LGTMRecord.h"
-// #include "Records/LIGHRecord.h"
+#include "Records/LIGHRecord.h"
 // #include "Records/LSCRRecord.h"
 #include "Records/LTEXRecord.h"
 #include "Records/LVLIRecord.h"
@@ -113,20 +113,20 @@
 // #include "Records/MATORecord.h"
 #include "Records/MATTRecord.h"
 // #include "Records/MESGRecord.h"
-// #include "Records/MGEFRecord.h"
-// #include "Records/MISCRecord.h"
+#include "Records/MGEFRecord.h"
+#include "Records/MISCRecord.h"
 // #include "Records/MOVTRecord.h"
 // #include "Records/MSTTRecord.h"
 // #include "Records/MUSCRecord.h"
 // #include "Records/MUSTRecord.h"
 // #include "Records/NAVIRecord.h"
-// #include "Records/NPC_Record.h"
+#include "Records/NPC_Record.h"
 #include "Records/OTFTRecord.h"
-// #include "Records/PACKRecord.h"
+#include "Records/PACKRecord.h"
 // #include "Records/PERKRecord.h"
 // #include "Records/PROJRecord.h"
 // #include "Records/PWATRecord.h" // Empty GRUP
-// #include "Records/QUSTRecord.h"
+ #include "Records/QUSTRecord.h"
 // #include "Records/RACERecord.h"
 // #include "Records/REGNRecord.h"
 // #include "Records/RELARecord.h"
@@ -136,9 +136,9 @@
 // #include "Records/SCENRecord.h"
 // #include "Records/SCOLRecord.h" // Empty GRUP
 // #include "Records/SCPTRecord.h"
-// #include "Records/SCRLRecord.h"
+#include "Records/SCRLRecord.h"
 #include "Records/SHOURecord.h"
-// #include "Records/SLGMRecord.h"
+#include "Records/SLGMRecord.h"
 // #include "Records/SMBNRecord.h"
 // #include "Records/SMENRecord.h"
 // #include "Records/SMQNRecord.h"
@@ -146,7 +146,7 @@
 // #include "Records/SNDRRecord.h"
 // #include "Records/SOPMRecord.h"
 // #include "Records/SOUNRecord.h"
-// #include "Records/SPELRecord.h"
+#include "Records/SPELRecord.h"
 // #include "Records/SPGDRecord.h"
 // #include "Records/STATRecord.h"
 // #include "Records/TACTRecord.h"
@@ -154,10 +154,10 @@
 #include "Records/TXSTRecord.h"
 #include "Records/VTYPRecord.h"
 // #include "Records/WATRRecord.h"
-// #include "Records/WEAPRecord.h"
+#include "Records/WEAPRecord.h"
 #include "Records/WOOPRecord.h"
 #include "Records/WRLDRecord.h"
-// #include "Records/WTHRRecord.h"
+#include "Records/WTHRRecord.h"
 
 
 // Helper macros
@@ -174,34 +174,34 @@ class TES5File : public ModFile
         GRUP(ACTI);
         GRUP(ADDN);
         GRUP(ALCH);
-        // GRUP(AMMO);
+        GRUP(AMMO);
         GRUP(ANIO);
         GRUP(APPA);
         // GRUP(ARMA);
-        // GRUP(ARMO);
+        GRUP(ARMO);
         GRUP(ARTO);
         GRUP(ASPC);
         GRUP(ASTP);
         // GRUP(AVIF);
-        // GRUP(BOOK);
+        GRUP(BOOK);
         // GRUP(BPTD);
         // GRUP(CAMS);
         GRUP(CELL);
         // GRUP(CLAS);
         // GRUP(CLDC); // Empty GRUP
         // GRUP(CLFM);
-        // GRUP(CLMT);
+        GRUP(CLMT);
         // GRUP(COBJ);
         GRUP(COLL);
-        // GRUP(CONT);
+        GRUP(CONT);
         // GRUP(CPTH);
         // GRUP(CSTY);
         // GRUP(DEBR);
-        // GRUP(DIAL);
-        // GRUP(DLBR);
+        GRUP(DIAL);
+        GRUP(DLBR);
         // GRUP(DLVW);
         // GRUP(DOBJ);
-        // GRUP(DOOR);
+        GRUP(DOOR);
         // GRUP(DUAL);
         // GRUP(ECZN);
         // GRUP(EFSH);
@@ -209,13 +209,13 @@ class TES5File : public ModFile
         GRUP(EQUP);
         // GRUP(EXPL);
         // GRUP(EYES);
-        // GRUP(FACT);
-        // GRUP(FLOR);
+        GRUP(FACT);
+        GRUP(FLOR);
         // GRUP(FLST);
         // GRUP(FSTP);
         // GRUP(FSTS);
-        // GRUP(FURN);
-        // GRUP(GLOB);
+        GRUP(FURN);
+        GRUP(GLOB);
         // GRUP_EDID(GMST);
         // GRUP(GRAS);
         // GRUP(HAIR); // Empty GRUP
@@ -225,15 +225,15 @@ class TES5File : public ModFile
         // GRUP(IDLM);
         // GRUP(IMAD);
         // GRUP(IMGS);
-        // GRUP(INGR);
+        GRUP(INGR);
         // GRUP(IPCT);
         // GRUP(IPDS);
-        // GRUP(KEYM);
+        GRUP(KEYM);
         GRUP(KYWD);
         // GRUP(LCRT);
         // GRUP(LCTN);
         // GRUP(LGTM);
-        // GRUP(LIGH);
+        GRUP(LIGH);
         // GRUP(LSCR);
         GRUP(LTEX);
         GRUP(LVLI);
@@ -242,20 +242,20 @@ class TES5File : public ModFile
         // GRUP(MATO);
         GRUP(MATT);
         // GRUP(MESG);
-        // GRUP(MGEF);
-        // GRUP(MISC);
+        GRUP(MGEF);
+        GRUP(MISC);
         // GRUP(MOVT);
         // GRUP(MSTT);
         // GRUP(MUSC);
         // GRUP(MUST);
         // GRUP(NAVI);
-        // GRUP(NPC_);
+        GRUP(NPC_);
         GRUP(OTFT);
-        // GRUP(PACK);
+        GRUP(PACK);
         // GRUP(PERK);
         // GRUP(PROJ);
         // GRUP(PWAT); // Empty GRUP
-        // GRUP(QUST);
+        GRUP(QUST);
         // GRUP(RACE);
         // GRUP(REGN);
         // GRUP(RELA);
@@ -265,9 +265,9 @@ class TES5File : public ModFile
         // GRUP(SCEN);
         // GRUP(SCOL); // Empty GRUP
         // GRUP(SCPT);
-        // GRUP(SCRL);
+        GRUP(SCRL);
         GRUP(SHOU);
-        // GRUP(SLGM);
+        GRUP(SLGM);
         // GRUP(SMBN);
         // GRUP(SMEN);
         // GRUP(SMQN);
@@ -275,7 +275,7 @@ class TES5File : public ModFile
         // GRUP(SNDR);
         // GRUP(SOPM);
         // GRUP(SOUN);
-        // GRUP(SPEL);
+        GRUP(SPEL);
         // GRUP(SPGD);
         // GRUP(STAT);
         // GRUP(TACT);
@@ -283,10 +283,10 @@ class TES5File : public ModFile
         GRUP(TXST);
         GRUP(VTYP);
         // GRUP(WATR);
-        // GRUP(WEAP);
+        GRUP(WEAP);
         GRUP(WOOP);
         GRUP(WRLD);
-        // GRUP(WTHR);
+        GRUP(WTHR);
 
         TES5File(Collection *_Parent, char * FileName, char * ModName, const uint32_t _flags);
         ~TES5File();
@@ -294,7 +294,7 @@ class TES5File : public ModFile
         Record * GetTES4();
         int32_t   LoadTES4();
         int32_t   Load(RecordOp &read_parser, RecordOp &indexer, std::vector<FormIDResolver *> &Expanders, std::vector<Record *> &DeletedRecords);
-        uint32_t   GetNumRecords(const uint32_t &RecordType);
+        size_t   GetNumRecords(const uint32_t &RecordType);
         char *   GetMasterName(uint8_t &CollapsedIndex);
         Record * CreateRecord(const uint32_t &RecordType, char * const &RecordEditorID, Record *&SourceRecord, Record *&ParentRecord, CreationFlags &options);
         int32_t   DeleteRecord(Record *&curRecord, RecordOp &deindexer);

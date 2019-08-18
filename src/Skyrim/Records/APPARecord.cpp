@@ -34,8 +34,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\Common.h"
-#include "..\..\ModFile.h"
+#include "../../Common.h"
+#include "../../ModFile.h"
 #include "APPARecord.h"
 
 namespace Sk {
@@ -159,7 +159,10 @@ int32_t APPARecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                     FULL.Read(buffer, subSize, CompressedOnDisk, LookupStrings);
                     break;
                 case REV32(MODL):
-                    MODL.Read(buffer, subSize);
+                    MODL.MODL.Read(buffer, subSize, CompressedOnDisk);
+                    break;
+                case REV32(MODT):
+                    MODL.MODT.Read(buffer, subSize, CompressedOnDisk);
                     break;
                 case REV32(ICON):
                     ICON.Read(buffer, subSize, CompressedOnDisk);
@@ -186,11 +189,8 @@ int32_t APPARecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                     DATA.Read(buffer, subSize);
                     break;
                 default:
-                    //printer("Filename = %s\n", FileName);
-                    printer("  APPA: %08X - Unknown subType = %04x\n", formID, subType);
+                    CBASH_SUBTYPE_UNKNOWN
                     CBASH_CHUNK_DEBUG
-                    printer("  Size = %i\n", subSize);
-                    printer("  CurPos = %04x\n", buffer - 6);
                     buffer = end_buffer;
                     break;
             }
@@ -206,7 +206,6 @@ int32_t APPARecord::Unload()
         VMAD.Unload();
         OBND.Unload();
         FULL.Unload();
-        MODL.Unload();
         ICON.Unload();
         MICO.Unload();
         DEST.Unload();
@@ -224,7 +223,7 @@ int32_t APPARecord::WriteRecord(FileWriter &writer)
         WRITE(VMAD);
         WRITE(OBND);
         WRITE(FULL);
-        WRITE(MODL);
+        MODL.Write(writer);
         WRITE(ICON);
         WRITE(MICO);
         WRITE(DEST);

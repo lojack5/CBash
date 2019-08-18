@@ -43,6 +43,8 @@ class FragmentINFO : public Fragments
 public:
     std::vector<GenFragment *> fragments;
 
+    uint8_t flags;
+
     FragmentINFO();
     virtual ~FragmentINFO();
 

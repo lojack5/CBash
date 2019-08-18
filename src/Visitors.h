@@ -91,12 +91,13 @@ class RecordIndexer : public RecordOp
     {
     private:
         EditorID_Map &EditorID_ModFile_Record;
-        FormID_Map &FormID_ModFile_Record;
+		EditorID_Map &EDIDIndex;
+		FormID_Map &FormID_ModFile_Record;
         ModFile *curModFile;
 
     public:
-        RecordIndexer(ModFile *_curModFile, EditorID_Map &_EditorID_Map, FormID_Map &_FormID_Map);
-        RecordIndexer(EditorID_Map &_EditorID_Map, FormID_Map &_FormID_Map);
+        RecordIndexer(ModFile *_curModFile, EditorID_Map &_EditorID_Map, FormID_Map &_FormID_Map, EditorID_Map &EDIDIndex);
+        RecordIndexer(EditorID_Map &_EditorID_Map, FormID_Map &_FormID_Map, EditorID_Map &EDIDIndex);
         ~RecordIndexer();
 
         bool Accept(Record *&curRecord);

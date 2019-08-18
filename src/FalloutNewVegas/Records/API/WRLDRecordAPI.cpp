@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\..\Common.h"
-#include "..\WRLDRecord.h"
+#include "../../../Common.h"
+#include "../WRLDRecord.h"
 
 namespace FNV
 {
@@ -45,172 +45,172 @@ uint32_t WRLDRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
         case 0: //recType
             return GetType();
         case 1: //flags1
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 2: //fid
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 3: //versionControl1
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 4;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 4: //eid
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 5: //formVersion
-            return CB_UINT16_FIELD;
+            return UINT16_FIELD;
         case 6: //versionControl2
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 2;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 7: //full
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 8: //encounterZone
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 9: //parent
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 10: //parentFlags
-            return CB_UINT16_FLAG_FIELD;
+            return UINT16_FLAG_FIELD;
         case 11: //climate
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 12: //water
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 13: //lodWater
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 14: //lodWaterHeight
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 15: //defaultLandHeight
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 16: //defaultWaterHeight
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 17: //iconPath
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 18: //smallIconPath
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 19: //dimX
-            return CB_SINT32_FIELD;
+            return SINT32_FIELD;
         case 20: //dimY
-            return CB_SINT32_FIELD;
+            return SINT32_FIELD;
         case 21: //NWCellX
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 22: //NWCellY
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 23: //SECellX
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 24: //SECellY
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 25: //mapScale
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 26: //xCellOffset
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 27: //yCellOffset
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 28: //imageSpace
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 29: //flags
-            return CB_UINT8_FLAG_FIELD;
+            return UINT8_FLAG_FIELD;
         case 30: //xMinObjBounds
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 31: //yMinObjBounds
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 32: //xMaxObjBounds
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 33: //yMaxObjBounds
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 34: //music
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 35: //canopyShadowPath
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 36: //waterNoisePath
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 37: //swappedImpacts
             if(ListFieldID == 0) //swappedImpacts
                 {
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return (uint32_t)IMPS.value.size();
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
                 }
 
             if(ListIndex >= IMPS.value.size())
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             switch(ListFieldID)
                 {
                 case 1: //material
-                    return CB_UINT32_TYPE_FIELD;
+                    return UINT32_TYPE_FIELD;
                 case 2: //oldImpact
-                    return CB_FORMID_FIELD;
+                    return FORMID_FIELD;
                 case 3: //newImpact
-                    return CB_FORMID_FIELD;
+                    return FORMID_FIELD;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 38: //concSolid
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 39: //concBroken
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 40: //metalSolid
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 41: //metalHollow
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 42: //metalSheet
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 43: //wood
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 44: //sand
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 45: //dirt
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 46: //grass
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 47: //water
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 48: //ofst_p
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return OFST.GetSize();
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 49: //CELL
-            return CB_SUBRECORD_FIELD;
+            return SUBRECORD_FIELD;
         case 50: //CELLS
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_SUBRECORD_ARRAY_FIELD;
+                    return SUBRECORD_ARRAY_FIELD;
                 case 1: //fieldSize
                     return (uint32_t)CELLS.size();
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
         default:
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         }
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * WRLDRecord::GetField(FIELD_IDENTIFIERS, void **FieldValues)

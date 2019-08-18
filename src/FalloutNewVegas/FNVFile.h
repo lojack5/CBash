@@ -252,7 +252,7 @@ class FNVFile : public ModFile
         Record * GetTES4();
         int32_t   LoadTES4();
         int32_t   Load(RecordOp &read_parser, RecordOp &indexer, std::vector<FormIDResolver *> &Expanders, std::vector<Record *> &DeletedRecords);
-        uint32_t   GetNumRecords(const uint32_t &RecordType);
+        size_t   GetNumRecords(const uint32_t &RecordType);
         char *   GetMasterName(uint8_t &CollapsedIndex);
         Record * CreateRecord(const uint32_t &RecordType, char * const &RecordEditorID, Record *&SourceRecord, Record *&ParentRecord, CreationFlags &options);
         int32_t   DeleteRecord(Record *&curRecord, RecordOp &deindexer);

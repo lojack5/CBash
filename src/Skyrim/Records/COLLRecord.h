@@ -35,9 +35,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
 #pragma once
-#include "..\..\GenericRecord.h"
-#include "..\SkyrimChunks.h"
-#include "..\SkyrimCommon.h"
+#include "../../GenericRecord.h"
+#include "../SkyrimChunks.h"
+#include "../SkyrimCommon.h"
 
 
 namespace Sk {
@@ -88,6 +88,7 @@ class COLLRecord : public TES5Record // Collision Layer
         int32_t ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk=false);
         int32_t Unload();
         int32_t WriteRecord(FileWriter &writer);
+		char *GetEditorIDKey() { return EDID.value; }
 
         bool operator ==(const COLLRecord &other) const;
         bool operator !=(const COLLRecord &other) const;

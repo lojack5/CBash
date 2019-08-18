@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\..\Common.h"
-#include "..\WRLDRecord.h"
+#include "../../../Common.h"
+#include "../WRLDRecord.h"
 
 namespace Ob
 {
@@ -45,76 +45,76 @@ uint32_t WRLDRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
         case 0: //recType
             return GetType();
         case 1: //flags1
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 2: //fid
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 3: //flags2
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 4: //eid
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 5: //full
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 6: //parent
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 7: //climate
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 8: //water
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 9: //mapPath
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 10: //dimX
-            return CB_SINT32_FIELD;
+            return SINT32_FIELD;
         case 11: //dimY
-            return CB_SINT32_FIELD;
+            return SINT32_FIELD;
         case 12: //NWCellX
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 13: //NWCellY
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 14: //SECellX
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 15: //SECellY
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 16: //flags
-            return CB_UINT8_FLAG_FIELD;
+            return UINT8_FLAG_FIELD;
         case 17: //xMinObjBounds
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 18: //yMinObjBounds
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 19: //xMaxObjBounds
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 20: //yMaxObjBounds
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 21: //soundType
-            return CB_UINT32_FIELD;
+            return UINT32_FIELD;
         case 22: //ofst_p
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return OFST.GetSize();
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 23: //ROAD
-            return CB_SUBRECORD_FIELD;
+            return SUBRECORD_FIELD;
         case 24: //CELL
-            return CB_SUBRECORD_FIELD;
+            return SUBRECORD_FIELD;
         case 25: //CELLS
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_SUBRECORD_ARRAY_FIELD;
+                    return SUBRECORD_ARRAY_FIELD;
                 case 1: //fieldSize
                     return (uint32_t)CELLS.size();
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
         default:
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         }
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * WRLDRecord::GetField(FIELD_IDENTIFIERS, void **FieldValues)

@@ -147,10 +147,10 @@ uint32_t FragmentQUST::GetSize() const
 void FragmentQUST::Write(FileWriter &writer) const
 {
     writer.record_write(&unk1, sizeof(unk1));
-    uint16_t count = static_cast<uint16_t>(fragments.size());
-    writer.record_write(&count, sizeof(count));
+	uint16_t count = (uint16_t)fragments.size();
+    writer.record_write(&count, sizeof(uint16_t));
     fileName.Write16(writer);
-    for (uint16_t i = 0; i < count; ++i)
+    for (size_t i = 0; i < count; ++i)
     {
         writer.record_write(&(fragments[i]->stage), sizeof(uint16_t));
         writer.record_write(&(fragments[i]->unk1), sizeof(uint16_t));
@@ -159,8 +159,8 @@ void FragmentQUST::Write(FileWriter &writer) const
         fragments[i]->scriptName.Write16(writer);
         fragments[i]->fragmentName.Write16(writer);
     }
-    count = static_cast<uint16_t>(aliases.size());
-    writer.record_write(&count, sizeof(count));
+    count = aliases.size();
+    writer.record_write(&count, sizeof(uint16_t));
     for (uint16_t i = 0; i < count; ++i)
         aliases[i]->Write(writer);
 }

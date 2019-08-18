@@ -35,9 +35,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
 #pragma once
-#include "..\SkyrimCommon.h"
-#include "..\..\GenericRecord.h"
-#include "..\SkyrimChunks.h"
+#include "../SkyrimCommon.h"
+#include "../../GenericRecord.h"
+#include "../SkyrimChunks.h"
 
 namespace Sk {
 
@@ -73,7 +73,7 @@ class ALCHRecord : public TES5Record // Ingestible
         LStringRecord FULL; // Name
         OptCounted<OrderedPackedArray<FORMID>, uint32_t, REV32(KSIZ)> KWDA; // Keywords
         LStringRecord DESC; // Description
-        OptSubRecord<FNVWORLDMODEL> MODL; // Model
+        FNVMODEL MODL; // Model
         OptSubRecord<SKDESTRUCT> Destructable; // Destruction Data
         StringRecord ICON; // Large Icon
         StringRecord MICO; // Menu Icon
@@ -112,6 +112,7 @@ class ALCHRecord : public TES5Record // Ingestible
         int32_t ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk=false);
         int32_t Unload();
         int32_t WriteRecord(FileWriter &writer);
+		char *GetEditorIDKey() { return EDID.value; }
 
         bool operator ==(const ALCHRecord &other) const;
         bool operator !=(const ALCHRecord &other) const;

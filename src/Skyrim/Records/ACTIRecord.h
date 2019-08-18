@@ -35,9 +35,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
 #pragma once
-#include "..\..\GenericRecord.h"
-#include "..\SkyrimChunks.h"
-#include "..\SkyrimCommon.h"
+#include "../../GenericRecord.h"
+#include "../SkyrimChunks.h"
+#include "../SkyrimCommon.h"
 
 namespace Sk {
 
@@ -48,7 +48,7 @@ public:
     VMADRecord VMAD; // Virtual Machind Data
     ReqSubRecord<GENOBND> OBND; // Object Bounds
     LStringRecord FULL; // Full Name
-    OptSubRecord<FNVWORLDMODEL> MODL; // Model
+    FNVMODEL MODL; // Model
     OptSubRecord<SKDESTRUCT> Destructable; // Destruction Data
     // KSIZ - ignored
     OptCounted<OrderedPackedArray<FORMID>, uint32_t, REV32(KSIZ)> KWDA; // Keywords
@@ -57,7 +57,7 @@ public:
     OptSimpleSubRecord<FORMID> VNAM; // Sound - Acttivation
     OptSimpleSubRecord<FORMID> WNAM; // Water Type
     LStringRecord RNAM; // Active Text Override
-    OptSimpleSubRecord<uint16_t> FNAM; // Flags
+	SemiOptSimpleSubRecord<uint16_t> FNAM; // Flags
     OptSimpleSubRecord<FORMID> KNAM; // Interaction Keyword
 
     ACTIRecord(unsigned char *_recData=NULL);
@@ -77,6 +77,7 @@ public:
     int32_t ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk=false);
     int32_t Unload();
     int32_t WriteRecord(FileWriter &writer);
+		char *GetEditorIDKey() { return EDID.value; }
 
     bool operator ==(const ACTIRecord &other) const;
     bool operator !=(const ACTIRecord &other) const;

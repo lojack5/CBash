@@ -33,7 +33,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\Common.h"
+#include "../../Common.h"
 #include "IMGSRecord.h"
 
 namespace FNV
@@ -250,7 +250,11 @@ int32_t IMGSRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                 DNAM.Read(buffer, subSize);
                 break;
             default:
-                UnrecognizedSubRecord(formID, subType, subSize, buffer, end_buffer);
+                //printf("FileName = %s\n", FileName);
+                printf("  IMGS: %08X - Unknown subType = %04x\n", formID, subType);
+                printf("  Size = %i\n", subSize);
+                printf("  CurPos = %08x\n\n", buffer - 6);
+                buffer = end_buffer;
                 break;
             }
         };

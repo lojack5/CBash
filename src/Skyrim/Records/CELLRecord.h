@@ -34,8 +34,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
 #pragma once
-#include "..\..\Common.h"
-#include "..\..\GenericRecord.h"
+#include "../../Common.h"
+#include "../../GenericRecord.h"
+#include "../SkyrimChunks.h"
 
 namespace Sk
 {
@@ -53,6 +54,33 @@ class CELLRecord : public TES5Record //Cell
             bool operator ==(const CELLXCLC &other) const;
             bool operator !=(const CELLXCLC &other) const;
             };
+
+
+		struct TES5LIGHT
+		{
+			GENCLR  ambient; //Ambient Color
+			GENCLR  directional; //Directional Color
+			GENCLR  fog; //Fog Color
+			float fogNear, fogFar; //Fog Near, Fog Far
+			int32_t  directionalXY, directionalZ; //Directional Rotation XY, Directional Rotation Z
+			float directionalFade, fogClip, fogPower; //Directional Fade, Fog Clip Dist, Fog Power
+
+			GENCLR ambientXp, ambientXm, ambientYp, ambientYm, ambientZp, ambientZm;
+			GENCLR specular;
+			float fresnelPow;
+			GENCLR fogFarTwo;
+			float fogMax;
+			float lightFadeDistancesStart;
+			float lightFadeDistancesEnd;
+
+			uint32_t inheritFlags;
+
+			TES5LIGHT();
+			~TES5LIGHT();
+
+			bool operator ==(const TES5LIGHT &other) const;
+			bool operator !=(const TES5LIGHT &other) const;
+		};
 
         enum flagsFlags
             {
@@ -92,7 +120,7 @@ class CELLRecord : public TES5Record //Cell
         StringRecord FULL; //Name
         ReqSimpleSubRecord<uint8_t> DATA; //Flags
         OptSubRecord<CELLXCLC> XCLC; //Grid
-//      OptSubRecord<TES5LIGHT> XCLL; //Lighting
+        OptSubRecord<TES5LIGHT> XCLL; //Lighting
         UnorderedSparseArray<GENIMPS *> IMPS; //Swapped Impact
         OptSubRecord<GENIMPF> IMPF; //Footstep Materials
         ReqSimpleSubRecord<FORMID> LTMP; //Light Template
@@ -105,21 +133,22 @@ class CELLRecord : public TES5Record //Cell
         OptSimpleSubRecord<FORMID> XEZN; //Encounter Zone
         OptSimpleSubRecord<FORMID> XCCM; //Climate
         OptSimpleSubRecord<FORMID> XCWT; //Water -> WATR
-//      OptSubRecord<TES5XOWN> Ownership; //Owner
+		OptSimpleSubRecord<FORMID> XOWN; //Owner simple.
+		OptSimpleSubRecord<FORMID> XILL; //Owner simple.
+		StringRecord XWEM; //Editor ID
+		SemiOptSimpleSubRecord<uint32_t> XRNK;
         OptSimpleSubRecord<FORMID> XCAS; //Acoustic Space
         RawRecord XCMT; //Unused
         OptSimpleSubRecord<FORMID> XCMO; //Music Type
         RawRecord TVDT; //Unknown (Skyrim)
         RawRecord MHDT; //Unknown (Skyrim)
         OptSimpleSubRecord<FORMID> XLCN; //Unknown (Skyrim) -> LCTN
-        RawRecord XWCN; //Unknown (Skyrim)
-        RawRecord XWCU; //Unknown (Skyrim)
+		OptCounted<UnorderedPackedArray<struct XWCU>, uint32_t, REV32(XWCN)> XWCU; // Keywords
 
-/*
         std::vector<Record *> ACHR;
-        std::vector<Record *> ACRE;
         std::vector<Record *> REFR;
-        std::vector<Record *> PGRE;
+/*
+		std::vector<Record *> PGRE;
         std::vector<Record *> PMIS;
         std::vector<Record *> PBEA;
         std::vector<Record *> PFLA;
@@ -196,6 +225,7 @@ class CELLRecord : public TES5Record //Cell
         int32_t ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk=false);
         int32_t Unload();
         int32_t WriteRecord(FileWriter &writer);
+		char *GetEditorIDKey() { return EDID.value; }
 
         bool operator ==(const CELLRecord &other) const;
         bool operator !=(const CELLRecord &other) const;

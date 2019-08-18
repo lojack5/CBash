@@ -76,17 +76,17 @@ struct ModFile
         bool   Open();
         bool   Close();
 
-        virtual int32_t   LoadTES4() abstract {};
-        virtual int32_t   Load(RecordOp &read_parser, RecordOp &indexer, std::vector<FormIDResolver *> &Expanders, std::vector<Record *> &DeletedRecords) abstract {};
-        virtual uint32_t   GetNumRecords(const uint32_t &RecordType) abstract {};
-        virtual Record * CreateRecord(const uint32_t &RecordType, char * const &RecordEditorID, Record *&SourceRecord, Record *&ParentRecord, CreationFlags &options) abstract {};
-        virtual int32_t   DeleteRecord(Record *&curRecord, RecordOp &deindexer) abstract {};
-        virtual int32_t   Save(char * const &SaveName, std::vector<FormIDResolver *> &Expanders, bool CloseMod, RecordOp &indexer) abstract {};
+        virtual int32_t   LoadTES4() = 0;
+        virtual int32_t   Load(RecordOp &read_parser, RecordOp &indexer, std::vector<FormIDResolver *> &Expanders, std::vector<Record *> &DeletedRecords) = 0;
+        virtual size_t   GetNumRecords(const uint32_t &RecordType) = 0;
+        virtual Record * CreateRecord(const uint32_t &RecordType, char * const &RecordEditorID, Record *&SourceRecord, Record *&ParentRecord, CreationFlags &options) = 0;
+        virtual int32_t   DeleteRecord(Record *&curRecord, RecordOp &deindexer) = 0;
+        virtual int32_t   Save(char * const &SaveName, std::vector<FormIDResolver *> &Expanders, bool CloseMod, RecordOp &indexer) = 0;
 
-        virtual void     SetFilter(bool inclusive, boost::unordered_set<uint32_t> &RecordTypes, boost::unordered_set<FORMID> &WorldSpaces) abstract {};
+        virtual void     SetFilter(bool inclusive, boost::unordered_set<uint32_t> &RecordTypes, boost::unordered_set<FORMID> &WorldSpaces) = 0;
 
-        virtual void     VisitAllRecords(RecordOp &op) abstract {};
-        virtual void     VisitRecords(const uint32_t &RecordType, RecordOp &op) abstract {};
+        virtual void     VisitAllRecords(RecordOp &op) = 0;
+        virtual void     VisitRecords(const uint32_t &RecordType, RecordOp &op) = 0;
     };
 
 class FormIDMasterUpdater : public FormIDOp

@@ -33,7 +33,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\Common.h"
+#include "../../Common.h"
 #include "CCRDRecord.h"
 
 namespace FNV
@@ -252,7 +252,11 @@ int32_t CCRDRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                 DATA.Read(buffer, subSize);
                 break;
             default:
-                UnrecognizedSubRecord(formID, subType, subSize, buffer, end_buffer);
+                //printf("FileName = %s\n", FileName);
+                printf("  CCRD: %08X - Unknown subType = %04x\n", formID, subType);
+                printf("  Size = %i\n", subSize);
+                printf("  CurPos = %08x\n\n", buffer - 6);
+                buffer = end_buffer;
                 break;
             }
         };

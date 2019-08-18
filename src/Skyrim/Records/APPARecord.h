@@ -35,9 +35,10 @@
  *
  * ***** END LICENSE BLOCK ***** */
 #pragma once
-#include "..\..\Common.h"
-#include "..\..\GenericRecord.h"
-#include "..\SkyrimCommon.h"
+#include "../../Common.h"
+#include "../../GenericRecord.h"
+#include "../SkyrimCommon.h"
+#include "../SkyrimChunks.h"
 
 namespace Sk {
 
@@ -61,7 +62,7 @@ class APPARecord : public TES5Record // Apparatus record
         VMADRecord VMAD; // VM data
         ReqSubRecord<GENOBND> OBND; // Object Bounds
         LStringRecord FULL; // Full Name
-        OptSubRecord<GENMODEL> MODL; // Model
+        MODEL MODL; // Model
         StringRecord ICON; // Inventory image filename
         StringRecord MICO; // Message image filename
         OptSubRecord<GENDESTRUCT> DEST; // Destruction data
@@ -88,6 +89,7 @@ class APPARecord : public TES5Record // Apparatus record
         int32_t ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk=false);
         int32_t Unload();
         int32_t WriteRecord(FileWriter &writer);
+		char *GetEditorIDKey() { return EDID.value; }
 
         bool operator ==(const APPARecord &other) const;
         bool operator !=(const APPARecord &other) const;

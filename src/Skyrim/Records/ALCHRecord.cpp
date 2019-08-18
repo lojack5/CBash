@@ -35,7 +35,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 #include "ALCHRecord.h"
-#include "..\..\ModFile.h"
+#include "../../ModFile.h"
 
 namespace Sk {
 
@@ -107,8 +107,8 @@ bool ALCHRecord::VisitFormIDs(FormIDOp &op)
 {
     for (uint32_t i = 0; i < KWDA.value.size(); ++i)
         op.Accept(KWDA.value[i]);
-    if (MODL.IsLoaded())
-        MODL->Textures.VisitFormIDs(op);
+    
+    MODL.Textures.VisitFormIDs(op);
     if (Destructable.IsLoaded())
         Destructable->VisitFormIDs(op);
     if (YNAM.IsLoaded())
@@ -230,16 +230,14 @@ int32_t ALCHRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
             DESC.Read(buffer, subSize, CompressedOnDisk, LookupStrings);
             break;
         case REV32(MODL):
-            MODL.Load();
-            MODL->MODL.Read(buffer, subSize, CompressedOnDisk);
+            MODL.MODL.Read(buffer, subSize, CompressedOnDisk);
             break;
         case REV32(MODT):
-            MODL.Load();
-            MODL->MODT.Read(buffer, subSize, CompressedOnDisk);
+            MODL.MODT.Read(buffer, subSize, CompressedOnDisk);
             break;
         case REV32(MODS):
-            MODL.Load();
-            MODL->Textures.Read(buffer, subSize);
+            MODL.Textures.Read(buffer, subSize);
+            break;
         case REV32(DEST):
             Destructable.Load();
             Destructable->DEST.Read(buffer, subSize);
@@ -322,11 +320,8 @@ int32_t ALCHRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
             Effects.value.back()->CTDA.value.back()->CIS2.Read(buffer, subSize, CompressedOnDisk);
             break;
         default:
-            //printer("Filename = %s\n", FileName);
-            printer("  AACT: %08X - Unknown subType = %04x\n", formID, subType);
+            CBASH_SUBTYPE_UNKNOWN
             CBASH_CHUNK_DEBUG
-            printer("  Size = %i\n", subSize);
-            printer("  CurPos = %04x\n", buffer - 6);
             buffer = end_buffer;
             break;
         }
@@ -343,7 +338,6 @@ int32_t ALCHRecord::Unload()
     FULL.Unload();
     KWDA.Unload();
     DESC.Unload();
-    MODL.Unload();
     Destructable.Unload();
     ICON.Unload();
     MICO.Unload();
@@ -363,7 +357,7 @@ int32_t ALCHRecord::WriteRecord(FileWriter &writer)
     WRITE(FULL);
     WRITE(KWDA);
     WRITE(DESC);
-    WRITE(MODL);
+    MODL.Write(writer);
     Destructable.Write(writer);
     WRITE(ICON);
     WRITE(MICO);

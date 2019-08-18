@@ -75,14 +75,17 @@ struct Collection
         std::vector<Record *> sortedConflicts;
 
     public:
-        cb_game_type_t CollectionType;
+        whichGameTypes CollectionType;
 
         std::vector<ModFile *> ModFiles;
+        std::map<std::string, ModFile *> MappedModFiles;
         std::vector<ModFile *> LoadOrder255;
         std::vector<FormIDResolver *> Expanders;
 
         EditorID_Map EditorID_ModFile_Record;
         FormID_Map FormID_ModFile_Record;
+
+		EditorID_Map EDIDIndex;
 
         EditorID_Map ExtendedEditorID_ModFile_Record;
         FormID_Map ExtendedFormID_ModFile_Record;
@@ -106,6 +109,10 @@ struct Collection
         void AddRecordFilter(uint32_t recordtype);
         void AddWSpaceFilter(FORMID worldspace);
         void ResetFilter();
+
+        ModFile *ModFileByName(std::string name) {
+            return MappedModFiles[name];
+        }
 
         // Callback(position, maximum, modfile-name);
         int32_t Load(bool (*_ProgressCallback)(const uint32_t, const uint32_t, const char *) = NULL);

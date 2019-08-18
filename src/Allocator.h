@@ -37,6 +37,7 @@
 #include "Common.h"
 //#include "GenericRecord.h"
 #include <vector>
+//Shared among builds even if they mean something different..
 #include <malloc.h>
 
 template<class T, uint32_t RecType, uint32_t AllocUnit>
@@ -45,6 +46,7 @@ class RecordPoolAllocator
     private:
         unsigned char *freed_position;
         std::vector<unsigned char *> buffers;
+		std::map<unsigned char *, size_t> sizes;
 
     public:
         RecordPoolAllocator():
@@ -124,6 +126,7 @@ class RecordPoolAllocator
             for(uint32_t p = 0;p < buffers.size(); p++)
                 free(buffers[p]);
             buffers.clear();
+			sizes.clear();
             //_heapmin();
             freed_position = NULL;
             }
@@ -134,7 +137,7 @@ class RecordPoolAllocator
             MakeFreeSet(free_set);
             for(uint32_t p = 0;p < buffers.size(); p++)
                 {
-                uint32_t buffer_size = (uint32_t)_msize(buffers[p]);
+                size_t buffer_size = sizes[buffers[p]];
                 //in case malloc returned more than the requested amount
                 buffer_size -= buffer_size % sizeof(T);
                 unsigned char *end_of_buffer = buffers[p] + buffer_size;
@@ -149,16 +152,19 @@ class RecordPoolAllocator
                 free(buffers[p]);
                 }
             buffers.clear();
+			sizes.clear();
             freed_position = NULL;
             }
 
         void reserve(uint32_t elements)
             {
             //Allocate memory
-            unsigned char *buffer = (unsigned char *)malloc(sizeof(T) * elements);
+			size_t size = sizeof(T) * elements;
+            unsigned char *buffer = (unsigned char *)malloc(size);
             if(buffer == 0)
                 throw std::bad_alloc();
             buffers.push_back(buffer);
+			sizes[buffer] = bufsize(buffer, size);
             //memset(buffer, 0x00, buffer_size);
 
             //Populate the free linked list in reverse so that the first freed_position is at the beginning of the buffer
@@ -208,12 +214,12 @@ class RecordPoolAllocator
             freed_position = (unsigned char *)curRecord;
             }
 
-        uint32_t object_capacity()
+        size_t object_capacity()
             {
-            uint32_t size = 0;
+            size_t size = 0;
             for(uint32_t p = 0;p < buffers.size(); p++)
                 {
-                uint32_t buffer_size = (uint32_t)_msize(buffers[p]);
+                size_t buffer_size = sizes[buffers[p]];
                 //in case malloc returned more than the requested amount
                 buffer_size -= buffer_size % sizeof(T);
                 size += buffer_size / sizeof(T);
@@ -222,7 +228,7 @@ class RecordPoolAllocator
             return size;
             }
 
-        uint32_t free_object_capacity()
+        size_t free_object_capacity()
             {
             uint32_t size = 0;
 
@@ -238,12 +244,12 @@ class RecordPoolAllocator
             return size;
             }
 
-        uint32_t used_object_capacity()
+		size_t used_object_capacity()
             {
             return object_capacity() - free_object_capacity();
             }
 
-        uint32_t bytes_capacity()
+		size_t bytes_capacity()
             {
             return object_capacity() * sizeof(T);
             }
@@ -265,7 +271,7 @@ class RecordPoolAllocator
             MakeFreeSet(free_set);
             for(uint32_t p = 0;p < buffers.size(); p++)
                 {
-                uint32_t buffer_size = (uint32_t)_msize(buffers[p]);
+                size_t buffer_size = sizes[buffers[p]];
                 //in case malloc returned more than the requested amount
                 buffer_size -= buffer_size % sizeof(T);
                 unsigned char *end_of_buffer = buffers[p] + buffer_size;
@@ -317,7 +323,7 @@ class RecordPoolAllocator
             Records.reserve(object_capacity() - free_set.size());
             for(uint32_t p = 0;p < buffers.size(); p++)
                 {
-                uint32_t buffer_size = (uint32_t)_msize(buffers[p]);
+                size_t buffer_size = sizes[buffers[p]];
                 //in case malloc returned more than the requested amount
                 buffer_size -= buffer_size % sizeof(T);
                 unsigned char *end_of_buffer = buffers[p] + buffer_size;
@@ -336,7 +342,7 @@ class RecordPoolAllocator
             uint32_t pos = 0;
             for(uint32_t p = 0;p < buffers.size(); p++)
                 {
-                uint32_t buffer_size = (uint32_t)_msize(buffers[p]);
+                size_t buffer_size = sizes[buffers[p]];
                 //in case malloc returned more than the requested amount
                 buffer_size -= buffer_size % sizeof(T);
                 unsigned char *end_of_buffer = buffers[p] + buffer_size;
@@ -348,11 +354,32 @@ class RecordPoolAllocator
                 }
             }
 
-        void add_buffer(unsigned char *buffer)
+		unsigned char *add_buffer(size_t size)
             {
-            buffers.push_back(buffer);
-            return;
+			unsigned char * buffer = (unsigned char*)malloc(size);
+			if (buffer != NULL) {
+				track_buffer(buffer, size);
+			}
+			return buffer;
             }
+
+		void track_buffer(unsigned char *buffer, size_t size)
+		{
+			buffers.push_back(buffer);
+			sizes[buffer] = bufsize(buffer, size);
+			return;
+		}
+
+		//Env depending bufsize, utilizes msize on win32
+		size_t bufsize(unsigned char *buffer, size_t allocatedSize)
+		{
+#ifdef _WIN32
+			return _msize(buffer);
+#else
+			return allocatedSize;
+#endif
+		}
+
     };
 
 //template<class T, uint32_t AllocUnit>

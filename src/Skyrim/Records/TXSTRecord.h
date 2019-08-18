@@ -34,8 +34,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 #pragma once
-#include "..\..\Common.h"
-#include "..\..\GenericRecord.h"
+#include "../../Common.h"
+#include "../../GenericRecord.h"
 
 namespace Sk
 {
@@ -98,6 +98,7 @@ class TXSTRecord : public TES5Record //Texture Set
         int32_t ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk=false);
         int32_t Unload();
         int32_t WriteRecord(FileWriter &writer);
+		char *GetEditorIDKey() { return EDID.value; }
 
         bool operator ==(const TXSTRecord &other) const;
         bool operator !=(const TXSTRecord &other) const;

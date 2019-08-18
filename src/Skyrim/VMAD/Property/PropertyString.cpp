@@ -53,6 +53,8 @@ void PropertyString::Read(unsigned char *&buffer, const int16_t &version, const 
 
 void PropertyString::Write(FileWriter &writer)
 {
+	//Workaround for a strange bug - type is resetted to 0x00 even though we explicitly set it to 0x01.
+	this->type = eString;
     Property::Write(writer);
     value.Write16(writer);
 }
@@ -112,9 +114,9 @@ void PropertyStringArray::Read(unsigned char *&buffer, const int16_t &version, c
 void PropertyStringArray::Write(FileWriter &writer)
 {
     Property::Write(writer);
-    uint32_t count = size();
-    writer.record_write(&count, sizeof(count));
-    for (uint32_t i = 0; i < count; ++i)
+    size_t count = size();
+    writer.record_write(&count, sizeof(uint32_t));
+    for (size_t i = 0; i < count; ++i)
         (*this)[i].Write16(writer);
 }
 

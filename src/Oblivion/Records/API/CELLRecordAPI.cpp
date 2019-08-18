@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\..\Common.h"
-#include "..\CELLRecord.h"
+#include "../../../Common.h"
+#include "../CELLRecord.h"
 
 namespace Ob
 {
@@ -45,174 +45,174 @@ uint32_t CELLRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
         case 0: //recType
             return GetType();
         case 1: //flags1
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 2: //fid
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 3: //flags2
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 4: //eid
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 5: //full
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 6: //flags
-            return CB_UINT8_FLAG_FIELD;
+            return UINT8_FLAG_FIELD;
         case 7: //ambientRed
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 8: //ambientGreen
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 9: //ambientBlue
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 10: //unused1
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return XCLL.IsLoaded() ? 1 : 0;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 11: //directionalRed
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 12: //directionalGreen
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 13: //directionalBlue
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 14: //unused2
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return XCLL.IsLoaded() ? 1 : 0;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 15: //fogRed
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 16: //fogGreen
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 17: //fogBlue
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 18: //unused3
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return XCLL.IsLoaded() ? 1 : 0;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 19: //fogNear
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 20: //fogFar
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 21: //directionalXY
-            return CB_SINT32_FIELD;
+            return SINT32_FIELD;
         case 22: //directionalZ
-            return CB_SINT32_FIELD;
+            return SINT32_FIELD;
         case 23: //directionalFade
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 24: //fogClip
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 25: //musicType
-            return CB_UINT8_TYPE_FIELD;
+            return UINT8_TYPE_FIELD;
         case 26: //owner
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 27: //rank
-            return CB_SINT32_FIELD;
+            return SINT32_FIELD;
         case 28: //globalVariable
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 29: //climate
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 30: //waterHeight
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 31: //regions
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_FORMID_ARRAY_FIELD;
+                    return FORMID_ARRAY_FIELD;
                 case 1: //fieldSize
                     return (uint32_t)XCLR.value.size();
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 32: //posX
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UNKNOWN_OR_SINT32_FIELD;
+                    return UNKNOWN_OR_SINT32_FIELD;
                 case 2: //WhichType
                     if(!IsInterior())
-                        return CB_SINT32_FIELD;
-                    return CB_UNKNOWN_FIELD;
+                        return SINT32_FIELD;
+                    return UNKNOWN_FIELD;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 33: //posY
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UNKNOWN_OR_SINT32_FIELD;
+                    return UNKNOWN_OR_SINT32_FIELD;
                 case 2: //WhichType
                     if(!IsInterior())
-                        return CB_SINT32_FIELD;
-                    return CB_UNKNOWN_FIELD;
+                        return SINT32_FIELD;
+                    return UNKNOWN_FIELD;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 34: //water
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 35: //ACHR
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_SUBRECORD_ARRAY_FIELD;
+                    return SUBRECORD_ARRAY_FIELD;
                 case 1: //fieldSize
                     return (uint32_t)ACHR.size();
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 36: //ACRE
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_SUBRECORD_ARRAY_FIELD;
+                    return SUBRECORD_ARRAY_FIELD;
                 case 1: //fieldSize
                     return (uint32_t)ACRE.size();
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 37: //REFR
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_SUBRECORD_ARRAY_FIELD;
+                    return SUBRECORD_ARRAY_FIELD;
                 case 1: //fieldSize
                     return (uint32_t)REFR.size();
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 38: //PGRD
-            return CB_SUBRECORD_FIELD;
+            return SUBRECORD_FIELD;
         case 39: //LAND
-            return CB_SUBRECORD_FIELD;
+            return SUBRECORD_FIELD;
         case 40: //Parent
-            return CB_PARENTRECORD_FIELD;
+            return PARENTRECORD_FIELD;
         default:
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         }
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * CELLRecord::GetField(FIELD_IDENTIFIERS, void **FieldValues)

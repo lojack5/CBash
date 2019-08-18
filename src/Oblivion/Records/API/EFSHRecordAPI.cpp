@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\..\Common.h"
-#include "..\EFSHRecord.h"
+#include "../../../Common.h"
+#include "../EFSHRecord.h"
 
 namespace Ob
 {
@@ -45,219 +45,219 @@ uint32_t EFSHRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
         case 0: //recType
             return GetType();
         case 1: //flags1
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 2: //fid
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 3: //flags2
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 4: //eid
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 5: //fillTexturePath
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 6: //particleTexturePath
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 7: //flags
-            return CB_UINT8_FLAG_FIELD;
+            return UINT8_FLAG_FIELD;
         case 8: //unused1
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 3;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 9: //memSBlend
-            return CB_UINT32_FIELD;
+            return UINT32_FIELD;
         case 10: //memBlendOp
-            return CB_UINT32_FIELD;
+            return UINT32_FIELD;
         case 11: //memZFunc
-            return CB_UINT32_FIELD;
+            return UINT32_FIELD;
         case 12: //fillRed
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 13: //fillGreen
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 14: //fillBlue
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 15: //unused2
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 1;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 16: //fillAIn
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 17: //fillAFull
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 18: //fillAOut
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 19: //fillAPRatio
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 20: //fillAAmp
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 21: //fillAFreq
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 22: //fillAnimSpdU
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 23: //fillAnimSpdV
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 24: //edgeOff
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 25: //edgeRed
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 26: //edgeGreen
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 27: //edgeBlue
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 28: //unused3
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 1;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 29: //edgeAIn
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 30: //edgeAFull
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 31: //edgeAOut
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 32: //edgeAPRatio
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 33: //edgeAAmp
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 34: //edgeAFreq
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 35: //fillAFRatio
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 36: //edgeAFRatio
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 37: //memDBlend
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 38: //partSBlend
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 39: //partBlendOp
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 40: //partZFunc
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 41: //partDBlend
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 42: //partBUp
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 43: //partBFull
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 44: //partBDown
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 45: //partBFRatio
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 46: //partBPRatio
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 47: //partLTime
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 48: //partLDelta
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 49: //partNSpd
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 50: //partNAcc
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 51: //partVel1
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 52: //partVel2
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 53: //partVel3
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 54: //partAcc1
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 55: //partAcc2
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 56: //partAcc3
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 57: //partKey1
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 58: //partKey2
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 59: //partKey1Time
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 60: //partKey2Time
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 61: //key1Red
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 62: //key1Green
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 63: //key1Blue
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 64: //unused4
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 1;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 65: //key2Red
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 66: //key2Green
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 67: //key2Blue
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 68: //unused5
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 1;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 69: //key3Red
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 70: //key3Green
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 71: //key3Blue
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 72: //unused6
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 1;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 73: //key1A
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 74: //key2A
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 75: //key3A
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 76: //key1Time
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 77: //key2Time
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 78: //key3Time
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         default:
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         }
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * EFSHRecord::GetField(FIELD_IDENTIFIERS, void **FieldValues)

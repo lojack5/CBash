@@ -33,7 +33,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\Common.h"
+#include "../../Common.h"
 #include "TXSTRecord.h"
 
 namespace Sk
@@ -211,11 +211,8 @@ int32_t TXSTRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                 DNAM.Read(buffer, subSize);
                 break;
             default:
-                //printer("FileName = %s\n", FileName);
-                printer("  TXST: %08X - Unknown subType = %04x\n", formID, subType);
+                CBASH_SUBTYPE_UNKNOWN
                 CBASH_CHUNK_DEBUG
-                printer("  Size = %i\n", subSize);
-                printer("  CurPos = %04x\n\n", buffer - 6);
                 buffer = end_buffer;
                 break;
             }

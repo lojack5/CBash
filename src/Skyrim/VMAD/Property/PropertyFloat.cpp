@@ -52,6 +52,8 @@ void PropertyFloat::Read(unsigned char *&buffer, const int16_t &version, const i
 
 void PropertyFloat::Write(FileWriter &writer)
 {
+	//Workaround for a strange bug - type is resetted to 0x00 even though we explicitly set it to 0x01.
+	this->type = eFloat;
     Property::Write(writer);
     writer.record_write(&value, sizeof(value));
 }
@@ -88,7 +90,7 @@ PropertyFloat & PropertyFloat::operator = (const PropertyFloat &other)
 uint32_t PropertyFloatArray::GetSize() const
 {
     // common + itemCount + items
-    return Property::GetSize() + sizeof(uint32_t) + (size() * sizeof(float));
+    return Property::GetSize() + sizeof(uint32_t) + ((uint32_t)size() * sizeof(float));
 }
 
 void PropertyFloatArray::Read(unsigned char *&buffer, const int16_t &version, const int16_t &objFormat, const bool &CompressedOnDisk)
@@ -104,8 +106,8 @@ void PropertyFloatArray::Read(unsigned char *&buffer, const int16_t &version, co
 void PropertyFloatArray::Write(FileWriter &writer)
 {
     Property::Write(writer);
-    uint32_t count = size();
-    writer.record_write(&count, sizeof(count));
+    size_t count = size();
+    writer.record_write(&count, sizeof(uint32_t));
     writer.record_write(&((*this)[0]), count * sizeof(float));
 }
 

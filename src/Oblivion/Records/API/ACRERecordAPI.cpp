@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\..\Common.h"
-#include "..\ACRERecord.h"
+#include "../../../Common.h"
+#include "../ACRERecord.h"
 
 namespace Ob
 {
@@ -45,73 +45,73 @@ uint32_t ACRERecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
         case 0: //recType
             return GetType();
         case 1: //flags1
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 2: //fid
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 3: //flags2
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 4: //eid
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 5: //base
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 6: //owner
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 7: //rank
-            return CB_SINT32_FIELD;
+            return SINT32_FIELD;
         case 8: //globalVariable
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 9: //lod1
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 10: //lod2
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 11: //lod3
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 12: //parent
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 13: //parentFlags
-            return CB_UINT8_FLAG_FIELD;
+            return UINT8_FLAG_FIELD;
         case 14: //unused1
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return XESP.IsLoaded() ? 3 : 0;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 15: //xrgd_p
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return XRGD.GetSize();
                 default: //fieldType
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 16: //scale
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 17: //posX
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 18: //posY
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 19: //posZ
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 20: //rotX
-            return CB_RADIAN_FIELD;
+            return RADIAN_FIELD;
         case 21: //rotY
-            return CB_RADIAN_FIELD;
+            return RADIAN_FIELD;
         case 22: //rotZ
-            return CB_RADIAN_FIELD;
+            return RADIAN_FIELD;
         case 23: //Parent
-            return CB_PARENTRECORD_FIELD;
+            return PARENTRECORD_FIELD;
         default:
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         }
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * ACRERecord::GetField(FIELD_IDENTIFIERS, void **FieldValues)

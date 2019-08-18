@@ -34,14 +34,14 @@
  *
  * ***** END LICENSE BLOCK ***** */
 #pragma once
-#include "..\..\Common.h"
-#include "..\..\GenericRecord.h"
+#include "../../Common.h"
+#include "../../GenericRecord.h"
 
 namespace Ob
 {
 class QUSTRecord : public Record //Quest
     {
-    private:
+    public:
         struct QUSTDATA
             {
             uint8_t   flags, priority;

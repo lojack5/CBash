@@ -242,11 +242,11 @@ struct Record
         //bool   HasInvalidFormIDs() const;
         //void   HasInvalidFormIDs(bool value);
 
-        virtual int32_t Unload() abstract {};
-        virtual uint32_t GetType() abstract {};
-        virtual char * GetStrType() abstract {};
-        virtual int32_t WriteRecord(FileWriter &writer) abstract {};
-        virtual int32_t ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk=false) abstract {};
+        virtual int32_t Unload() = 0;
+        virtual uint32_t GetType() = 0;
+        virtual char * GetStrType() = 0;
+        virtual int32_t WriteRecord(FileWriter &writer) = 0;
+        virtual int32_t ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk=false) = 0;
 
         virtual uint32_t GetFieldAttribute(DEFAULTED_FIELD_IDENTIFIERS, uint32_t WhichAttribute=0);
         virtual void * GetField(DEFAULTED_FIELD_IDENTIFIERS, void **FieldValues=NULL);
@@ -265,9 +265,10 @@ struct Record
 
         bool         master_equality(Record *master, RecordOp &read_self, RecordOp &read_master, boost::unordered_set<Record *> &identical_records);
         bool         shallow_equals(Record *other);
-        virtual bool equals(Record *other) abstract {};
+        virtual bool equals(Record *other) = 0;
         virtual bool deep_equals(Record *master, RecordOp &read_self, RecordOp &read_master, boost::unordered_set<Record *> &identical_records);
 
+		bool ReadRecord(int32_t sizeDistance);
         bool IsDeleted() const;
         void IsDeleted(bool value);
         bool IsBorderRegion();

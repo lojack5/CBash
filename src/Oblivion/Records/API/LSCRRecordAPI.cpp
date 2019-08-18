@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\..\Common.h"
-#include "..\LSCRRecord.h"
+#include "../../../Common.h"
+#include "../LSCRRecord.h"
 
 namespace Ob
 {
@@ -45,51 +45,51 @@ uint32_t LSCRRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
         case 0: //recType
             return GetType();
         case 1: //flags1
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 2: //fid
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 3: //flags2
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 4: //eid
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 5: //iconPath
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 6: //text
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 7: //locations
             if(ListFieldID == 0) //locations
                 {
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return (uint32_t)LNAM.value.size();
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
                 }
 
             if(ListIndex >= LNAM.value.size())
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             switch(ListFieldID)
                 {
                 case 1: //direct
-                    return CB_FORMID_FIELD;
+                    return FORMID_FIELD;
                 case 2: //indirect
-                    return CB_FORMID_FIELD;
+                    return FORMID_FIELD;
                 case 3: //gridY
-                    return CB_SINT16_FIELD;
+                    return SINT16_FIELD;
                 case 4: //gridX
-                    return CB_SINT16_FIELD;
+                    return SINT16_FIELD;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
         default:
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         }
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * LSCRRecord::GetField(FIELD_IDENTIFIERS, void **FieldValues)

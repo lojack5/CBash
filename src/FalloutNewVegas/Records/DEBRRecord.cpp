@@ -33,7 +33,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\Common.h"
+#include "../../Common.h"
 #include "DEBRRecord.h"
 
 namespace FNV
@@ -87,7 +87,7 @@ bool DEBRRecord::DEBRModel::Read(unsigned char *&buffer, const uint32_t &subSize
 
     uint32_t size = (uint32_t)strlen((char *)buffer) + 1;
     modPath = new char[size];
-    strcpy_s(modPath, size, (char *)buffer);
+    strncpy(modPath, (char *)buffer, size);
     buffer += size;
 
     flags = *(uint8_t *)buffer;
@@ -202,7 +202,7 @@ DEBRRecord::DEBRModels& DEBRRecord::DEBRModels::operator = (const DEBRModels &rh
                     {
                     pathSize = (uint32_t)strlen(rhs.MODS[p]->modPath) + 1;
                     MODS[p]->modPath = new char[pathSize];
-                    strcpy_s(MODS[p]->modPath, pathSize, rhs.MODS[p]->modPath);
+                    strncpy(MODS[p]->modPath, rhs.MODS[p]->modPath, pathSize);
                     }
                 MODS[p]->flags = rhs.MODS[p]->flags;
                 }
@@ -313,7 +313,7 @@ int32_t DEBRRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                 printer("  DEBR: %08X - Unknown subType = %04x\n", formID, subType);
                 CBASH_CHUNK_DEBUG
                 printer("  Size = %i\n", subSize);
-                printer("  CurPos = %04x\n\n", buffer - 6);
+                printer("  CurPos = %08x\n\n", buffer - 6);
                 buffer = end_buffer;
                 break;
             }

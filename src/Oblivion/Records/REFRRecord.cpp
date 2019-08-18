@@ -33,7 +33,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\Common.h"
+#include "../../Common.h"
 #include "REFRRecord.h"
 #include "CELLRecord.h"
 
@@ -884,7 +884,7 @@ int32_t REFRRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                         break;
                     default:
                         printer("  REFR: %08X - Unknown XSED size = %u\n", formID, subSize);
-                        printer("  CurPos = %04x\n\n", buffer - 6);
+                        printer("  CurPos = %08x\n\n", buffer - 6);
                         buffer += subSize;
                         break;
                     }
@@ -916,7 +916,7 @@ int32_t REFRRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                     default:
                         printer("  REFR: %08X - Unexpected FULL chunk\n", formID);
                         printer("  Size = %i\n", subSize);
-                        printer("  CurPos = %04x\n\n", buffer - 6);
+                        printer("  CurPos = %08x\n\n", buffer - 6);
                         buffer += subSize;
                         break;
                     }
@@ -964,7 +964,7 @@ int32_t REFRRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                 printer("  REFR: %08X - Unknown subType = %04x\n", formID, subType);
                 CBASH_CHUNK_DEBUG
                 printer("  Size = %i\n", subSize);
-                printer("  CurPos = %04x\n\n", buffer - 6);
+                printer("  CurPos = %08x\n\n", buffer - 6);
                 buffer = end_buffer;
                 break;
             }

@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\..\Common.h"
-#include "..\ADDNRecord.h"
+#include "../../../Common.h"
+#include "../ADDNRecord.h"
 
 namespace FNV
 {
@@ -45,81 +45,81 @@ uint32_t ADDNRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
         case 0: //recType
             return GetType();
         case 1: //flags1
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 2: //fid
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 3: //versionControl1
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 4;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 4: //eid
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 5: //formVersion
-            return CB_UINT16_FIELD;
+            return UINT16_FIELD;
         case 6: //versionControl2
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 2;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 7: //boundX
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 8: //boundY
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 9: //boundZ
-            return CB_SINT16_FIELD;
+            return SINT16_FIELD;
         case 10: //modPath
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 11: //modb
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 12: //modt_p
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return MODL.IsLoaded() ? MODL->MODT.GetSize() : 0;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 13: //mods Alternate Textures
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
 
         case 16: //modelFlags
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 17: //data Node Index
-            return CB_SINT32_FIELD;
+            return SINT32_FIELD;
         case 18: //snam Sound
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 19: //dnam DNAM ,, Struct
-            return CB_UINT16_FIELD;
+            return UINT16_FIELD;
         case 20: //dnam_p DNAM ,, Struct
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 2;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
         default:
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         }
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * ADDNRecord::GetField(FIELD_IDENTIFIERS, void **FieldValues)

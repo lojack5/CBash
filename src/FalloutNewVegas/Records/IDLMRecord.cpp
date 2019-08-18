@@ -33,7 +33,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\Common.h"
+#include "../../Common.h"
 #include "IDLMRecord.h"
 
 namespace FNV
@@ -179,7 +179,7 @@ int32_t IDLMRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                             printer("  IDLM: %08X - Unexpected IDLC value. Expected (0) and got (%u). IDLC = %u.\n", formID, test, IDLC.value);
                             CBASH_CHUNK_DEBUG
                             printer("  Size = %i\n", subSize);
-                            printer("  CurPos = %04x\n\n", buffer - 6);
+                            printer("  CurPos = %08x\n\n", buffer - 6);
                             }
                         }
                         break;
@@ -187,7 +187,7 @@ int32_t IDLMRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                         printer("  IDLM: %08X - Unexpected IDLC chunk size. Expected (1 or 4) and got (%u)\n", formID, subSize);
                         CBASH_CHUNK_DEBUG
                         printer("  Size = %i\n", subSize);
-                        printer("  CurPos = %04x\n\n", buffer - 6);
+                        printer("  CurPos = %08x\n\n", buffer - 6);
                         buffer += subSize;
                         break;
                     }
@@ -203,7 +203,7 @@ int32_t IDLMRecord::ParseRecord(unsigned char *buffer, unsigned char *end_buffer
                 printer("  IDLM: %08X - Unknown subType = %04x\n", formID, subType);
                 CBASH_CHUNK_DEBUG
                 printer("  Size = %i\n", subSize);
-                printer("  CurPos = %04x\n\n", buffer - 6);
+                printer("  CurPos = %08x\n\n", buffer - 6);
                 buffer = end_buffer;
                 break;
             }

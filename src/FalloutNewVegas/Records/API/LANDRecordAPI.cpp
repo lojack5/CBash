@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\..\Common.h"
-#include "..\LANDRecord.h"
+#include "../../../Common.h"
+#include "../LANDRecord.h"
 
 namespace FNV
 {
@@ -48,57 +48,57 @@ uint32_t LANDRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
         case 0: //recType
             return GetType();
         case 1: //flags1
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 2: //fid
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 3: //versionControl1
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 4;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 4: //eid
-            return CB_MISSING_FIELD;
+            return MISSING_FIELD;
         case 5: //formVersion
-            return CB_UINT16_FIELD;
+            return UINT16_FIELD;
         case 6: //versionControl2
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 2;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 7: //data
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return DATA.GetSize();
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 8: //normals
             if(ListFieldID == 0) //normals
                 {
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return ListIndex < 33 ? 33 : 0;
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
                 }
 
@@ -107,45 +107,45 @@ uint32_t LANDRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return ListIndex < 33 ? 33 : 0;
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
                 }
 
             if(ListIndex >= 33)
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             if(ListX2Index >= 33)
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             switch(ListX2FieldID)
                 {
                 case 1: //x
-                    return CB_UINT8_FIELD;
+                    return UINT8_FIELD;
                 case 2: //y
-                    return CB_UINT8_FIELD;
+                    return UINT8_FIELD;
                 case 3: //z
-                    return CB_UINT8_FIELD;
+                    return UINT8_FIELD;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 9: //heightOffset
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 10: //heights
             if(ListFieldID == 0) //heights
                 {
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return ListIndex < 33 ? 33 : 0;
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
                 }
 
@@ -154,50 +154,50 @@ uint32_t LANDRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return ListIndex < 33 ? 33 : 0;
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
                 }
 
             if(ListIndex >= 33)
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             if(ListX2Index >= 33)
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             switch(ListX2FieldID)
                 {
                 case 1: //height
-                    return CB_SINT8_FIELD;
+                    return SINT8_FIELD;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 11: //unused1
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return VHGT.IsLoaded() ? 3 : 0;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 12: //colors
             if(ListFieldID == 0) //colors
                 {
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return ListIndex < 33 ? 33 : 0;
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
                 }
 
@@ -206,182 +206,182 @@ uint32_t LANDRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return ListIndex < 33 ? 33 : 0;
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
                 }
 
             if(ListIndex >= 33)
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             if(ListX2Index >= 33)
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             switch(ListX2FieldID)
                 {
                 case 1: //red
-                    return CB_UINT8_FIELD;
+                    return UINT8_FIELD;
                 case 2: //green
-                    return CB_UINT8_FIELD;
+                    return UINT8_FIELD;
                 case 3: //blue
-                    return CB_UINT8_FIELD;
+                    return UINT8_FIELD;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 13: //baseTextures
             if(ListFieldID == 0) //baseTextures
                 {
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return (uint32_t)BTXT.value.size();
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
                 }
 
             if(ListIndex >= BTXT.value.size())
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             switch(ListFieldID)
                 {
                 case 1: //texture
-                    return CB_FORMID_FIELD;
+                    return FORMID_FIELD;
                 case 2: //quadrant
-                    return CB_SINT8_FIELD;
+                    return SINT8_FIELD;
                 case 3: //unused1
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_UINT8_ARRAY_FIELD;
+                            return UINT8_ARRAY_FIELD;
                         case 1: //fieldSize
                             return 1;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
                 case 4: //layer
-                    return CB_SINT16_FIELD;
+                    return SINT16_FIELD;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 14: //alphaLayers
             if(ListFieldID == 0) //alphaLayers
                 {
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return (uint32_t)Layers.value.size();
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
                 }
 
             if(ListIndex >= Layers.value.size())
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             switch(ListFieldID)
                 {
                 case 1: //texture
-                    return CB_FORMID_FIELD;
+                    return FORMID_FIELD;
                 case 2: //quadrant
-                    return CB_SINT8_FIELD;
+                    return SINT8_FIELD;
                 case 3: //unused1
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_UINT8_ARRAY_FIELD;
+                            return UINT8_ARRAY_FIELD;
                         case 1: //fieldSize
                             return 1;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
                 case 4: //layer
-                    return CB_SINT16_FIELD;
+                    return SINT16_FIELD;
                 case 5: //opacities
                     if(ListX2FieldID == 0) //opacities
                         {
                         switch(WhichAttribute)
                             {
                             case 0: //fieldType
-                                return CB_LIST_FIELD;
+                                return LIST_FIELD;
                             case 1: //fieldSize
                                 return (uint32_t)Layers.value[ListIndex]->VTXT.value.size();
                             default:
-                                return CB_UNKNOWN_FIELD;
+                                return UNKNOWN_FIELD;
                             }
                         }
 
                     if(ListX2Index >= Layers.value[ListIndex]->VTXT.value.size())
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
 
                     switch(ListX2FieldID)
                         {
                         case 1: //position
-                            return CB_UINT16_FIELD;
+                            return UINT16_FIELD;
                         case 2: //unused1
                             switch(WhichAttribute)
                                 {
                                 case 0: //fieldType
-                                    return CB_UINT8_ARRAY_FIELD;
+                                    return UINT8_ARRAY_FIELD;
                                 case 1: //fieldSize
                                     return 2;
                                 default:
-                                    return CB_UNKNOWN_FIELD;
+                                    return UNKNOWN_FIELD;
                                 }
                         case 3: //opacity
-                            return CB_FLOAT32_FIELD;
+                            return FLOAT32_FIELD;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 15: //vertexTextures
             if(ListFieldID == 0) //vertexTextures
                 {
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return (uint32_t)VTEX.value.size();
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
                 }
 
             if(ListIndex >= VTEX.value.size())
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             switch(ListFieldID)
                 {
                 case 1: //texture
-                    return CB_FORMID_FIELD;
+                    return FORMID_FIELD;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 16: //Position
             if(ListFieldID == 0) //Position
                 {
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return ListIndex < 33 ? 33 : 0;
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
                 }
 
@@ -390,79 +390,79 @@ uint32_t LANDRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return ListIndex < 33 ? 33 : 0;
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
                 }
 
             if(ListIndex >= 33)
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             if(ListX2Index >= 33)
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             switch(ListX2FieldID)
                 {
                 case 1: //height
-                    return CB_FLOAT32_FIELD;
+                    return FLOAT32_FIELD;
                 case 2: //normalX
-                    return CB_UINT8_FIELD;
+                    return UINT8_FIELD;
                 case 3: //normalY
-                    return CB_UINT8_FIELD;
+                    return UINT8_FIELD;
                 case 4: //normalZ
-                    return CB_UINT8_FIELD;
+                    return UINT8_FIELD;
                 case 5: //red
-                    return CB_UINT8_FIELD;
+                    return UINT8_FIELD;
                 case 6: //green
-                    return CB_UINT8_FIELD;
+                    return UINT8_FIELD;
                 case 7: //blue
-                    return CB_UINT8_FIELD;
+                    return UINT8_FIELD;
                 case 8: //baseTexture
-                    return CB_FORMID_FIELD;
+                    return FORMID_FIELD;
                 case 9: //alphaLayer1Texture
-                    return CB_FORMID_FIELD;
+                    return FORMID_FIELD;
                 case 10: //alphaLayer1Opacity
-                    return CB_FLOAT32_FIELD;
+                    return FLOAT32_FIELD;
                 case 11: //alphaLayer2Texture
-                    return CB_FORMID_FIELD;
+                    return FORMID_FIELD;
                 case 12: //alphaLayer2Opacity
-                    return CB_FLOAT32_FIELD;
+                    return FLOAT32_FIELD;
                 case 13: //alphaLayer3Texture
-                    return CB_FORMID_FIELD;
+                    return FORMID_FIELD;
                 case 14: //alphaLayer3Opacity
-                    return CB_FLOAT32_FIELD;
+                    return FLOAT32_FIELD;
                 case 15: //alphaLayer4Texture
-                    return CB_FORMID_FIELD;
+                    return FORMID_FIELD;
                 case 16: //alphaLayer4Opacity
-                    return CB_FLOAT32_FIELD;
+                    return FLOAT32_FIELD;
                 case 17: //alphaLayer5Texture
-                    return CB_FORMID_FIELD;
+                    return FORMID_FIELD;
                 case 18: //alphaLayer5Opacity
-                    return CB_FLOAT32_FIELD;
+                    return FLOAT32_FIELD;
                 case 19: //alphaLayer6Texture
-                    return CB_FORMID_FIELD;
+                    return FORMID_FIELD;
                 case 20: //alphaLayer6Opacity
-                    return CB_FLOAT32_FIELD;
+                    return FLOAT32_FIELD;
                 case 21: //alphaLayer7Texture
-                    return CB_FORMID_FIELD;
+                    return FORMID_FIELD;
                 case 22: //alphaLayer7Opacity
-                    return CB_FLOAT32_FIELD;
+                    return FLOAT32_FIELD;
                 case 23: //alphaLayer8Texture
-                    return CB_FORMID_FIELD;
+                    return FORMID_FIELD;
                 case 24: //alphaLayer8Opacity
-                    return CB_FLOAT32_FIELD;
+                    return FLOAT32_FIELD;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
         case 17: //Parent
-            return CB_PARENTRECORD_FIELD;
+            return PARENTRECORD_FIELD;
         default:
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         }
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * LANDRecord::GetField(FIELD_IDENTIFIERS, void **FieldValues)

@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\..\Common.h"
-#include "..\REFRRecord.h"
+#include "../../../Common.h"
+#include "../REFRRecord.h"
 
 namespace Ob
 {
@@ -45,165 +45,165 @@ uint32_t REFRRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
         case 0: //recType
             return GetType();
         case 1: //flags1
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 2: //fid
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 3: //flags2
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 4: //eid
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 5: //base
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 6: //destination
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 7: //destinationPosX
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 8: //destinationPosY
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 9: //destinationPosZ
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 10: //destinationRotX
-            return CB_RADIAN_FIELD;
+            return RADIAN_FIELD;
         case 11: //destinationRotY
-            return CB_RADIAN_FIELD;
+            return RADIAN_FIELD;
         case 12: //destinationRotZ
-            return CB_RADIAN_FIELD;
+            return RADIAN_FIELD;
         case 13: //lockLevel
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 14: //unused1
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return Data.IsLoaded() && Data->XLOC.IsLoaded() ? 3: 0;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 15: //lockKey
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 16: //unused2
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return Data.IsLoaded() && Data->XLOC.IsLoaded() ? 4: 0;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 17: //lockFlags
-            return CB_UINT8_FLAG_FIELD;
+            return UINT8_FLAG_FIELD;
         case 18: //unused3
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return Data.IsLoaded() && Data->XLOC.IsLoaded() ? 3: 0;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 19: //owner
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 20: //rank
-            return CB_SINT32_FIELD;
+            return SINT32_FIELD;
         case 21: //globalVariable
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 22: //parent
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 23: //parentFlags
-            return CB_UINT8_FLAG_FIELD;
+            return UINT8_FLAG_FIELD;
         case 24: //unused4
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return Data.IsLoaded() && Data->XESP.IsLoaded() ? 3: 0;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 25: //target
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 26: //seed
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_OR_UINT32_FIELD;
+                    return UINT8_OR_UINT32_FIELD;
                 case 2: //WhichType
                     if(Data.IsLoaded() && Data->XSED.IsLoaded())
-                        return Data->XSED->isOffset ? CB_UINT8_FIELD : CB_UINT32_FIELD;
-                    return CB_UINT32_FIELD;
+                        return Data->XSED->isOffset ? UINT8_FIELD : UINT32_FIELD;
+                    return UINT32_FIELD;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 27: //lod1
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 28: //lod2
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 29: //lod3
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 30: //charge
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 31: //health
-            return CB_SINT32_FIELD;
+            return SINT32_FIELD;
         case 32: //unknownXPCIFormID
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 33: //unknownXPCIString
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 34: //levelMod
-            return CB_SINT32_FIELD;
+            return SINT32_FIELD;
         case 35: //unknownXRTMFormID
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 36: //actionFlags
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 37: //count
-            return CB_SINT32_FIELD;
+            return SINT32_FIELD;
         case 38: //markerFlags
-            return CB_UINT8_FLAG_FIELD;
+            return UINT8_FLAG_FIELD;
         case 39: //markerName
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 40: //markerType
-            return CB_UINT8_TYPE_FIELD;
+            return UINT8_TYPE_FIELD;
         case 41: //markerUnused
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return Data.IsLoaded() && Data->Marker.IsLoaded() ? 1: 0;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 42: //scale
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 43: //soulType
-            return CB_UINT8_TYPE_FIELD;
+            return UINT8_TYPE_FIELD;
         case 44: //posX
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 45: //posY
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 46: //posZ
-            return CB_FLOAT32_FIELD;
+            return FLOAT32_FIELD;
         case 47: //rotX
-            return CB_RADIAN_FIELD;
+            return RADIAN_FIELD;
         case 48: //rotY
-            return CB_RADIAN_FIELD;
+            return RADIAN_FIELD;
         case 49: //rotZ
-            return CB_RADIAN_FIELD;
+            return RADIAN_FIELD;
         case 50: //Parent
-            return CB_PARENTRECORD_FIELD;
+            return PARENTRECORD_FIELD;
         default:
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         }
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * REFRRecord::GetField(FIELD_IDENTIFIERS, void **FieldValues)

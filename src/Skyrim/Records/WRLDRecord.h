@@ -34,8 +34,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 #pragma once
-#include "..\..\Common.h"
-#include "..\..\GenericRecord.h"
+#include "../../Common.h"
+#include "../../GenericRecord.h"
 
 namespace Sk
 {
@@ -68,7 +68,8 @@ class WRLDRecord : public TES5Record //Worldspace
         StringRecord EDID; //Editor ID
         StringRecord FULL; //Name
         OptSimpleSubRecord<FORMID> XEZN; //Encounter Zone
-        OptSimpleSubRecord<FORMID> WNAM; //Parent Worldspace
+		OptSimpleSubRecord<FORMID> XLCN; //Unknown (Skyrim) -> LCTN
+		OptSimpleSubRecord<FORMID> WNAM; //Parent Worldspace
         OptSimpleSubRecord<uint16_t> PNAM; //Parent Flags
         OptSimpleSubRecord<FORMID> CNAM; //Climate
         ReqSimpleSubRecord<FORMID, 0x18> NAM2; //Water
@@ -91,6 +92,7 @@ class WRLDRecord : public TES5Record //Worldspace
         RawRecord OFST; //Unknown
         RawRecord RNAM; //Unknown (Skyrim)
         RawRecord NAMA; //Unknown (Skyrim)
+		OptSubRecord<FNVWORLDMODEL> MODL; // Model
         StringRecord TNAM; //Texture Filename (Skyrim)
         StringRecord UNAM; //Normal Texture Filename (Skyrim)
 
@@ -155,6 +157,7 @@ class WRLDRecord : public TES5Record //Worldspace
         int32_t ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk=false);
         int32_t Unload();
         int32_t WriteRecord(FileWriter &writer);
+		char *GetEditorIDKey() { return EDID.value; }
 
         bool operator ==(const WRLDRecord &other) const;
         bool operator !=(const WRLDRecord &other) const;

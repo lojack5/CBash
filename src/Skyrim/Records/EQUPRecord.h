@@ -35,7 +35,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 #pragma once
-#include "..\..\GenericRecord.h"
+#include "../../GenericRecord.h"
 
 
 namespace Sk {
@@ -65,6 +65,7 @@ class EQUPRecord : public TES5Record // Word of Power Record
         int32_t ParseRecord(unsigned char *buffer, unsigned char *end_buffer, bool CompressedOnDisk=false);
         int32_t Unload();
         int32_t WriteRecord(FileWriter &writer);
+		char *GetEditorIDKey() { return EDID.value; }
 
         bool operator ==(const EQUPRecord &other) const;
         bool operator !=(const EQUPRecord &other) const;

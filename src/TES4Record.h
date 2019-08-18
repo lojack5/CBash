@@ -58,7 +58,7 @@ class TES4Record : public Record
 
     public:
         // Common
-        cb_game_type_t whichGame;
+        whichGameTypes whichGame;
         ReqSubRecord<TES4HEDR> HEDR; //Header
         RawRecord OFST; //Unknown
         RawRecord DELE; //Unknown
@@ -103,6 +103,7 @@ class TES4Record : public Record
         int32_t Unload();
         int32_t WriteRecord(FileWriter &writer);
         uint32_t Write(FileWriter &writer, const bool &bMastersChanged, FormIDResolver &expander, FormIDResolver &collapser, std::vector<FormIDResolver *> &Expanders);
+		bool   Read();
 
         bool operator ==(const TES4Record &other) const;
         bool operator !=(const TES4Record &other) const;

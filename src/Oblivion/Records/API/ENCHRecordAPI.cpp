@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-#include "..\..\..\Common.h"
-#include "..\ENCHRecord.h"
+#include "../../../Common.h"
+#include "../ENCHRecord.h"
 
 namespace Ob
 {
@@ -45,50 +45,50 @@ uint32_t ENCHRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
         case 0: //recType
             return GetType();
         case 1: //flags1
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 2: //fid
-            return CB_FORMID_FIELD;
+            return FORMID_FIELD;
         case 3: //flags2
-            return CB_UINT32_FLAG_FIELD;
+            return UINT32_FLAG_FIELD;
         case 4: //eid
-            return CB_ISTRING_FIELD;
+            return ISTRING_FIELD;
         case 5: //full
-            return CB_STRING_FIELD;
+            return STRING_FIELD;
         case 6: //itemType
-            return CB_UINT32_TYPE_FIELD;
+            return UINT32_TYPE_FIELD;
         case 7: //chargeAmount
-            return CB_UINT32_FIELD;
+            return UINT32_FIELD;
         case 8: //enchantCost
-            return CB_UINT32_FIELD;
+            return UINT32_FIELD;
         case 9: //flags
-            return CB_UINT8_FLAG_FIELD;
+            return UINT8_FLAG_FIELD;
         case 10: //unused1
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return 3;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 11: //effects
             if(ListFieldID == 0) //effects
                 {
                 switch(WhichAttribute)
                     {
                     case 0: //fieldType
-                        return CB_LIST_FIELD;
+                        return LIST_FIELD;
                     case 1: //fieldSize
                         return (uint32_t)Effects.value.size();
                     default:
-                        return CB_UNKNOWN_FIELD;
+                        return UNKNOWN_FIELD;
                     }
                 }
 
             if(ListIndex >= Effects.value.size())
-                return CB_UNKNOWN_FIELD;
+                return UNKNOWN_FIELD;
 
             switch(ListFieldID)
                 {
@@ -97,203 +97,203 @@ uint32_t ENCHRecord::GetFieldAttribute(FIELD_IDENTIFIERS, uint32_t WhichAttribut
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_MGEFCODE_OR_CHAR4_FIELD;
+                            return MGEFCODE_OR_CHAR4_FIELD;
                         case 2: //WhichType
                             if(Effects.value[ListIndex]->OBME.IsLoaded())
-                                return Effects.value[ListIndex]->EFID.value >= 0x80000000 ? CB_RESOLVED_MGEFCODE_FIELD : CB_STATIC_MGEFCODE_FIELD;
+                                return Effects.value[ListIndex]->EFID.value >= 0x80000000 ? RESOLVED_MGEFCODE_FIELD : STATIC_MGEFCODE_FIELD;
                             else
-                                return CB_CHAR4_FIELD;
+                                return CHAR4_FIELD;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
                 case 3: //magnitude
-                    return CB_UINT32_FIELD;
+                    return UINT32_FIELD;
                 case 4: //area
-                    return CB_UINT32_FIELD;
+                    return UINT32_FIELD;
                 case 5: //duration
-                    return CB_UINT32_FIELD;
+                    return UINT32_FIELD;
                 case 6: //rangeType
-                    return CB_UINT32_FIELD;
+                    return UINT32_FIELD;
                 case 7: //actorValue
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_FORMID_OR_MGEFCODE_OR_ACTORVALUE_OR_UINT32_FIELD;
+                            return FORMID_OR_MGEFCODE_OR_ACTORVALUE_OR_UINT32_FIELD;
                         case 2: //WhichType
                             if(Effects.value[ListIndex]->OBME.IsLoaded())
                                 {
                                 switch(Effects.value[ListIndex]->OBME->EFME.value.efitParamInfo)
                                     {
                                     case 1: //It's a regular formID, so nothing fancy.
-                                        return CB_FORMID_FIELD;
+                                        return FORMID_FIELD;
                                     case 2: //It's a mgefCode, and not a formID at all.
                                         //Conditional resolution of mgefCode's based on JRoush's OBME mod
                                         //It's resolved just like a formID, except it uses the lower byte instead of the upper
-                                        return Effects.value[ListIndex]->EFIT.value.actorValue >= 0x80000000 ? CB_RESOLVED_MGEFCODE_FIELD : CB_STATIC_MGEFCODE_FIELD;
+                                        return Effects.value[ListIndex]->EFIT.value.actorValue >= 0x80000000 ? RESOLVED_MGEFCODE_FIELD : STATIC_MGEFCODE_FIELD;
                                     case 3: //It's an actor value, and not a formID at all.
                                         //Conditional resolution of av's based on JRoush's OBME/AV mod(s)
                                         //It's resolved just like a formID
-                                        return Effects.value[ListIndex]->EFIT.value.actorValue >= 0x800 ? CB_RESOLVED_ACTORVALUE_FIELD : CB_STATIC_ACTORVALUE_FIELD;
+                                        return Effects.value[ListIndex]->EFIT.value.actorValue >= 0x800 ? RESOLVED_ACTORVALUE_FIELD : STATIC_ACTORVALUE_FIELD;
                                     default: //It's not a formID, mgefCode, or fancied up actor value
                                         //so do nothing
-                                        return CB_UINT32_FIELD;
+                                        return UINT32_FIELD;
                                     }
                                 }
                             else
-                                return CB_STATIC_ACTORVALUE_FIELD;
+                                return STATIC_ACTORVALUE_FIELD;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
                 case 8: //script
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_FORMID_OR_MGEFCODE_OR_ACTORVALUE_OR_UINT32_FIELD;
+                            return FORMID_OR_MGEFCODE_OR_ACTORVALUE_OR_UINT32_FIELD;
                         case 2: //WhichType
                             if(Effects.value[ListIndex]->OBME.IsLoaded() && Effects.value[ListIndex]->SCIT.IsLoaded())
                                 {
                                 switch(Effects.value[ListIndex]->OBME->EFME.value.efixParamInfo)
                                     {
                                     case 1: //It's a regular formID, so nothing fancy.
-                                        return CB_FORMID_FIELD;
+                                        return FORMID_FIELD;
                                     case 2: //It's a mgefCode, and not a formID at all.
                                         //Conditional resolution of mgefCode's based on JRoush's OBME mod
                                         //It's resolved just like a formID, except it uses the lower byte instead of the upper
-                                        return Effects.value[ListIndex]->SCIT->script >= 0x80000000 ? CB_RESOLVED_MGEFCODE_FIELD : CB_STATIC_MGEFCODE_FIELD;
+                                        return Effects.value[ListIndex]->SCIT->script >= 0x80000000 ? RESOLVED_MGEFCODE_FIELD : STATIC_MGEFCODE_FIELD;
                                     case 3: //It's an actor value, and not a formID at all.
                                         //Conditional resolution of av's based on JRoush's OBME/AV mod(s)
                                         //It's resolved just like a formID
-                                        return Effects.value[ListIndex]->SCIT->script >= 0x800 ? CB_RESOLVED_ACTORVALUE_FIELD : CB_STATIC_ACTORVALUE_FIELD;
+                                        return Effects.value[ListIndex]->SCIT->script >= 0x800 ? RESOLVED_ACTORVALUE_FIELD : STATIC_ACTORVALUE_FIELD;
                                     default: //It's not a formID, mgefCode, or fancied up actor value
                                         //so do nothing
-                                        return CB_UINT32_FIELD;
+                                        return UINT32_FIELD;
                                     }
                                 }
                             else
-                                return CB_FORMID_FIELD;
+                                return FORMID_FIELD;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
                 case 9: //school
-                    return CB_UINT32_TYPE_FIELD;
+                    return UINT32_TYPE_FIELD;
                 case 10: //visual
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_MGEFCODE_OR_CHAR4_FIELD;
+                            return MGEFCODE_OR_CHAR4_FIELD;
                         case 2: //WhichType
                             if(Effects.value[ListIndex]->OBME.IsLoaded() && Effects.value[ListIndex]->SCIT.IsLoaded())
-                                return ((Effects.value[ListIndex]->SCIT->visual >= 0x80000000) ? CB_RESOLVED_MGEFCODE_FIELD : CB_STATIC_MGEFCODE_FIELD);
+                                return ((Effects.value[ListIndex]->SCIT->visual >= 0x80000000) ? RESOLVED_MGEFCODE_FIELD : STATIC_MGEFCODE_FIELD);
                             else
-                                return CB_CHAR4_FIELD;
+                                return CHAR4_FIELD;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
                 case 11: //flags
-                    return CB_UINT8_FLAG_FIELD;
+                    return UINT8_FLAG_FIELD;
                 case 12: //unused1
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_UINT8_ARRAY_FIELD;
+                            return UINT8_ARRAY_FIELD;
                         case 1: //fieldSize
                             return Effects.value[ListIndex]->SCIT.IsLoaded() ? 3 : 0;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
                 case 13: //full
-                    return CB_STRING_FIELD;
+                    return STRING_FIELD;
                 //OBME Fields
                 case 14: //recordVersion
-                    return CB_UINT8_FIELD;
+                    return UINT8_FIELD;
                 case 15: //betaVersion
-                    return CB_UINT8_FIELD;
+                    return UINT8_FIELD;
                 case 16: //minorVersion
-                    return CB_UINT8_FIELD;
+                    return UINT8_FIELD;
                 case 17: //majorVersion
-                    return CB_UINT8_FIELD;
+                    return UINT8_FIELD;
                 case 18: //efitParamInfo
-                    return CB_UINT8_FIELD;
+                    return UINT8_FIELD;
                 case 19: //efixParamInfo
-                    return CB_UINT8_FIELD;
+                    return UINT8_FIELD;
                 case 20: //reserved1
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_UINT8_ARRAY_FIELD;
+                            return UINT8_ARRAY_FIELD;
                         case 1: //fieldSize
                             return Effects.value[ListIndex]->OBME.IsLoaded() ? 0xA : 0;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
                 case 21: //iconPath
-                    return CB_ISTRING_FIELD;
+                    return ISTRING_FIELD;
                 case 22: //efixOverrides
-                    return CB_UINT32_FLAG_FIELD;
+                    return UINT32_FLAG_FIELD;
                 case 23: //efixFlags
-                    return CB_UINT32_FLAG_FIELD;
+                    return UINT32_FLAG_FIELD;
                 case 24: //baseCost
-                    return CB_FLOAT32_FIELD;
+                    return FLOAT32_FIELD;
                 case 25: //resistAV
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_ACTORVALUE_FIELD;
+                            return ACTORVALUE_FIELD;
                         case 2: //WhichType
                             if(Effects.value[ListIndex]->OBME.IsLoaded() && Effects.value[ListIndex]->OBME->EFIX.IsLoaded())
-                                return Effects.value[ListIndex]->OBME->EFIX->resistAV >= 0x800 ? CB_RESOLVED_ACTORVALUE_FIELD : CB_STATIC_ACTORVALUE_FIELD;
+                                return Effects.value[ListIndex]->OBME->EFIX->resistAV >= 0x800 ? RESOLVED_ACTORVALUE_FIELD : STATIC_ACTORVALUE_FIELD;
                             else
-                                return CB_UNKNOWN_FIELD;
+                                return UNKNOWN_FIELD;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
                 case 26: //reserved2
                     switch(WhichAttribute)
                         {
                         case 0: //fieldType
-                            return CB_UINT8_ARRAY_FIELD;
+                            return UINT8_ARRAY_FIELD;
                         case 1: //fieldSize
                             return Effects.value[ListIndex]->OBME.IsLoaded() && Effects.value[ListIndex]->OBME->EFIX.IsLoaded() ? 0x10 : 0;
                         default:
-                            return CB_UNKNOWN_FIELD;
+                            return UNKNOWN_FIELD;
                         }
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
         //OBME Fields
         case 12: //recordVersion
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 13: //betaVersion
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 14: //minorVersion
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 15: //majorVersion
-            return CB_UINT8_FIELD;
+            return UINT8_FIELD;
         case 16: //reserved
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return OBME.IsLoaded() ? 0x1C : 0;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         case 17: //datx_p
             switch(WhichAttribute)
                 {
                 case 0: //fieldType
-                    return CB_UINT8_ARRAY_FIELD;
+                    return UINT8_ARRAY_FIELD;
                 case 1: //fieldSize
                     return (OBME.IsLoaded() && OBME->DATX.IsLoaded()) ? 0x20 : 0;
                 default:
-                    return CB_UNKNOWN_FIELD;
+                    return UNKNOWN_FIELD;
                 }
         default:
-            return CB_UNKNOWN_FIELD;
+            return UNKNOWN_FIELD;
         }
-    return CB_UNKNOWN_FIELD;
+    return UNKNOWN_FIELD;
     }
 
 void * ENCHRecord::GetField(FIELD_IDENTIFIERS, void **FieldValues)

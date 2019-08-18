@@ -45,6 +45,8 @@ class FormIDOp;
 class Script
 {
 public:
+
+    //Should be NonNullStringRecord
     NonNullStringRecord name;
     uint8_t status;
     std::vector<Property *> properties;

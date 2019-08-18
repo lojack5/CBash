@@ -162,19 +162,17 @@ class FNVGRUPRecords<FNV::DIALRecord, RecType, AllocUnit, IsKeyedByEditorID>
                 unsigned char *dial_buffer = NULL;
                 if(numDIAL)
                     {
-                    dial_buffer = (unsigned char *)malloc(sizeof(FNV::DIALRecord) * numDIAL);
+                    dial_buffer = (unsigned char *)dial_pool.add_buffer(sizeof(FNV::DIALRecord) * numDIAL);
                     if(dial_buffer == 0)
                         throw std::bad_alloc();
-                    dial_pool.add_buffer(dial_buffer);
                     }
 
                 unsigned char *info_buffer = NULL;
                 if(numINFO)
                     {
-                    info_buffer = (unsigned char *)malloc(sizeof(FNV::INFORecord) * numINFO);
+                    info_buffer = (unsigned char *)info_pool.add_buffer(sizeof(FNV::INFORecord) * numINFO);
                     if(info_buffer == 0)
                         throw std::bad_alloc();
-                    info_pool.add_buffer(info_buffer);
                     }
 
                 last_record = orphaned_records = new FNV::DIALRecord();
@@ -467,91 +465,81 @@ class FNVGRUPRecords<FNV::CELLRecord, RecType, AllocUnit, IsKeyedByEditorID>
                 unsigned char *cell_buffer = NULL;
                 if(numCELL)
                     {
-                    cell_buffer = (unsigned char *)malloc(sizeof(FNV::CELLRecord) * numCELL);
+                    cell_buffer = (unsigned char *)cell_pool.add_buffer(sizeof(FNV::CELLRecord) * numCELL);
                     if(cell_buffer == 0)
                         throw std::bad_alloc();
-                    cell_pool.add_buffer(cell_buffer);
                     }
 
                 unsigned char *achr_buffer = NULL;
                 if(numACHR)
                     {
-                    achr_buffer = (unsigned char *)malloc(sizeof(FNV::ACHRRecord) * numACHR);
+                    achr_buffer = (unsigned char *)achr_pool.add_buffer(sizeof(FNV::ACHRRecord) * numACHR);
                     if(achr_buffer == 0)
                         throw std::bad_alloc();
-                    achr_pool.add_buffer(achr_buffer);
                     }
 
                 unsigned char *acre_buffer = NULL;
                 if(numACRE)
                     {
-                    acre_buffer = (unsigned char *)malloc(sizeof(FNV::ACRERecord) * numACRE);
+                    acre_buffer = (unsigned char *)acre_pool.add_buffer(sizeof(FNV::ACRERecord) * numACRE);
                     if(acre_buffer == 0)
                         throw std::bad_alloc();
-                    acre_pool.add_buffer(acre_buffer);
                     }
 
                 unsigned char *refr_buffer = NULL;
                 if(numREFR)
                     {
-                    refr_buffer = (unsigned char *)malloc(sizeof(FNV::REFRRecord) * numREFR);
+                    refr_buffer = (unsigned char *)refr_pool.add_buffer(sizeof(FNV::REFRRecord) * numREFR);
                     if(refr_buffer == 0)
                         throw std::bad_alloc();
-                    refr_pool.add_buffer(refr_buffer);
                     }
 
                 unsigned char *pgre_buffer = NULL;
                 if(numPGRE)
                     {
-                    pgre_buffer = (unsigned char *)malloc(sizeof(FNV::PGRERecord) * numPGRE);
+                    pgre_buffer = (unsigned char *)pgre_pool.add_buffer(sizeof(FNV::PGRERecord) * numPGRE);
                     if(pgre_buffer == 0)
                         throw std::bad_alloc();
-                    pgre_pool.add_buffer(pgre_buffer);
                     }
 
                 unsigned char *pmis_buffer = NULL;
                 if(numPMIS)
                     {
-                    pmis_buffer = (unsigned char *)malloc(sizeof(FNV::PMISRecord) * numPMIS);
+                    pmis_buffer = (unsigned char *)pmis_pool.add_buffer(sizeof(FNV::PMISRecord) * numPMIS);
                     if(pmis_buffer == 0)
                         throw std::bad_alloc();
-                    pmis_pool.add_buffer(pmis_buffer);
                     }
 
                 unsigned char *pbea_buffer = NULL;
                 if(numPBEA)
                     {
-                    pbea_buffer = (unsigned char *)malloc(sizeof(FNV::PBEARecord) * numPBEA);
+                    pbea_buffer = (unsigned char *)pbea_pool.add_buffer(sizeof(FNV::PBEARecord) * numPBEA);
                     if(pbea_buffer == 0)
                         throw std::bad_alloc();
-                    pbea_pool.add_buffer(pbea_buffer);
                     }
 
                 unsigned char *pfla_buffer = NULL;
                 if(numPFLA)
                     {
-                    pfla_buffer = (unsigned char *)malloc(sizeof(FNV::PFLARecord) * numPFLA);
+                    pfla_buffer = (unsigned char *)pfla_pool.add_buffer(sizeof(FNV::PFLARecord) * numPFLA);
                     if(pfla_buffer == 0)
                         throw std::bad_alloc();
-                    pfla_pool.add_buffer(pfla_buffer);
                     }
 
                 unsigned char *pcbe_buffer = NULL;
                 if(numPCBE)
                     {
-                    pcbe_buffer = (unsigned char *)malloc(sizeof(FNV::PCBERecord) * numPCBE);
+                    pcbe_buffer = (unsigned char *)pcbe_pool.add_buffer(sizeof(FNV::PCBERecord) * numPCBE);
                     if(pcbe_buffer == 0)
                         throw std::bad_alloc();
-                    pcbe_pool.add_buffer(pcbe_buffer);
                     }
 
                 unsigned char *navm_buffer = NULL;
                 if(numNAVM)
                     {
-                    navm_buffer = (unsigned char *)malloc(sizeof(FNV::NAVMRecord) * numNAVM);
+                    navm_buffer = (unsigned char *)navm_pool.add_buffer(sizeof(FNV::NAVMRecord) * numNAVM);
                     if(navm_buffer == 0)
                         throw std::bad_alloc();
-                    navm_pool.add_buffer(navm_buffer);
                     }
 
                 last_record = orphaned_records = new FNV::CELLRecord();
@@ -1264,109 +1252,97 @@ class FNVGRUPRecords<FNV::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
                 unsigned char *wrld_buffer = NULL;
                 if(numWRLD)
                     {
-                    wrld_buffer = (unsigned char *)malloc(sizeof(FNV::WRLDRecord) * numWRLD);
+                    wrld_buffer = (unsigned char *)wrld_pool.add_buffer(sizeof(FNV::WRLDRecord) * numWRLD);
                     if(wrld_buffer == 0)
                         throw std::bad_alloc();
-                    wrld_pool.add_buffer(wrld_buffer);
                     }
 
                 unsigned char *cell_buffer = NULL;
                 if(numCELL)
                     {
-                    cell_buffer = (unsigned char *)malloc(sizeof(FNV::CELLRecord) * numCELL);
+                    cell_buffer = (unsigned char *)cell_pool.add_buffer(sizeof(FNV::CELLRecord) * numCELL);
                     if(cell_buffer == 0)
                         throw std::bad_alloc();
-                    cell_pool.add_buffer(cell_buffer);
                     }
 
                 unsigned char *land_buffer = NULL;
                 if(numLAND)
                     {
-                    land_buffer = (unsigned char *)malloc(sizeof(FNV::LANDRecord) * numLAND);
+                    land_buffer = (unsigned char *)land_pool.add_buffer(sizeof(FNV::LANDRecord) * numLAND);
                     if(land_buffer == 0)
                         throw std::bad_alloc();
-                    land_pool.add_buffer(land_buffer);
                     }
 
                 unsigned char *achr_buffer = NULL;
                 if(numACHR)
                     {
-                    achr_buffer = (unsigned char *)malloc(sizeof(FNV::ACHRRecord) * numACHR);
+                    achr_buffer = (unsigned char *)CELL.achr_pool.add_buffer(sizeof(FNV::ACHRRecord) * numACHR);
                     if(achr_buffer == 0)
                         throw std::bad_alloc();
-                    CELL.achr_pool.add_buffer(achr_buffer);
                     }
 
                 unsigned char *acre_buffer = NULL;
                 if(numACRE)
                     {
-                    acre_buffer = (unsigned char *)malloc(sizeof(FNV::ACRERecord) * numACRE);
+                    acre_buffer = (unsigned char *)CELL.acre_pool.add_buffer(sizeof(FNV::ACRERecord) * numACRE);
                     if(acre_buffer == 0)
                         throw std::bad_alloc();
-                    CELL.acre_pool.add_buffer(acre_buffer);
                     }
 
                 unsigned char *refr_buffer = NULL;
                 if(numREFR)
                     {
-                    refr_buffer = (unsigned char *)malloc(sizeof(FNV::REFRRecord) * numREFR);
+                    refr_buffer = (unsigned char *)CELL.refr_pool.add_buffer(sizeof(FNV::REFRRecord) * numREFR);
                     if(refr_buffer == 0)
                         throw std::bad_alloc();
-                    CELL.refr_pool.add_buffer(refr_buffer);
                     }
 
                 unsigned char *pgre_buffer = NULL;
                 if(numPGRE)
                     {
-                    pgre_buffer = (unsigned char *)malloc(sizeof(FNV::PGRERecord) * numPGRE);
+                    pgre_buffer = (unsigned char *)CELL.pgre_pool.add_buffer(sizeof(FNV::PGRERecord) * numPGRE);
                     if(pgre_buffer == 0)
                         throw std::bad_alloc();
-                    CELL.pgre_pool.add_buffer(pgre_buffer);
                     }
 
                 unsigned char *pmis_buffer = NULL;
                 if(numPMIS)
                     {
-                    pmis_buffer = (unsigned char *)malloc(sizeof(FNV::PMISRecord) * numPMIS);
+                    pmis_buffer = (unsigned char *)CELL.pmis_pool.add_buffer(sizeof(FNV::PMISRecord) * numPMIS);
                     if(pmis_buffer == 0)
                         throw std::bad_alloc();
-                    CELL.pmis_pool.add_buffer(pmis_buffer);
                     }
 
                 unsigned char *pbea_buffer = NULL;
                 if(numPBEA)
                     {
-                    pbea_buffer = (unsigned char *)malloc(sizeof(FNV::PBEARecord) * numPBEA);
+                    pbea_buffer = (unsigned char *)CELL.pbea_pool.add_buffer(sizeof(FNV::PBEARecord) * numPBEA);
                     if(pbea_buffer == 0)
                         throw std::bad_alloc();
-                    CELL.pbea_pool.add_buffer(pbea_buffer);
                     }
 
                 unsigned char *pfla_buffer = NULL;
                 if(numPFLA)
                     {
-                    pfla_buffer = (unsigned char *)malloc(sizeof(FNV::PFLARecord) * numPFLA);
+                    pfla_buffer = (unsigned char *)CELL.pfla_pool.add_buffer(sizeof(FNV::PFLARecord) * numPFLA);
                     if(pfla_buffer == 0)
                         throw std::bad_alloc();
-                    CELL.pfla_pool.add_buffer(pfla_buffer);
                     }
 
                 unsigned char *pcbe_buffer = NULL;
                 if(numPCBE)
                     {
-                    pcbe_buffer = (unsigned char *)malloc(sizeof(FNV::PCBERecord) * numPCBE);
+                    pcbe_buffer = (unsigned char *)CELL.pcbe_pool.add_buffer(sizeof(FNV::PCBERecord) * numPCBE);
                     if(pcbe_buffer == 0)
                         throw std::bad_alloc();
-                    CELL.pcbe_pool.add_buffer(pcbe_buffer);
                     }
 
                 unsigned char *navm_buffer = NULL;
                 if(numNAVM)
                     {
-                    navm_buffer = (unsigned char *)malloc(sizeof(FNV::NAVMRecord) * numNAVM);
+                    navm_buffer = (unsigned char *)CELL.navm_pool.add_buffer(sizeof(FNV::NAVMRecord) * numNAVM);
                     if(navm_buffer == 0)
                         throw std::bad_alloc();
-                    CELL.navm_pool.add_buffer(navm_buffer);
                     }
 
                 last_wrld_record = orphaned_wrld_records = new FNV::WRLDRecord();
@@ -2033,7 +2009,7 @@ class FNVGRUPRecords<FNV::WRLDRecord, RecType, AllocUnit, IsKeyedByEditorID>
                         if(CloseMod)
                             curCell->LAND = NULL;
 
-                        uint32_t ignored_count = 0;
+                        size_t ignored_count = 0;
                         for(uint32_t y = 0; y < curCell->ACHR.size(); ++y)
                             {
                             if(curCell->ACHR[y]->IsPersistent())

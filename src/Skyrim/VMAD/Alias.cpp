@@ -77,7 +77,7 @@ void Alias::Read(unsigned char *&buffer, const int16_t &version, const int16_t &
         buffer += 4;
     }
     // version, objFormat
-    buffer += 8;
+    buffer += 4;
     // scriptCount
     uint16_t count = *(uint16_t *)buffer;
     buffer += 2;
@@ -109,9 +109,9 @@ void Alias::Write(FileWriter &writer)
     writer.record_write(&version, sizeof(version));
     int16_t objFormat = 2;
     writer.record_write(&objFormat, sizeof(objFormat));
-    uint16_t count = static_cast<uint16_t>(scripts.size());
+	uint16_t count = (uint16_t)scripts.size();
     writer.record_write(&count, sizeof(count));
-    for (uint16_t i = 0; i < count; ++i)
+    for (size_t i = 0; i < count; ++i)
         scripts[i]->Write(writer);
 }
 
